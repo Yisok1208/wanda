@@ -39,9 +39,11 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 
 # Load and process c4 dataset
 def get_c4(nsamples, seed, seqlen, tokenizer):
-    # Load train and validation datasets
+    # 加载 Hugging Face 官方的 C4 数据集的训练集和验证集
     traindata = load_dataset('c4', 'en', split='train', streaming=False)
-    valdata = load_dataset('allenai/c4', 'allenai--c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation')
+    valdata = load_dataset('c4', 'en', split='validation', streaming=False)  # 使用官方 C4 数据集的验证集
+
+    return traindata, valdata
 
     # Generate samples from training set
     random.seed(seed)
