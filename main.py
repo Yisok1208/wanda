@@ -20,7 +20,7 @@ def get_llm(model_name, cache_dir="llm_weights"):
     cache_dir=cache_dir,
     low_cpu_mem_usage=True,
     device_map="auto",
-    use_auth_token=True  # This uses your stored Hugging Face token
+    use_auth_token=os.getenv("HUGGINGFACE_TOKEN")  # This uses your stored Hugging Face token
 )
 
     model.seqlen = model.config.max_position_embeddings 
