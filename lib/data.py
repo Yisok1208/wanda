@@ -40,8 +40,8 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 # Load and process c4 dataset
 def get_c4(nsamples, seed, seqlen, tokenizer):
     # 加载 Hugging Face 官方的 C4 数据集的训练集和验证集
-    traindata = load_dataset('c4', 'en', split='train', cache_dir='/mnt/parscratch/users/aca22yn/huggingface_cache', streaming=False)
-    valdata = load_dataset('c4', 'en', split='validation', cache_dir='/mnt/parscratch/users/aca22yn/huggingface_cache', streaming=False)  # 使用官方 C4 数据集的验证集
+    traindata = load_dataset('c4', 'en', split='train', cache_dir='/mnt/parscratch/users/aca22yn/huggingface_cache', streaming=True)
+    valdata = load_dataset('c4', 'en', split='validation', cache_dir='/mnt/parscratch/users/aca22yn/huggingface_cache', streaming=True)  # 使用官方 C4 数据集的验证集
 
     return traindata, valdata
 
