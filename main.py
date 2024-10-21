@@ -15,12 +15,13 @@ print('# of gpus: ', torch.cuda.device_count())
 
 def get_llm(model_name, cache_dir="llm_weights"):
     model = AutoModelForCausalLM.from_pretrained(
-        model_name, 
-        torch_dtype=torch.float16, 
-        cache_dir=cache_dir, 
-        low_cpu_mem_usage=True, 
-        device_map="auto"
-    )
+    model_name,
+    torch_dtype=torch.float16,
+    cache_dir=cache_dir,
+    low_cpu_mem_usage=True,
+    device_map="auto",
+    use_auth_token=True  # This uses your stored Hugging Face token
+)
 
     model.seqlen = model.config.max_position_embeddings 
     return model
