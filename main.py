@@ -20,7 +20,7 @@ def get_llm(model_name, cache_dir="mnt/parscratch/users/aca22yn/wanda/llm_weight
     cache_dir=cache_dir,
     low_cpu_mem_usage=True,
     device_map="auto",
-    token=hf_token,
+    use_auth_token=hf_token,
     )
 
     model.seqlen = model.config.max_position_embeddings 
