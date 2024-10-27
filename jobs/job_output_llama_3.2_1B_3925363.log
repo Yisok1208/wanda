@@ -1,0 +1,14 @@
+torch 2.5.0
+transformers 4.28.0
+accelerate 0.18.0
+# of gpus:  0
+loading llm model meta-llama/Llama-3.2-1B-Instruct
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 111, in <module>
+    main()
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 58, in main
+    model = get_llm(args.model, args.cache_dir)
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 23, in get_llm
+    token=args.hf_token,
+NameError: name 'args' is not defined
+srun: error: gpu05: task 0: Exited with exit code 1

@@ -1,0 +1,22 @@
+/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+torch 2.5.0
+transformers 4.28.0
+accelerate 0.18.0
+# of gpus:  0
+loading llm model meta-llama/Llama-3.2-1B-Instruct
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 111, in <module>
+    main()
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 58, in main
+    model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 17, in get_llm
+    model = AutoModelForCausalLM.from_pretrained(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py", line 471, in from_pretrained
+    return model_class.from_pretrained(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/modeling_utils.py", line 2629, in from_pretrained
+    model = cls(config, *model_args, **model_kwargs)
+TypeError: __init__() got an unexpected keyword argument 'token'
+srun: error: gpu15: task 0: Exited with exit code 1

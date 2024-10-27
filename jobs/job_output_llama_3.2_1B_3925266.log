@@ -1,0 +1,12 @@
+usage: main.py [-h] [--model MODEL] [--seed SEED] [--nsamples NSAMPLES]
+               [--sparsity_ratio SPARSITY_RATIO]
+               [--sparsity_type {unstructured,4:8,2:4}]
+               [--prune_method {magnitude,wanda,sparsegpt,ablate_mag_seq,ablate_wanda_seq,ablate_mag_iter,ablate_wanda_iter,search}]
+               [--cache_dir CACHE_DIR] [--use_variant] [--save SAVE]
+               [--save_model SAVE_MODEL] [--eval_zero_shot]
+main.py: error: unrecognized arguments: --save_dir /mnt/parscratch/users/aca22yn/results/llama_3.2_1B/ --hf_token cat"/mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt"
+torch 2.5.0
+transformers 4.28.0
+accelerate 0.18.0
+# of gpus:  0
+srun: error: gpu05: task 0: Exited with exit code 2

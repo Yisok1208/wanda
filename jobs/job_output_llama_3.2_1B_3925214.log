@@ -1,0 +1,8 @@
+
+CondaError: Run 'conda init' before 'conda activate'
+
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 4, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+srun: error: gpu05: task 0: Exited with exit code 1
