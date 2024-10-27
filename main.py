@@ -13,7 +13,7 @@ print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
 print('# of gpus: ', torch.cuda.device_count())
 
-def get_llm(model_name, cache_dir="mnt/parscratch/users/aca22yn/wanda/llm_weights"):
+def get_llm(model_name, cache_dir="mnt/parscratch/users/aca22yn/wanda/llm_weights", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype=torch.float16,
@@ -55,7 +55,7 @@ def main():
 
     model_name = args.model.split("/")[-1]
     print(f"loading llm model {args.model}")
-    model = get_llm(args.model, args.cache_dir)
+    model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=False)
 
