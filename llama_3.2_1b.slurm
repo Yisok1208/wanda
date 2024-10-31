@@ -27,5 +27,5 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
           --prune_method wanda \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/results/llama_3.2_1B/"
+          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama_3.2_1B/"
 
