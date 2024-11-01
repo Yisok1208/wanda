@@ -28,6 +28,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
     return model
 
 def main():
+    print("Script started successfully.")
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, help='LLaMA model')
     parser.add_argument('--seed', type=int, default=0, help='Seed for sampling the calibration data.')
