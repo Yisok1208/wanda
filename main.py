@@ -68,7 +68,7 @@ def main():
     print("use device ", device)
 
     if args.sparsity_ratio != 0:
-        print("pruning starts")
+        print("Starting pruning with method:", args.prune_method)
         if args.prune_method == "wanda":
             prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         elif args.prune_method == "magnitude":
@@ -77,13 +77,14 @@ def main():
             prune_sparsegpt(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         elif "ablate" in args.prune_method:
             prune_ablate(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
-
+        print("Pruning completed.")
     ################################################################
     print("*"*30)
     sparsity_ratio = check_sparsity(model)
     print(f"sparsity sanity check {sparsity_ratio:.4f}")
     print("*"*30)
     ################################################################
+    print("Starting perplexity evaluation on wikitext.")
     ppl_test = eval_ppl(args, model, tokenizer, device)
     print(f"wikitext perplexity {ppl_test}")
 
@@ -95,6 +96,7 @@ def main():
         print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}", file=f, flush=True)
 
     if args.eval_zero_shot:
+        print("Starting zero-shot evaluation.")
         accelerate=False
         if "30b" in args.model or "65b" in args.model or "70b" in args.model:
             accelerate=True
@@ -109,6 +111,7 @@ def main():
     if args.save_model:
         model.save_pretrained(args.save_model)
         tokenizer.save_pretrained(args.save_model)
+        print("Model and tokenizer saved successfully.")
 
 if __name__ == '__main__':
     main()
