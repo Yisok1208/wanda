@@ -1,0 +1,84 @@
+/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Some weights of LlamaForCausalLM were not initialized from the model checkpoint at meta-llama/Llama-3.2-1B-Instruct and are newly initialized: ['model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+torch 2.5.0
+transformers 4.28.0
+accelerate 0.18.0
+# of gpus:  0
+loading llm model meta-llama/Llama-3.2-1B-Instruct
+use device  cuda:0
+pruning starts
+loading calibdation data
+Downloading data:   0%|          | 0/1024 [00:00<?, ?files/s]Downloading data:   0%|          | 1/1024 [00:01<25:32,  1.50s/files]Downloading data:   7%|▋         | 73/1024 [00:01<00:15, 63.26files/s]Downloading data:  17%|█▋        | 175/1024 [00:03<00:15, 54.56files/s]
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 111, in <module>
+    main()
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 70, in main
+    prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
+  File "/mnt/parscratch/users/aca22yn/wanda/lib/prune.py", line 132, in prune_wanda
+    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
+  File "/mnt/parscratch/users/aca22yn/wanda/lib/data.py", line 73, in get_loaders
+    return get_c4(nsamples, seed, seqlen, tokenizer)
+  File "/mnt/parscratch/users/aca22yn/wanda/lib/data.py", line 43, in get_c4
+    traindata = load_dataset('allenai/c4', 'en', split='train[:100]')
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/load.py", line 2154, in load_dataset
+    builder_instance.download_and_prepare(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/builder.py", line 924, in download_and_prepare
+    self._download_and_prepare(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/builder.py", line 978, in _download_and_prepare
+    split_generators = self._split_generators(dl_manager, **split_generators_kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/packaged_modules/json/json.py", line 78, in _split_generators
+    data_files = dl_manager.download_and_extract(self.config.data_files)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/download/download_manager.py", line 326, in download_and_extract
+    return self.extract(self.download(url_or_urls))
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/download/download_manager.py", line 159, in download
+    downloaded_path_or_paths = map_nested(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/py_utils.py", line 494, in map_nested
+    mapped = [
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/py_utils.py", line 495, in <listcomp>
+    map_nested(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/py_utils.py", line 511, in map_nested
+    mapped = [
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/py_utils.py", line 512, in <listcomp>
+    _single_map_nested((function, obj, batched, batch_size, types, None, True, None))
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/py_utils.py", line 380, in _single_map_nested
+    return [mapped_item for batch in iter_batched(data_struct, batch_size) for mapped_item in function(batch)]
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/py_utils.py", line 380, in <listcomp>
+    return [mapped_item for batch in iter_batched(data_struct, batch_size) for mapped_item in function(batch)]
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/download/download_manager.py", line 206, in _download_batched
+    return thread_map(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/tqdm/contrib/concurrent.py", line 69, in thread_map
+    return _executor_map(ThreadPoolExecutor, fn, *iterables, **tqdm_kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/tqdm/contrib/concurrent.py", line 51, in _executor_map
+    return list(tqdm_class(ex.map(fn, *iterables, chunksize=chunksize), **kwargs))
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/tqdm/std.py", line 1181, in __iter__
+    for obj in iterable:
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/concurrent/futures/_base.py", line 609, in result_iterator
+    yield fs.pop().result()
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/concurrent/futures/_base.py", line 446, in result
+    return self.__get_result()
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+    raise self._exception
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/download/download_manager.py", line 229, in _download_single
+    out = cached_path(url_or_filename, download_config=download_config)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/datasets/utils/file_utils.py", line 182, in cached_path
+    output_path = huggingface_hub.HfApi(
+  File "/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/hf_api.py", line 5637, in hf_hub_download
+    return hf_hub_download(
+  File "/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 862, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1011, in _hf_hub_download_to_cache_dir
+    _download_to_tmp_and_move(
+  File "/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1545, in _download_to_tmp_and_move
+    http_get(
+OSError: [Errno 122] Disk quota exceeded
+srun: error: gpu05: task 0: Exited with exit code 1
