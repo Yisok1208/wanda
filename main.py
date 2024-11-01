@@ -21,6 +21,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
     low_cpu_mem_usage=True,
     device_map="auto",
     use_auth_token=hf_token,
+    force_download=True
     )
 
     model.seqlen = model.config.max_position_embeddings 
@@ -56,8 +57,10 @@ def main():
     model_name = args.model.split("/")[-1]
     print(f"loading llm model {args.model}")
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
+    print("Model loaded successfully.")
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=False)
+    print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
