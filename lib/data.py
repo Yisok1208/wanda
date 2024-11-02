@@ -43,9 +43,9 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 def get_c4(nsamples, seed, seqlen, tokenizer):
     # Load train and validation datasets
     print("Starting data loading...")
-    traindata = load_dataset('allenai/c4', 'en', split='train[:10]', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
+    traindata = load_dataset('allenai/c4', 'en', split='train', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
     print("Training data loaded.")
-    valdata = load_dataset('allenai/c4', 'en', split='validation[:10]', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
+    valdata = load_dataset('allenai/c4', 'en', split='validation', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
     print("Validation data loaded.")
 
     # Generate samples from training set
