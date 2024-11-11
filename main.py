@@ -13,7 +13,7 @@ print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
 print('# of gpus: ', torch.cuda.device_count())
 
-def get_llm(model_name, cache_dir=""llm_weights", hf_token=None):
+def get_llm(model_name, cache_dir="llm_weights", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype=torch.float16,
