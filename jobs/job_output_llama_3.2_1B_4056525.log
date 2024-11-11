@@ -1,5 +1,0 @@
-/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-slurmstepd: error: *** JOB 4056525 ON gpu04 CANCELLED AT 2024-11-01T14:13:51 ***
-slurmstepd: error: *** STEP 4056525.0 ON gpu04 CANCELLED AT 2024-11-01T14:13:51 ***
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.

@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 3, in <module>
-    import numpy as np
-ModuleNotFoundError: No module named 'numpy'

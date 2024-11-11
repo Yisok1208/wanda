@@ -1,8 +1,0 @@
-Requirement already satisfied: numpy in /users/aca22yn/.local/lib/python3.10/site-packages (2.1.2)
-
-[notice] A new release of pip available: 22.3.1 -> 24.2
-[notice] To update, run: pip install --upgrade pip
-Traceback (most recent call last):
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 4, in <module>
-    import torch
-ModuleNotFoundError: No module named 'torch'
