@@ -18,7 +18,6 @@ module load cuDNN/8.9.2.26-CUDA-12.1.1
 module load Anaconda3/2024.02-1
 
 #Activate conda
-source ~/.bashrc
 source activate prune_llm
 
 # Set Hugging Face cache environment variables
