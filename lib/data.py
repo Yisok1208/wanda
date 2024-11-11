@@ -3,7 +3,7 @@
 import numpy as np
 import random
 import torch
-from datasets import load_dataset, DownloadConfig
+from datasets import load_dataset
 
 download_config = DownloadConfig(force_download=True)
 
@@ -20,8 +20,8 @@ class TokenizerWrapper:
 # Load and process wikitext2 dataset
 def get_wikitext2(nsamples, seed, seqlen, tokenizer):
     # Load train and test datasets
-    traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train', download_config=download_config)
-    testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test', download_config=download_config)
+    traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
+    testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 
     # Encode datasets
     trainenc = tokenizer(" ".join(traindata['text']), return_tensors='pt')
@@ -43,9 +43,9 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 def get_c4(nsamples, seed, seqlen, tokenizer):
     # Load train and validation datasets
     print("Starting data loading...")
-    traindata = load_dataset('allenai/c4', 'en', split='train[:100]', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
+    traindata = load_dataset('allenai/c4', 'allenai--c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train')
     print("Training data loaded.")
-    valdata = load_dataset('allenai/c4', 'en', split='validation[:100]', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
+    valdata = load_dataset('allenai/c4', 'allenai--c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation')
     print("Validation data loaded.")
 
     # Generate samples from training set
