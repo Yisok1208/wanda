@@ -1,142 +1,0 @@
-Requirement already satisfied: numpy in /users/aca22yn/.local/lib/python3.10/site-packages (2.1.2)
-Requirement already satisfied: torch in /users/aca22yn/.local/lib/python3.10/site-packages (2.5.0)
-Requirement already satisfied: transformers in /users/aca22yn/.local/lib/python3.10/site-packages (4.45.2)
-Requirement already satisfied: datasets in /users/aca22yn/.local/lib/python3.10/site-packages (3.0.1)
-Requirement already satisfied: accelerate in /users/aca22yn/.local/lib/python3.10/site-packages (1.0.1)
-Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.4.127 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.4.127)
-Requirement already satisfied: filelock in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from torch) (3.8.0)
-Requirement already satisfied: nvidia-curand-cu12==10.3.5.147 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (10.3.5.147)
-Requirement already satisfied: triton==3.1.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (3.1.0)
-Requirement already satisfied: nvidia-cufft-cu12==11.2.1.3 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (11.2.1.3)
-Requirement already satisfied: nvidia-nvtx-cu12==12.4.127 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.4.127)
-Requirement already satisfied: nvidia-cublas-cu12==12.4.5.8 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.4.5.8)
-Requirement already satisfied: typing-extensions>=4.8.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (4.12.2)
-Requirement already satisfied: nvidia-cusolver-cu12==11.6.1.9 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (11.6.1.9)
-Requirement already satisfied: networkx in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (3.4.1)
-Requirement already satisfied: nvidia-cuda-cupti-cu12==12.4.127 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.4.127)
-Requirement already satisfied: nvidia-nvjitlink-cu12==12.4.127 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.4.127)
-Requirement already satisfied: nvidia-cudnn-cu12==9.1.0.70 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (9.1.0.70)
-Requirement already satisfied: nvidia-cuda-runtime-cu12==12.4.127 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.4.127)
-Requirement already satisfied: nvidia-cusparse-cu12==12.3.1.170 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (12.3.1.170)
-Requirement already satisfied: sympy==1.13.1 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (1.13.1)
-Requirement already satisfied: nvidia-nccl-cu12==2.21.5 in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (2.21.5)
-Requirement already satisfied: fsspec in /users/aca22yn/.local/lib/python3.10/site-packages (from torch) (2024.6.1)
-Requirement already satisfied: jinja2 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from torch) (3.1.2)
-Requirement already satisfied: mpmath<1.4,>=1.1.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from sympy==1.13.1->torch) (1.3.0)
-Requirement already satisfied: tokenizers<0.21,>=0.20 in /users/aca22yn/.local/lib/python3.10/site-packages (from transformers) (0.20.1)
-Requirement already satisfied: safetensors>=0.4.1 in /users/aca22yn/.local/lib/python3.10/site-packages (from transformers) (0.4.5)
-Requirement already satisfied: pyyaml>=5.1 in /users/aca22yn/.local/lib/python3.10/site-packages (from transformers) (6.0.2)
-Requirement already satisfied: huggingface-hub<1.0,>=0.23.2 in /users/aca22yn/.local/lib/python3.10/site-packages (from transformers) (0.26.0)
-Requirement already satisfied: tqdm>=4.27 in /users/aca22yn/.local/lib/python3.10/site-packages (from transformers) (4.66.5)
-Requirement already satisfied: regex!=2019.12.17 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from transformers) (2022.10.31)
-Requirement already satisfied: requests in /users/aca22yn/.local/lib/python3.10/site-packages (from transformers) (2.32.3)
-Requirement already satisfied: packaging>=20.0 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from transformers) (21.3)
-Requirement already satisfied: dill<0.3.9,>=0.3.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from datasets) (0.3.8)
-Requirement already satisfied: xxhash in /users/aca22yn/.local/lib/python3.10/site-packages (from datasets) (3.5.0)
-Requirement already satisfied: pandas in /users/aca22yn/.local/lib/python3.10/site-packages (from datasets) (2.2.3)
-Requirement already satisfied: multiprocess in /users/aca22yn/.local/lib/python3.10/site-packages (from datasets) (0.70.16)
-Requirement already satisfied: pyarrow>=15.0.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from datasets) (17.0.0)
-Requirement already satisfied: aiohttp in /users/aca22yn/.local/lib/python3.10/site-packages (from datasets) (3.10.10)
-Requirement already satisfied: psutil in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from accelerate) (5.9.4)
-Requirement already satisfied: frozenlist>=1.1.1 in /users/aca22yn/.local/lib/python3.10/site-packages (from aiohttp->datasets) (1.4.1)
-Requirement already satisfied: async-timeout<5.0,>=4.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from aiohttp->datasets) (4.0.3)
-Requirement already satisfied: attrs>=17.3.0 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from aiohttp->datasets) (22.1.0)
-Requirement already satisfied: multidict<7.0,>=4.5 in /users/aca22yn/.local/lib/python3.10/site-packages (from aiohttp->datasets) (6.1.0)
-Requirement already satisfied: yarl<2.0,>=1.12.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from aiohttp->datasets) (1.15.5)
-Requirement already satisfied: aiohappyeyeballs>=2.3.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from aiohttp->datasets) (2.4.3)
-Requirement already satisfied: aiosignal>=1.1.2 in /users/aca22yn/.local/lib/python3.10/site-packages (from aiohttp->datasets) (1.3.1)
-Requirement already satisfied: pyparsing!=3.0.5,>=2.0.2 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from packaging>=20.0->transformers) (3.0.9)
-Requirement already satisfied: certifi>=2017.4.17 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from requests->transformers) (2022.9.24)
-Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from requests->transformers) (1.26.12)
-Requirement already satisfied: charset-normalizer<4,>=2 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from requests->transformers) (2.1.1)
-Requirement already satisfied: idna<4,>=2.5 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from requests->transformers) (3.4)
-Requirement already satisfied: MarkupSafe>=2.0 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from jinja2->torch) (2.1.1)
-Requirement already satisfied: python-dateutil>=2.8.2 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from pandas->datasets) (2.8.2)
-Requirement already satisfied: tzdata>=2022.7 in /users/aca22yn/.local/lib/python3.10/site-packages (from pandas->datasets) (2024.2)
-Requirement already satisfied: pytz>=2020.1 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from pandas->datasets) (2022.6)
-Requirement already satisfied: six>=1.5 in /opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages (from python-dateutil>=2.8.2->pandas->datasets) (1.16.0)
-Requirement already satisfied: propcache>=0.2.0 in /users/aca22yn/.local/lib/python3.10/site-packages (from yarl<2.0,>=1.12.0->aiohttp->datasets) (0.2.0)
-
-[notice] A new release of pip available: 22.3.1 -> 24.2
-[notice] To update, run: pip install --upgrade pip
-/users/aca22yn/.local/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
-  warnings.warn(
-/users/aca22yn/.local/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py:471: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers. Please use `token` instead.
-  warnings.warn(
-/users/aca22yn/.cache/huggingface/modules/datasets_modules/datasets/c4/584d57ebe81c209b6c7f31727066d2c4b4bba37cb7092cdd83083d5ec11207db/c4.py:53: FutureWarning: Dataset 'c4' is deprecated and will be deleted. Use 'allenai/c4' instead.
-  warnings.warn(
-torch 2.5.0
-transformers 4.45.2
-accelerate 1.0.1
-# of gpus:  0
-loading llm model meta-llama/Llama-3.2-1B-Instruct
-use device  cuda:0
-pruning starts
-loading calibdation data
-Downloading data:   0%|          | 0/1024 [00:00<?, ?files/s]Downloading data:   0%|          | 1/1024 [00:07<2:03:55,  7.27s/files]Downloading data:   0%|          | 2/1024 [00:12<1:47:54,  6.34s/files]Downloading data:   0%|          | 3/1024 [00:14<1:13:56,  4.35s/files]Downloading data:   0%|          | 4/1024 [00:20<1:20:50,  4.76s/files]Downloading data:   0%|          | 5/1024 [00:25<1:25:22,  5.03s/files]Downloading data:   1%|          | 6/1024 [00:31<1:28:12,  5.20s/files]Downloading data:   1%|          | 7/1024 [00:36<1:29:54,  5.30s/files]Downloading data:   1%|          | 8/1024 [00:38<1:11:59,  4.25s/files]Downloading data:   1%|          | 9/1024 [00:44<1:19:37,  4.71s/files]Downloading data:   1%|          | 10/1024 [00:50<1:27:56,  5.20s/files]Downloading data:   1%|          | 11/1024 [00:56<1:31:25,  5.42s/files]Downloading data:   1%|          | 12/1024 [00:59<1:17:16,  4.58s/files]Downloading data:   1%|▏         | 13/1024 [01:05<1:23:59,  4.98s/files]Downloading data:   1%|▏         | 14/1024 [01:11<1:28:46,  5.27s/files]Downloading data:   1%|▏         | 15/1024 [01:17<1:30:45,  5.40s/files]Downloading data:   2%|▏         | 16/1024 [01:22<1:32:53,  5.53s/files]Downloading data:   2%|▏         | 17/1024 [01:28<1:33:46,  5.59s/files]Downloading data:   2%|▏         | 18/1024 [01:34<1:36:19,  5.75s/files]Downloading data:   2%|▏         | 19/1024 [01:40<1:36:37,  5.77s/files]Downloading data:   2%|▏         | 20/1024 [01:46<1:36:29,  5.77s/files]Downloading data:   2%|▏         | 21/1024 [01:52<1:36:42,  5.79s/files]Downloading data:   2%|▏         | 22/1024 [01:57<1:36:47,  5.80s/files]Downloading data:   2%|▏         | 23/1024 [02:03<1:35:27,  5.72s/files]Downloading data:   2%|▏         | 24/1024 [02:09<1:34:55,  5.70s/files]Downloading data:   2%|▏         | 25/1024 [02:14<1:34:26,  5.67s/files]Downloading data:   3%|▎         | 26/1024 [02:17<1:18:11,  4.70s/files]Downloading data:   3%|▎         | 27/1024 [02:22<1:23:02,  5.00s/files]Downloading data:   3%|▎         | 28/1024 [02:28<1:25:23,  5.14s/files]Downloading data:   3%|▎         | 29/1024 [02:34<1:28:31,  5.34s/files]Downloading data:   3%|▎         | 30/1024 [02:39<1:29:20,  5.39s/files]Downloading data:   3%|▎         | 31/1024 [02:45<1:29:33,  5.41s/files]Downloading data:   3%|▎         | 32/1024 [02:50<1:30:10,  5.45s/files]Downloading data:   3%|▎         | 33/1024 [02:56<1:32:20,  5.59s/files]Downloading data:   3%|▎         | 34/1024 [03:02<1:33:33,  5.67s/files]Downloading data:   3%|▎         | 35/1024 [03:08<1:33:57,  5.70s/files]Downloading data:   4%|▎         | 36/1024 [03:13<1:33:29,  5.68s/files]Downloading data:   4%|▎         | 37/1024 [03:16<1:19:48,  4.85s/files]Downloading data:   4%|▎         | 38/1024 [03:23<1:29:54,  5.47s/files]Downloading data:   4%|▍         | 39/1024 [03:25<1:13:15,  4.46s/files]Downloading data:   4%|▍         | 40/1024 [03:31<1:20:11,  4.89s/files]Downloading data:   4%|▍         | 41/1024 [03:40<1:41:13,  6.18s/files]Downloading data:   4%|▍         | 42/1024 [03:46<1:39:04,  6.05s/files]Downloading data:   4%|▍         | 43/1024 [03:52<1:36:09,  5.88s/files]Downloading data:   4%|▍         | 44/1024 [03:57<1:35:55,  5.87s/files]Downloading data:   4%|▍         | 45/1024 [04:03<1:34:57,  5.82s/files]Downloading data:   4%|▍         | 46/1024 [04:09<1:34:12,  5.78s/files]Downloading data:   5%|▍         | 47/1024 [04:18<1:50:37,  6.79s/files]Downloading data:   5%|▍         | 48/1024 [04:24<1:44:30,  6.42s/files]Downloading data:   5%|▍         | 49/1024 [04:29<1:40:28,  6.18s/files]Downloading data:   5%|▍         | 50/1024 [04:35<1:36:58,  5.97s/files]Downloading data:   5%|▍         | 51/1024 [04:40<1:34:54,  5.85s/files]Downloading data:   5%|▌         | 52/1024 [04:42<1:15:18,  4.65s/files]Downloading data:   5%|▌         | 53/1024 [04:48<1:20:41,  4.99s/files]Downloading data:   5%|▌         | 54/1024 [04:53<1:23:10,  5.15s/files]Downloading data:   5%|▌         | 55/1024 [04:59<1:26:52,  5.38s/files]Downloading data:   5%|▌         | 56/1024 [05:01<1:11:04,  4.41s/files]Downloading data:   6%|▌         | 57/1024 [05:13<1:46:36,  6.61s/files]Downloading data:   6%|▌         | 58/1024 [05:19<1:42:21,  6.36s/files]Downloading data:   6%|▌         | 59/1024 [05:25<1:39:26,  6.18s/files]Downloading data:   6%|▌         | 60/1024 [05:30<1:37:18,  6.06s/files]Downloading data:   6%|▌         | 61/1024 [05:36<1:35:12,  5.93s/files]Downloading data:   6%|▌         | 62/1024 [05:38<1:16:15,  4.76s/files]Downloading data:   6%|▌         | 63/1024 [05:44<1:19:22,  4.96s/files]Downloading data:   6%|▋         | 64/1024 [05:49<1:22:16,  5.14s/files]Downloading data:   6%|▋         | 65/1024 [05:55<1:26:20,  5.40s/files]Downloading data:   6%|▋         | 66/1024 [06:01<1:26:55,  5.44s/files]Downloading data:   7%|▋         | 67/1024 [06:03<1:11:42,  4.50s/files]Downloading data:   7%|▋         | 68/1024 [06:08<1:16:31,  4.80s/files]Downloading data:   7%|▋         | 69/1024 [06:14<1:20:03,  5.03s/files]Downloading data:   7%|▋         | 70/1024 [06:19<1:21:56,  5.15s/files]Downloading data:   7%|▋         | 71/1024 [06:25<1:22:57,  5.22s/files]Downloading data:   7%|▋         | 72/1024 [06:31<1:25:33,  5.39s/files]Downloading data:   7%|▋         | 73/1024 [06:36<1:27:18,  5.51s/files]Downloading data:   7%|▋         | 74/1024 [06:42<1:27:55,  5.55s/files]Downloading data:   7%|▋         | 75/1024 [06:48<1:27:32,  5.54s/files]Downloading data:   7%|▋         | 76/1024 [06:53<1:27:41,  5.55s/files]Downloading data:   8%|▊         | 77/1024 [06:59<1:27:50,  5.56s/files]Downloading data:   8%|▊         | 78/1024 [07:04<1:27:47,  5.57s/files]Downloading data:   8%|▊         | 79/1024 [07:10<1:28:03,  5.59s/files]Downloading data:   8%|▊         | 80/1024 [07:12<1:11:02,  4.52s/files]Downloading data:   8%|▊         | 81/1024 [07:17<1:15:16,  4.79s/files]Downloading data:   8%|▊         | 82/1024 [07:23<1:19:38,  5.07s/files]Downloading data:   8%|▊         | 83/1024 [07:26<1:07:46,  4.32s/files]Downloading data:   8%|▊         | 84/1024 [07:28<56:27,  3.60s/files]  Downloading data:   8%|▊         | 85/1024 [07:33<1:06:39,  4.26s/files]Downloading data:   8%|▊         | 86/1024 [07:39<1:12:48,  4.66s/files]Downloading data:   8%|▊         | 87/1024 [07:41<1:01:11,  3.92s/files]Downloading data:   9%|▊         | 88/1024 [07:47<1:11:30,  4.58s/files]Downloading data:   9%|▊         | 89/1024 [07:49<58:38,  3.76s/files]  Downloading data:   9%|▉         | 90/1024 [07:55<1:08:54,  4.43s/files]Downloading data:   9%|▉         | 91/1024 [08:01<1:16:18,  4.91s/files]Downloading data:   9%|▉         | 92/1024 [08:07<1:21:21,  5.24s/files]Downloading data:   9%|▉         | 93/1024 [08:13<1:23:05,  5.35s/files]Downloading data:   9%|▉         | 94/1024 [08:19<1:25:09,  5.49s/files]Downloading data:   9%|▉         | 95/1024 [08:24<1:26:01,  5.56s/files]Downloading data:   9%|▉         | 96/1024 [08:30<1:27:17,  5.64s/files]Downloading data:   9%|▉         | 97/1024 [08:33<1:13:11,  4.74s/files]Downloading data:  10%|▉         | 98/1024 [08:35<1:01:38,  3.99s/files]Downloading data:  10%|▉         | 99/1024 [08:42<1:17:04,  5.00s/files]Downloading data:  10%|▉         | 100/1024 [08:51<1:33:11,  6.05s/files]Downloading data:  10%|▉         | 101/1024 [08:56<1:30:37,  5.89s/files]Downloading data:  10%|▉         | 102/1024 [09:02<1:29:24,  5.82s/files]Downloading data:  10%|█         | 103/1024 [09:08<1:28:24,  5.76s/files]Downloading data:  10%|█         | 104/1024 [09:15<1:33:33,  6.10s/files]Downloading data:  10%|█         | 105/1024 [09:21<1:32:38,  6.05s/files]Downloading data:  10%|█         | 106/1024 [09:28<1:38:33,  6.44s/files]Downloading data:  10%|█         | 107/1024 [09:34<1:34:43,  6.20s/files]Downloading data:  11%|█         | 108/1024 [09:39<1:31:27,  5.99s/files]Downloading data:  11%|█         | 109/1024 [09:45<1:30:31,  5.94s/files]Downloading data:  11%|█         | 110/1024 [09:50<1:28:20,  5.80s/files]Downloading data:  11%|█         | 111/1024 [09:56<1:26:35,  5.69s/files]Downloading data:  11%|█         | 112/1024 [10:02<1:27:17,  5.74s/files]Downloading data:  11%|█         | 113/1024 [10:07<1:27:26,  5.76s/files]Downloading data:  11%|█         | 114/1024 [10:13<1:26:01,  5.67s/files]Downloading data:  11%|█         | 115/1024 [10:19<1:26:17,  5.70s/files]Downloading data:  11%|█▏        | 116/1024 [10:25<1:27:04,  5.75s/files]Downloading data:  11%|█▏        | 117/1024 [10:30<1:25:41,  5.67s/files]Downloading data:  12%|█▏        | 118/1024 [10:35<1:24:30,  5.60s/files]Downloading data:  12%|█▏        | 119/1024 [10:41<1:24:25,  5.60s/files]Downloading data:  12%|█▏        | 120/1024 [10:47<1:24:59,  5.64s/files]Downloading data:  12%|█▏        | 121/1024 [10:54<1:33:18,  6.20s/files]Downloading data:  12%|█▏        | 122/1024 [11:03<1:42:56,  6.85s/files]Downloading data:  12%|█▏        | 123/1024 [11:08<1:37:07,  6.47s/files]Downloading data:  12%|█▏        | 124/1024 [11:14<1:32:26,  6.16s/files]Downloading data:  12%|█▏        | 125/1024 [11:19<1:28:56,  5.94s/files]Downloading data:  12%|█▏        | 126/1024 [11:21<1:11:26,  4.77s/files]Downloading data:  12%|█▏        | 127/1024 [11:27<1:15:06,  5.02s/files]Downloading data:  12%|█▎        | 128/1024 [11:29<1:00:49,  4.07s/files]Downloading data:  13%|█▎        | 129/1024 [11:31<53:08,  3.56s/files]  Downloading data:  13%|█▎        | 130/1024 [11:37<1:02:03,  4.16s/files]Downloading data:  13%|█▎        | 131/1024 [11:39<52:45,  3.54s/files]  Downloading data:  13%|█▎        | 132/1024 [11:44<1:01:47,  4.16s/files]Downloading data:  13%|█▎        | 133/1024 [11:50<1:09:24,  4.67s/files]Downloading data:  13%|█▎        | 134/1024 [11:56<1:14:08,  5.00s/files]Downloading data:  13%|█▎        | 135/1024 [12:02<1:17:37,  5.24s/files]Downloading data:  13%|█▎        | 136/1024 [12:04<1:03:32,  4.29s/files]Downloading data:  13%|█▎        | 137/1024 [12:06<54:19,  3.68s/files]  Downloading data:  13%|█▎        | 138/1024 [12:11<1:02:18,  4.22s/files]Downloading data:  14%|█▎        | 139/1024 [12:17<1:07:17,  4.56s/files]Downloading data:  14%|█▎        | 140/1024 [12:22<1:11:20,  4.84s/files]Downloading data:  14%|█▍        | 141/1024 [12:41<2:10:25,  8.86s/files]Downloading data:  14%|█▍        | 142/1024 [12:47<1:57:42,  8.01s/files]Downloading data:  14%|█▍        | 143/1024 [12:49<1:30:51,  6.19s/files]Downloading data:  14%|█▍        | 144/1024 [12:51<1:12:42,  4.96s/files]Downloading data:  14%|█▍        | 145/1024 [12:56<1:16:30,  5.22s/files]Downloading data:  14%|█▍        | 146/1024 [13:02<1:19:10,  5.41s/files]Downloading data:  14%|█▍        | 147/1024 [13:05<1:07:44,  4.64s/files]Downloading data:  14%|█▍        | 148/1024 [13:07<56:47,  3.89s/files]  Downloading data:  15%|█▍        | 149/1024 [13:13<1:03:46,  4.37s/files]Downloading data:  15%|█▍        | 150/1024 [13:18<1:08:44,  4.72s/files]Downloading data:  15%|█▍        | 151/1024 [13:21<58:02,  3.99s/files]  Downloading data:  15%|█▍        | 152/1024 [13:26<1:05:39,  4.52s/files]Downloading data:  15%|█▍        | 153/1024 [13:32<1:11:17,  4.91s/files]Downloading data:  15%|█▌        | 154/1024 [13:38<1:14:56,  5.17s/files]Downloading data:  15%|█▌        | 155/1024 [13:44<1:17:17,  5.34s/files]Downloading data:  15%|█▌        | 156/1024 [13:50<1:19:36,  5.50s/files]Downloading data:  15%|█▌        | 157/1024 [13:55<1:19:58,  5.54s/files]Downloading data:  15%|█▌        | 158/1024 [14:01<1:20:56,  5.61s/files]Downloading data:  16%|█▌        | 159/1024 [14:07<1:21:01,  5.62s/files]Downloading data:  16%|█▌        | 160/1024 [14:13<1:22:13,  5.71s/files]Downloading data:  16%|█▌        | 161/1024 [14:18<1:21:46,  5.69s/files]Downloading data:  16%|█▌        | 162/1024 [14:25<1:24:59,  5.92s/files]Downloading data:  16%|█▌        | 163/1024 [14:30<1:23:17,  5.80s/files]Downloading data:  16%|█▌        | 164/1024 [14:37<1:28:35,  6.18s/files]Downloading data:  16%|█▌        | 165/1024 [14:43<1:26:07,  6.02s/files]Downloading data:  16%|█▌        | 166/1024 [14:49<1:25:44,  6.00s/files]Downloading data:  16%|█▋        | 167/1024 [14:51<1:09:15,  4.85s/files]Downloading data:  16%|█▋        | 168/1024 [14:57<1:13:16,  5.14s/files]Downloading data:  17%|█▋        | 169/1024 [15:02<1:14:43,  5.24s/files]Downloading data:  17%|█▋        | 170/1024 [15:08<1:18:04,  5.49s/files]Downloading data:  17%|█▋        | 171/1024 [15:14<1:19:04,  5.56s/files]Downloading data:  17%|█▋        | 172/1024 [15:20<1:19:11,  5.58s/files]Downloading data:  17%|█▋        | 173/1024 [15:25<1:19:07,  5.58s/files]Downloading data:  17%|█▋        | 174/1024 [15:31<1:19:13,  5.59s/files]Downloading data:  17%|█▋        | 175/1024 [15:37<1:19:46,  5.64s/files]Downloading data:  17%|█▋        | 176/1024 [15:42<1:19:12,  5.60s/files]Downloading data:  17%|█▋        | 177/1024 [15:48<1:19:10,  5.61s/files]Downloading data:  17%|█▋        | 178/1024 [15:54<1:19:55,  5.67s/files]Downloading data:  17%|█▋        | 179/1024 [15:59<1:20:13,  5.70s/files]Downloading data:  18%|█▊        | 180/1024 [16:02<1:06:26,  4.72s/files]Downloading data:  18%|█▊        | 181/1024 [16:07<1:10:07,  4.99s/files]Downloading data:  18%|█▊        | 181/1024 [16:14<1:15:36,  5.38s/files]
-Traceback (most recent call last):
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 111, in <module>
-    main()
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 70, in main
-    prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/prune.py", line 132, in prune_wanda
-    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/data.py", line 73, in get_loaders
-    return get_c4(nsamples, seed, seqlen, tokenizer)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/data.py", line 43, in get_c4
-    traindata = load_dataset('c4', 'en', split='train', trust_remote_code=True)
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/load.py", line 2096, in load_dataset
-    builder_instance.download_and_prepare(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/builder.py", line 924, in download_and_prepare
-    self._download_and_prepare(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/builder.py", line 1647, in _download_and_prepare
-    super()._download_and_prepare(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/builder.py", line 977, in _download_and_prepare
-    split_generators = self._split_generators(dl_manager, **split_generators_kwargs)
-  File "/users/aca22yn/.cache/huggingface/modules/datasets_modules/datasets/c4/584d57ebe81c209b6c7f31727066d2c4b4bba37cb7092cdd83083d5ec11207db/c4.py", line 79, in _split_generators
-    train_downloaded_files = dl_manager.download(data_urls["train"])
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/download/download_manager.py", line 159, in download
-    downloaded_path_or_paths = map_nested(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 511, in map_nested
-    mapped = [
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 512, in <listcomp>
-    _single_map_nested((function, obj, batched, batch_size, types, None, True, None))
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 380, in _single_map_nested
-    return [mapped_item for batch in iter_batched(data_struct, batch_size) for mapped_item in function(batch)]
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 380, in <listcomp>
-    return [mapped_item for batch in iter_batched(data_struct, batch_size) for mapped_item in function(batch)]
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/download/download_manager.py", line 202, in _download_batched
-    return thread_map(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/tqdm/contrib/concurrent.py", line 69, in thread_map
-    return _executor_map(ThreadPoolExecutor, fn, *iterables, **tqdm_kwargs)
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/tqdm/contrib/concurrent.py", line 51, in _executor_map
-    return list(tqdm_class(ex.map(fn, *iterables, chunksize=chunksize), **kwargs))
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/tqdm/std.py", line 1181, in __iter__
-    for obj in iterable:
-  File "/opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/concurrent/futures/_base.py", line 621, in result_iterator
-    yield _result_or_cancel(fs.pop())
-  File "/opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/concurrent/futures/_base.py", line 319, in _result_or_cancel
-    return fut.result(timeout)
-  File "/opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/concurrent/futures/_base.py", line 458, in result
-    return self.__get_result()
-  File "/opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
-    raise self._exception
-  File "/opt/apps/testapps/el7/software/staging/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/concurrent/futures/thread.py", line 58, in run
-    result = self.fn(*self.args, **self.kwargs)
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/download/download_manager.py", line 225, in _download_single
-    out = cached_path(url_or_filename, download_config=download_config)
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/datasets/utils/file_utils.py", line 182, in cached_path
-    output_path = huggingface_hub.HfApi(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
-    return fn(*args, **kwargs)
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/huggingface_hub/hf_api.py", line 5637, in hf_hub_download
-    return hf_hub_download(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
-    return fn(*args, **kwargs)
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 862, in hf_hub_download
-    return _hf_hub_download_to_cache_dir(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1011, in _hf_hub_download_to_cache_dir
-    _download_to_tmp_and_move(
-  File "/users/aca22yn/.local/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1533, in _download_to_tmp_and_move
-    with incomplete_path.open("ab") as f:
-OSError: [Errno 122] Disk quota exceeded

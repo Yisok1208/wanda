@@ -1,38 +1,0 @@
-/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-/users/aca22yn/.local/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-Some weights of LlamaForCausalLM were not initialized from the model checkpoint at meta-llama/Llama-3.2-1B-Instruct and are newly initialized: ['model.layers.11.self_attn.rotary_emb.inv_freq', 'model.layers.8.self_attn.rotary_emb.inv_freq', 'model.layers.5.self_attn.rotary_emb.inv_freq', 'model.layers.14.self_attn.rotary_emb.inv_freq', 'model.layers.13.self_attn.rotary_emb.inv_freq', 'model.layers.6.self_attn.rotary_emb.inv_freq', 'model.layers.4.self_attn.rotary_emb.inv_freq', 'model.layers.2.self_attn.rotary_emb.inv_freq', 'model.layers.1.self_attn.rotary_emb.inv_freq', 'model.layers.9.self_attn.rotary_emb.inv_freq', 'model.layers.10.self_attn.rotary_emb.inv_freq', 'model.layers.7.self_attn.rotary_emb.inv_freq', 'model.layers.12.self_attn.rotary_emb.inv_freq', 'model.layers.15.self_attn.rotary_emb.inv_freq', 'model.layers.0.self_attn.rotary_emb.inv_freq', 'model.layers.3.self_attn.rotary_emb.inv_freq']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-torch 2.5.0
-transformers 4.28.0
-accelerate 0.18.0
-# of gpus:  0
-loading llm model meta-llama/Llama-3.2-1B-Instruct
-use device  cuda:0
-pruning starts
-loading calibdation data
-Downloading and preparing dataset None/en to file:///users/aca22yn/.cache/huggingface/datasets/allenai___json/en-ec45c889631c3c39/0.0.0/fe5dd6ea2639a6df622901539cb550cf8797e5a6b2dd7af1cf934bed8e233e6e...
-Downloading data files:   0%|          | 0/1 [00:00<?, ?it/s]Downloading data files: 100%|██████████| 1/1 [00:00<00:00, 2928.98it/s]
-Extracting data files:   0%|          | 0/1 [00:00<?, ?it/s]Extracting data files: 100%|██████████| 1/1 [00:00<00:00, 267.84it/s]
-Generating train split:   0%|          | 0/364868892 [00:00<?, ? examples/s]Generating train split:   0%|          | 13602/364868892 [00:00<1:06:43, 91125.03 examples/s]Generating train split:   0%|          | 32053/364868892 [00:00<1:01:43, 98508.20 examples/s]Generating train split:   0%|          | 50510/364868892 [00:00<59:47, 101685.33 examples/s] Generating train split:   0%|          | 68750/364868892 [00:00<59:47, 101678.31 examples/s]Generating train split:   0%|          | 86966/364868892 [00:00<59:18, 102507.16 examples/s]Generating train split:   0%|          | 104859/364868892 [00:01<59:36, 101991.90 examples/s]Generating train split:   0%|          | 122789/364868892 [00:01<1:00:00, 101315.84 examples/s]Generating train split:   0%|          | 141177/364868892 [00:01<59:10, 102722.88 examples/s]  Generating train split:   0%|          | 159772/364868892 [00:01<58:31, 103865.15 examples/s]Generating train split:   0%|          | 177746/364868892 [00:01<59:04, 102892.32 examples/s]Generating train split:   0%|          | 195882/364868892 [00:01<58:50, 103285.03 examples/s]Generating train split:   0%|          | 214014/364868892 [00:02<58:48, 103335.89 examples/s]Generating train split:   0%|          | 227618/364868892 [00:03<4:12:29, 24069.24 examples/s]Generating train split:   0%|          | 245816/364868892 [00:04<3:11:14, 31775.83 examples/s]Generating train split:   0%|          | 263922/364868892 [00:04<2:30:06, 40482.38 examples/s]Generating train split:   0%|          | 282396/364868892 [00:04<2:01:07, 50167.36 examples/s]Generating train split:   0%|          | 300440/364868892 [00:04<1:42:11, 59459.73 examples/s]Generating train split:   0%|          | 318529/364868892 [00:04<1:29:07, 68171.55 examples/s]Generating train split:   0%|          | 336793/364868892 [00:05<1:19:27, 76454.98 examples/s]Generating train split:   0%|          | 354936/364868892 [00:05<1:13:37, 82513.51 examples/s]                                                                                              Traceback (most recent call last):
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 111, in <module>
-    main()
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 70, in main
-    prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/prune.py", line 132, in prune_wanda
-    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/data.py", line 73, in get_loaders
-    return get_c4(nsamples, seed, seqlen, tokenizer)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/data.py", line 43, in get_c4
-    traindata = load_dataset('allenai/c4', 'allenai--c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train')
-  File "/users/aca22yn/.local/lib/python3.9/site-packages/datasets/load.py", line 1791, in load_dataset
-    builder_instance.download_and_prepare(
-  File "/users/aca22yn/.local/lib/python3.9/site-packages/datasets/builder.py", line 891, in download_and_prepare
-    self._download_and_prepare(
-  File "/users/aca22yn/.local/lib/python3.9/site-packages/datasets/builder.py", line 1004, in _download_and_prepare
-    verify_splits(self.info.splits, split_dict)
-  File "/users/aca22yn/.local/lib/python3.9/site-packages/datasets/utils/info_utils.py", line 91, in verify_splits
-    raise ExpectedMoreSplits(str(set(expected_splits) - set(recorded_splits)))
-datasets.utils.info_utils.ExpectedMoreSplits: {'validation'}
-srun: error: gpu12: task 0: Exited with exit code 1
