@@ -13,14 +13,15 @@ print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
 print('# of gpus: ', torch.cuda.device_count())
 
-def get_llm(model_name, cache_dir="llm_weights", hf_token=None):
+def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype=torch.float16,
     cache_dir=cache_dir,
     low_cpu_mem_usage=True,
     device_map="auto",
-    use_auth_token=hf_token
+    use_auth_token=hf_token,
+    force_download=True
     )
 
     model.seqlen = model.config.max_position_embeddings 
@@ -36,7 +37,7 @@ def main():
     parser.add_argument("--sparsity_type", type=str, choices=["unstructured", "4:8", "2:4"])
     parser.add_argument("--prune_method", type=str, choices=["magnitude", "wanda", "sparsegpt", 
                         "ablate_mag_seq", "ablate_wanda_seq", "ablate_mag_iter", "ablate_wanda_iter", "search"])
-    parser.add_argument("--cache_dir", default="llm_weights", type=str )
+    parser.add_argument("--cache_dir", default="/mnt/parscratch/users/aca22yn/cache/transformers", type=str )
     parser.add_argument('--use_variant', action="store_true", help="whether to use the wanda variant described in the appendix")
     parser.add_argument('--save', type=str, default=None, help='Path to save results.')
     parser.add_argument('--save_model', type=str, default=None, help='Path to save the pruned model.')
