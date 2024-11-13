@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=llama_3.2_1B_job
 #SBATCH --ntasks=1
-#SBATCH --mem=64G
-#SBATCH --partition=gpu
+#SBATCH --mem=128G
+#SBATCH --partition=gpu-h100
 #SBATCH --qos=gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 #SBATCH --time=12:00:00
 #SBATCH --output=job_output_llama_3.2_1B_%j.log
 #SBATCH --mail-user=yng9@sheffield.ac.uk

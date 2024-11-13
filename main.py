@@ -21,7 +21,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
     low_cpu_mem_usage=True,
     device_map="auto",
     use_auth_token=hf_token,
-    force_download=True
+    force_download=False
     )
 
     model.seqlen = model.config.max_position_embeddings 
