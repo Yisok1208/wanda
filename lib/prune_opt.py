@@ -1,7 +1,8 @@
 import time 
 import heapq 
 import torch 
-import torch.nn as nn 
+import torch.nn as nn
+import tqdm
 from .sparsegpt import SparseGPT 
 from .layerwrapper import WrappedGPT
 from .data import get_loaders 
@@ -132,7 +133,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
         inps, outs, attention_mask = prepare_calibration_input(model, dataloader, device)
 
     layers = model.model.decoder.layers
-    for i in range(len(layers)):
+    for i in tqdm.tqdm(range(len(layers))):
         layer = layers[i]
         subset = find_layers(layer)
 

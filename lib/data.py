@@ -3,7 +3,7 @@
 import numpy as np
 import random
 import torch
-from datasets import load_dataset, DownloadConfig
+from datasets import load_dataset
 
 # Set seed for reproducibility
 def set_seed(seed):
@@ -40,8 +40,8 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 # Load and process c4 dataset
 def get_c4(nsamples, seed, seqlen, tokenizer):
     # Load train and validation datasets
-    traindata = load_dataset('allenai/c4', 'allenai--c4', split='train', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
-    valdata = load_dataset('allenai/c4', 'allenai--c4', split='validation', cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_config=download_config)
+    traindata = load_dataset('allenai/c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train')
+    valdata = load_dataset('allenai/c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation')
 
     # Generate samples from training set
     random.seed(seed)
