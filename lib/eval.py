@@ -22,7 +22,7 @@ def eval_ppl(model, tokenizer, device=torch.device("cuda:0")):
     _, testloader = get_loaders(
         dataset, seed=0, seqlen=model.seqlen, tokenizer=tokenizer 
     )
-
+    print(f"Loaded {len(testloader)} samples in testloader.")
     # Evaluate ppl in no grad context to avoid updating the model
     with torch.no_grad():
         ppl_test = eval_ppl_wikitext(model, testloader, 1, device)
@@ -43,6 +43,7 @@ def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
 
     # Loop through each batch
     for i in range(0,nsamples,bs):
+        print(f"Processing batch {i // bs + 1}/{nsamples // bs + 1}")
         if i % 50 == 0:
             print(f"sample {i}")
 
