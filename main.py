@@ -19,7 +19,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         torch_dtype=torch.bfloat16,
         cache_dir=cache_dir,
         low_cpu_mem_usage=True,
-        device_map="auto",
+        device_map="cuda",
         token=hf_token,
         force_download=False
     )
