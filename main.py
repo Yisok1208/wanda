@@ -16,12 +16,12 @@ print('# of gpus: ', torch.cuda.device_count())
 def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        torch_dtype=torch.float16,
+        torch_dtype="auto",
         cache_dir=cache_dir,
         low_cpu_mem_usage=True,
         device_map="auto",
         token=hf_token,
-        force_download=True
+        force_download=False
     )
 
     model.seqlen = model.config.max_position_embeddings 
