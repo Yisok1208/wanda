@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=llama_3.2_1B_job
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=12
 #SBATCH --mem=128G
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=16:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=job_output_llama_3.2_1B_%j.log
 #SBATCH --mail-user=yng9@sheffield.ac.uk
 #SBATCH --mail-type=ALL
@@ -29,9 +29,9 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
-          --model meta-llama/Llama-3.2-1B-Instruct \
+          --model baffo32/decapoda-research-llama-7B-hf \
           --prune_method wanda \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama_3.2_1B_Instruct/"
+          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama_7b_hf/"
 
