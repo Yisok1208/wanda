@@ -29,9 +29,9 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
-          --model "meta-llama/Llama-3.2-1B-Instruct" \
+          --model "google/gemma-2-9b" \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama_3.2_1b_instruct_sgpt_0.5/"
+          --save "/mnt/parscratch/users/aca22yn/wanda/results/gemma_2_9b_sgpt_0.5/"
 

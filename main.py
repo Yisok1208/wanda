@@ -30,7 +30,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
 def main():
     print("Script started successfully.")
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default="meta-llama/Llama-3.2-1B-Instruct", help='LLaMA model')
+    parser.add_argument('--model', type=str, default="google/gemma-2-9b", help='LLaMA model')
     parser.add_argument('--seed', type=int, default=0, help='Seed for sampling the calibration data.')
     parser.add_argument('--nsamples', type=int, default=128, help='Number of calibration samples.')
     parser.add_argument('--sparsity_ratio', type=float, default=0, help='Sparsity level')
@@ -60,7 +60,7 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct", use_fast=False)
+    tokenizer = AutoTokenizer.from_pretrained("google/gemma-2-9b", use_fast=False)
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
