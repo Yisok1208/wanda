@@ -33,5 +33,5 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
           --prune_method wanda \
           --sparsity_ratio 0.7 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/wanda/results/gemma_2_9b_wanda_0.5/"
+          --save "/mnt/parscratch/users/aca22yn/wanda/results/gemma_2_9b_wanda_0.7/"
 
