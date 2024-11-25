@@ -1,2 +1,2 @@
 method	actual_sparsity	ppl_test
-wanda	0.5000	7.2579
+sparsegpt	0.7000	26.6331
