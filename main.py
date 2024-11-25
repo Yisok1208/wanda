@@ -60,7 +60,7 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
-    tokenizer = AutoTokenizer.from_pretrained("baffo32/decapoda-research-llama-7B-hf")
+    tokenizer = AutoTokenizer.from_pretrained("baffo32/decapoda-research-llama-7B-hf", use_fast=False)
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
@@ -86,7 +86,7 @@ def main():
     print("*"*30)
     ################################################################
     print("Starting perplexity evaluation on wikitext.")
-    ppl_test = eval_ppl(model, tokenizer, device)
+    ppl_test = eval_ppl(args, model, tokenizer, device)
     print(f"wikitext perplexity {ppl_test}")
 
     if not os.path.exists(args.save):
