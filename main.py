@@ -18,8 +18,9 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         model_name="baffo32/decapoda-research-llama-7B-hf",
         torch_dtype=torch.float16,
         cache_dir=cache_dir,
+        low_cpu_mem_usage=True,
         device_map="auto",
-        token=hf_token,
+        use_auth_token=hf_token,
         force_download=True
     )
 
