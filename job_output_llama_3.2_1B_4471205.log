@@ -1,0 +1,365 @@
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py:471: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers. Please use `token` instead.
+  warnings.warn(
+torch 2.5.1
+transformers 4.46.3
+accelerate 1.1.1
+# of gpus:  1
+Script started successfully.
+loading llm model google/gemma-2-9b
+Downloading shards:   0%|          | 0/8 [00:00<?, ?it/s]Downloading shards:  12%|█▎        | 1/8 [01:56<13:36, 116.66s/it]Downloading shards:  25%|██▌       | 2/8 [03:55<11:46, 117.71s/it]Downloading shards:  38%|███▊      | 3/8 [05:53<09:50, 118.03s/it]Downloading shards:  50%|█████     | 4/8 [07:50<07:50, 117.74s/it]Downloading shards:  62%|██████▎   | 5/8 [09:49<05:54, 118.06s/it]Downloading shards:  75%|███████▌  | 6/8 [11:47<03:56, 118.07s/it]Downloading shards:  88%|████████▊ | 7/8 [13:45<01:58, 118.05s/it]Downloading shards: 100%|██████████| 8/8 [14:42<00:00, 98.67s/it] Downloading shards: 100%|██████████| 8/8 [14:42<00:00, 110.34s/it]
+Loading checkpoint shards:   0%|          | 0/8 [00:00<?, ?it/s]Loading checkpoint shards:  12%|█▎        | 1/8 [00:02<00:16,  2.35s/it]Loading checkpoint shards:  25%|██▌       | 2/8 [00:04<00:12,  2.08s/it]Loading checkpoint shards:  38%|███▊      | 3/8 [00:06<00:09,  1.95s/it]Loading checkpoint shards:  50%|█████     | 4/8 [00:07<00:07,  1.95s/it]Loading checkpoint shards:  62%|██████▎   | 5/8 [00:09<00:05,  1.90s/it]Loading checkpoint shards:  75%|███████▌  | 6/8 [00:11<00:03,  1.84s/it]Loading checkpoint shards:  88%|████████▊ | 7/8 [00:13<00:01,  1.83s/it]Loading checkpoint shards: 100%|██████████| 8/8 [00:14<00:00,  1.53s/it]Loading checkpoint shards: 100%|██████████| 8/8 [00:14<00:00,  1.78s/it]
+Model loaded successfully.
+Tokenizer loaded successfully.
+use device  cuda:0
+Starting pruning with method: wanda
+loading calibration data
+dataset loading complete
+  0%|          | 0/42 [00:00<?, ?it/s]  2%|▏         | 1/42 [00:14<09:37, 14.09s/it]  5%|▍         | 2/42 [00:26<08:54, 13.37s/it]  7%|▋         | 3/42 [00:40<08:36, 13.25s/it] 10%|▉         | 4/42 [00:52<08:17, 13.10s/it] 12%|█▏        | 5/42 [01:06<08:05, 13.11s/it] 14%|█▍        | 6/42 [01:18<07:49, 13.03s/it] 17%|█▋        | 7/42 [01:32<07:37, 13.07s/it] 19%|█▉        | 8/42 [01:44<07:22, 13.01s/it] 21%|██▏       | 9/42 [01:58<07:10, 13.04s/it] 24%|██▍       | 10/42 [02:10<06:55, 12.99s/it] 26%|██▌       | 11/42 [02:24<06:43, 13.03s/it] 29%|██▊       | 12/42 [02:36<06:29, 12.98s/it] 31%|███       | 13/42 [02:50<06:17, 13.02s/it] 33%|███▎      | 14/42 [03:02<06:03, 12.98s/it] 36%|███▌      | 15/42 [03:16<05:51, 13.02s/it] 38%|███▊      | 16/42 [03:28<05:37, 12.97s/it] 40%|████      | 17/42 [03:42<05:25, 13.02s/it] 43%|████▎     | 18/42 [03:54<05:11, 12.97s/it] 45%|████▌     | 19/42 pruning layer 0 name self_attn.q_proj
+pruning layer 0 name self_attn.k_proj
+pruning layer 0 name self_attn.v_proj
+pruning layer 0 name self_attn.o_proj
+pruning layer 0 name mlp.gate_proj
+pruning layer 0 name mlp.up_proj
+pruning layer 0 name mlp.down_proj
+pruning layer 1 name self_attn.q_proj
+pruning layer 1 name self_attn.k_proj
+pruning layer 1 name self_attn.v_proj
+pruning layer 1 name self_attn.o_proj
+pruning layer 1 name mlp.gate_proj
+pruning layer 1 name mlp.up_proj
+pruning layer 1 name mlp.down_proj
+pruning layer 2 name self_attn.q_proj
+pruning layer 2 name self_attn.k_proj
+pruning layer 2 name self_attn.v_proj
+pruning layer 2 name self_attn.o_proj
+pruning layer 2 name mlp.gate_proj
+pruning layer 2 name mlp.up_proj
+pruning layer 2 name mlp.down_proj
+pruning layer 3 name self_attn.q_proj
+pruning layer 3 name self_attn.k_proj
+pruning layer 3 name self_attn.v_proj
+pruning layer 3 name self_attn.o_proj
+pruning layer 3 name mlp.gate_proj
+pruning layer 3 name mlp.up_proj
+pruning layer 3 name mlp.down_proj
+pruning layer 4 name self_attn.q_proj
+pruning layer 4 name self_attn.k_proj
+pruning layer 4 name self_attn.v_proj
+pruning layer 4 name self_attn.o_proj
+pruning layer 4 name mlp.gate_proj
+pruning layer 4 name mlp.up_proj
+pruning layer 4 name mlp.down_proj
+pruning layer 5 name self_attn.q_proj
+pruning layer 5 name self_attn.k_proj
+pruning layer 5 name self_attn.v_proj
+pruning layer 5 name self_attn.o_proj
+pruning layer 5 name mlp.gate_proj
+pruning layer 5 name mlp.up_proj
+pruning layer 5 name mlp.down_proj
+pruning layer 6 name self_attn.q_proj
+pruning layer 6 name self_attn.k_proj
+pruning layer 6 name self_attn.v_proj
+pruning layer 6 name self_attn.o_proj
+pruning layer 6 name mlp.gate_proj
+pruning layer 6 name mlp.up_proj
+pruning layer 6 name mlp.down_proj
+pruning layer 7 name self_attn.q_proj
+pruning layer 7 name self_attn.k_proj
+pruning layer 7 name self_attn.v_proj
+pruning layer 7 name self_attn.o_proj
+pruning layer 7 name mlp.gate_proj
+pruning layer 7 name mlp.up_proj
+pruning layer 7 name mlp.down_proj
+pruning layer 8 name self_attn.q_proj
+pruning layer 8 name self_attn.k_proj
+pruning layer 8 name self_attn.v_proj
+pruning layer 8 name self_attn.o_proj
+pruning layer 8 name mlp.gate_proj
+pruning layer 8 name mlp.up_proj
+pruning layer 8 name mlp.down_proj
+pruning layer 9 name self_attn.q_proj
+pruning layer 9 name self_attn.k_proj
+pruning layer 9 name self_attn.v_proj
+pruning layer 9 name self_attn.o_proj
+pruning layer 9 name mlp.gate_proj
+pruning layer 9 name mlp.up_proj
+pruning layer 9 name mlp.down_proj
+pruning layer 10 name self_attn.q_proj
+pruning layer 10 name self_attn.k_proj
+pruning layer 10 name self_attn.v_proj
+pruning layer 10 name self_attn.o_proj
+pruning layer 10 name mlp.gate_proj
+pruning layer 10 name mlp.up_proj
+pruning layer 10 name mlp.down_proj
+pruning layer 11 name self_attn.q_proj
+pruning layer 11 name self_attn.k_proj
+pruning layer 11 name self_attn.v_proj
+pruning layer 11 name self_attn.o_proj
+pruning layer 11 name mlp.gate_proj
+pruning layer 11 name mlp.up_proj
+pruning layer 11 name mlp.down_proj
+pruning layer 12 name self_attn.q_proj
+pruning layer 12 name self_attn.k_proj
+pruning layer 12 name self_attn.v_proj
+pruning layer 12 name self_attn.o_proj
+pruning layer 12 name mlp.gate_proj
+pruning layer 12 name mlp.up_proj
+pruning layer 12 name mlp.down_proj
+pruning layer 13 name self_attn.q_proj
+pruning layer 13 name self_attn.k_proj
+pruning layer 13 name self_attn.v_proj
+pruning layer 13 name self_attn.o_proj
+pruning layer 13 name mlp.gate_proj
+pruning layer 13 name mlp.up_proj
+pruning layer 13 name mlp.down_proj
+pruning layer 14 name self_attn.q_proj
+pruning layer 14 name self_attn.k_proj
+pruning layer 14 name self_attn.v_proj
+pruning layer 14 name self_attn.o_proj
+pruning layer 14 name mlp.gate_proj
+pruning layer 14 name mlp.up_proj
+pruning layer 14 name mlp.down_proj
+pruning layer 15 name self_attn.q_proj
+pruning layer 15 name self_attn.k_proj
+pruning layer 15 name self_attn.v_proj
+pruning layer 15 name self_attn.o_proj
+pruning layer 15 name mlp.gate_proj
+pruning layer 15 name mlp.up_proj
+pruning layer 15 name mlp.down_proj
+pruning layer 16 name self_attn.q_proj
+pruning layer 16 name self_attn.k_proj
+pruning layer 16 name self_attn.v_proj
+pruning layer 16 name self_attn.o_proj
+pruning layer 16 name mlp.gate_proj
+pruning layer 16 name mlp.up_proj
+pruning layer 16 name mlp.down_proj
+pruning layer 17 name self_attn.q_proj
+pruning layer 17 name self_attn.k_proj
+pruning layer 17 name self_attn.v_proj
+pruning layer 17 name self_attn.o_proj
+pruning layer 17 name mlp.gate_proj
+pruning layer 17 name mlp.up_proj
+pruning layer 17 name mlp.down_proj
+pruning layer 18 name self_attn.q_proj
+pruning layer 18 name self_attn.k_proj
+pruning layer 18 name self_attn.v_proj
+pruning layer 18 name self_attn.o_proj
+pruning layer 18 name mlp.gate_proj
+pruning layer 18 name mlp.up_proj
+pruning layer 18 name mlp.down_proj
+pruning layer 19 name self_attn.q_proj
+pruning layer 19 name self_attn.k_proj
+pruning layer 19 name self_attn.v_proj
+pruning layer 19 name self_attn.o_proj
+pruning layer 19 name mlp.gate_proj
+pruning layer 19 name mlp.up_proj
+pruning layer 19 name mlp.down_proj
+pruning layer 20 name self_attn.q_proj
+pruning layer 20 name self_attn.k_proj
+pruning layer 20 name self_attn.v_proj
+pruning layer 20 name self_attn.o_proj
+pruning layer 20 name mlp.gate_proj
+pruning layer 20 name mlp.up_proj
+pruning layer 20 name mlp.down_proj
+pruning layer 21 name self_attn.q_proj
+pruning layer 21 name self_attn.k_proj
+pruning layer 21 name self_attn.v_proj
+pruning layer 21 name self_attn.o_proj
+pruning layer 21 name mlp.gate_proj
+pruning layer 21 name mlp.up_proj
+pruning layer 21 name mlp.down_proj
+pruning layer 22 name self_attn.q_proj
+pruning layer 22 name self_attn.k_proj
+pruning layer 22 name self_attn.v_proj
+pruning layer 22 name self_attn.o_proj
+pruning layer 22 name mlp.gate_proj
+pruning layer 22 name mlp.up_proj
+pruning layer 22 name mlp.down_proj
+pruning layer 23 name self_attn.q_proj
+pruning layer 23 name self_attn.k_proj
+pruning layer 23 name self_attn.v_proj
+pruning layer 23 name self_attn.o_proj
+pruning layer 23 name mlp.gate_proj
+pruning layer 23 name mlp.up_proj
+pruning layer 23 name mlp.down_proj
+pruning layer 24 name self_attn.q_proj
+pruning layer 24 name self_attn.k_proj
+pruning layer 24 name self_attn.v_proj
+pruning layer 24 name self_attn.o_proj
+pruning layer 24 name mlp.gate_proj
+pruning layer 24 name mlp.up_proj
+pruning layer 24 name mlp.down_proj
+pruning layer 25 name self_attn.q_proj
+pruning layer 25 name self_attn.k_proj
+pruning layer 25 name self_attn.v_proj
+pruning layer 25 name self_attn.o_proj
+pruning layer 25 name mlp.gate_proj
+pruning layer 25 name mlp.up_proj
+pruning layer 25 name mlp.down_proj
+pruning layer 26 name self_attn.q_proj
+pruning layer 26 name self_attn.k_proj
+pruning layer 26 name self_attn.v_proj
+pruning layer 26 name self_attn.o_proj
+pruning layer 26 name mlp.gate_proj
+pruning layer 26 name mlp.up_proj
+pruning layer 26 name mlp.down_proj
+pruning layer 27 name self_attn.q_proj
+pruning layer 27 name self_attn.k_proj
+pruning layer 27 name self_attn.v_proj
+pruning layer 27 name self_attn.o_proj
+pruning layer 27 name mlp.gate_proj
+pruning layer 27 name mlp.up_proj
+pruning layer 27 name mlp.down_proj
+pruning layer 28 name self_attn.q_proj
+pruning layer 28 name self_attn.k_proj
+pruning layer 28 name self_attn.v_proj
+pruning layer 28 name self_attn.o_proj
+pruning layer 28 name mlp.gate_proj
+pruning layer 28 name mlp.up_proj
+pruning layer 28 name mlp.down_proj
+pruning layer 29 name self_attn.q_proj
+pruning layer 29 name self_attn.k_proj
+pruning layer 29 name self_attn.v_proj
+pruning layer 29 name self_attn.o_proj
+pruning layer 29 name mlp.gate_proj
+pruning layer 29 name mlp.up_proj
+pruning layer 29 name mlp.down_proj
+pruning layer 30 name self_attn.q_proj
+pruning layer 30 name self_attn.k_proj
+pruning layer 30 name self_attn.v_proj
+pruning layer 30 name self_attn.o_proj
+pruning layer 30 name mlp.gate_proj
+pruning layer 30 name mlp.up_proj
+pruning layer 30 name mlp.down_proj
+pruning layer 31 name self_attn.q_proj
+pruning layer 31 name self_attn.k_proj
+pruning layer 31 name self_attn.v_proj
+[04:08<04:59, 13.01s/it] 48%|████▊     | 20/42 [04:20<04:45, 12.97s/it] 50%|█████     | 21/42 [04:34<04:33, 13.01s/it] 52%|█████▏    | 22/42 [04:46<04:19, 12.97s/it] 55%|█████▍    | 23/42 [04:59<04:07, 13.01s/it] 57%|█████▋    | 24/42 [05:12<03:53, 12.97s/it] 60%|█████▉    | 25/42 [05:25<03:41, 13.01s/it] 62%|██████▏   | 26/42 [05:38<03:27, 12.97s/it] 64%|██████▍   | 27/42 [05:51<03:15, 13.01s/it] 67%|██████▋   | 28/42 [06:04<03:01, 12.97s/it] 69%|██████▉   | 29/42 [06:17<02:49, 13.01s/it] 71%|███████▏  | 30/42 [06:30<02:35, 12.97s/it] 74%|███████▍  | 31/42 [06:43<02:23, 13.02s/it] 76%|███████▌  | 32/42 [06:56<02:09, 12.97s/it] 79%|███████▊  | 33/42 [07:09<01:57, 13.02s/it] 81%|████████  | 34/42 [07:22<01:43, 12.97s/it] 83%|████████▎ | 35/42 [07:35<01:31, 13.02s/it] 86%|████████▌ | 36/42 [07:48<01:17, 12.97s/it] 88%|████████▊ | 37/42 [08:01<01:05, 13.02s/it] 90%|█████████ | 38/42 [08:14<00:51, 12.97s/it] 93%|█████████▎| 39/42 [08:27<00:39, 13.01s/it] 95%|█████████▌| 40/42 [08:40<00:25, 12.97s/it] 98%|█████████▊| 41/42 [08:53<00:13, 13.01s/it]100%|██████████| 42/42 [09:06<00:00, 12.97s/it]100%|██████████| 42/42 [09:06<00:00, 13.02s/it]
+pruning layer 31 name self_attn.o_proj
+pruning layer 31 name mlp.gate_proj
+pruning layer 31 name mlp.up_proj
+pruning layer 31 name mlp.down_proj
+pruning layer 32 name self_attn.q_proj
+pruning layer 32 name self_attn.k_proj
+pruning layer 32 name self_attn.v_proj
+pruning layer 32 name self_attn.o_proj
+pruning layer 32 name mlp.gate_proj
+pruning layer 32 name mlp.up_proj
+pruning layer 32 name mlp.down_proj
+pruning layer 33 name self_attn.q_proj
+pruning layer 33 name self_attn.k_proj
+pruning layer 33 name self_attn.v_proj
+pruning layer 33 name self_attn.o_proj
+pruning layer 33 name mlp.gate_proj
+pruning layer 33 name mlp.up_proj
+pruning layer 33 name mlp.down_proj
+pruning layer 34 name self_attn.q_proj
+pruning layer 34 name self_attn.k_proj
+pruning layer 34 name self_attn.v_proj
+pruning layer 34 name self_attn.o_proj
+pruning layer 34 name mlp.gate_proj
+pruning layer 34 name mlp.up_proj
+pruning layer 34 name mlp.down_proj
+pruning layer 35 name self_attn.q_proj
+pruning layer 35 name self_attn.k_proj
+pruning layer 35 name self_attn.v_proj
+pruning layer 35 name self_attn.o_proj
+pruning layer 35 name mlp.gate_proj
+pruning layer 35 name mlp.up_proj
+pruning layer 35 name mlp.down_proj
+pruning layer 36 name self_attn.q_proj
+pruning layer 36 name self_attn.k_proj
+pruning layer 36 name self_attn.v_proj
+pruning layer 36 name self_attn.o_proj
+pruning layer 36 name mlp.gate_proj
+pruning layer 36 name mlp.up_proj
+pruning layer 36 name mlp.down_proj
+pruning layer 37 name self_attn.q_proj
+pruning layer 37 name self_attn.k_proj
+pruning layer 37 name self_attn.v_proj
+pruning layer 37 name self_attn.o_proj
+pruning layer 37 name mlp.gate_proj
+pruning layer 37 name mlp.up_proj
+pruning layer 37 name mlp.down_proj
+pruning layer 38 name self_attn.q_proj
+pruning layer 38 name self_attn.k_proj
+pruning layer 38 name self_attn.v_proj
+pruning layer 38 name self_attn.o_proj
+pruning layer 38 name mlp.gate_proj
+pruning layer 38 name mlp.up_proj
+pruning layer 38 name mlp.down_proj
+pruning layer 39 name self_attn.q_proj
+pruning layer 39 name self_attn.k_proj
+pruning layer 39 name self_attn.v_proj
+pruning layer 39 name self_attn.o_proj
+pruning layer 39 name mlp.gate_proj
+pruning layer 39 name mlp.up_proj
+pruning layer 39 name mlp.down_proj
+pruning layer 40 name self_attn.q_proj
+pruning layer 40 name self_attn.k_proj
+pruning layer 40 name self_attn.v_proj
+pruning layer 40 name self_attn.o_proj
+pruning layer 40 name mlp.gate_proj
+pruning layer 40 name mlp.up_proj
+pruning layer 40 name mlp.down_proj
+pruning layer 41 name self_attn.q_proj
+pruning layer 41 name self_attn.k_proj
+pruning layer 41 name self_attn.v_proj
+pruning layer 41 name self_attn.o_proj
+pruning layer 41 name mlp.gate_proj
+pruning layer 41 name mlp.up_proj
+pruning layer 41 name mlp.down_proj
+Pruning completed.
+******************************
+layer 0 sparsity 0.500000
+layer 1 sparsity 0.500000
+layer 2 sparsity 0.500000
+layer 3 sparsity 0.500000
+layer 4 sparsity 0.500000
+layer 5 sparsity 0.500000
+layer 6 sparsity 0.500000
+layer 7 sparsity 0.500000
+layer 8 sparsity 0.500000
+layer 9 sparsity 0.500000
+layer 10 sparsity 0.500000
+layer 11 sparsity 0.500000
+layer 12 sparsity 0.500000
+layer 13 sparsity 0.500000
+layer 14 sparsity 0.500000
+layer 15 sparsity 0.500000
+layer 16 sparsity 0.500000
+layer 17 sparsity 0.500000
+layer 18 sparsity 0.500000
+layer 19 sparsity 0.500000
+layer 20 sparsity 0.500000
+layer 21 sparsity 0.500000
+layer 22 sparsity 0.500000
+layer 23 sparsity 0.500000
+layer 24 sparsity 0.500000
+layer 25 sparsity 0.500000
+layer 26 sparsity 0.500000
+layer 27 sparsity 0.500000
+layer 28 sparsity 0.500000
+layer 29 sparsity 0.500000
+layer 30 sparsity 0.500000
+layer 31 sparsity 0.500000
+layer 32 sparsity 0.500000
+layer 33 sparsity 0.500000
+layer 34 sparsity 0.500000
+layer 35 sparsity 0.500000
+layer 36 sparsity 0.500000
+layer 37 sparsity 0.500000
+layer 38 sparsity 0.500000
+layer 39 sparsity 0.500000
+layer 40 sparsity 0.500000
+layer 41 sparsity 0.500000
+sparsity sanity check 0.5000
+******************************
+Starting perplexity evaluation on wikitext.
+evaluating on wikitext2
+Loaded 2 samples in testloader.
+nsamples 35
+sample 0
+wikitext perplexity 230.52198791503906
