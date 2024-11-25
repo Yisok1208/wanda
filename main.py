@@ -15,7 +15,7 @@ print('# of gpus: ', torch.cuda.device_count())
 
 def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
-        model_name="baffo32/decapoda-research-llama-7B-hf",
+        model_name,
         torch_dtype=torch.float16,
         cache_dir=cache_dir,
         low_cpu_mem_usage=True,
