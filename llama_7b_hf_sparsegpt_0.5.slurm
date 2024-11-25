@@ -33,5 +33,5 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama_7b_hf/"
+          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama_7b_hf_sgpt_0.5/"
 
