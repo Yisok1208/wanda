@@ -27,7 +27,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
     model.seqlen = model.config.max_position_embeddings 
     return model
 
-def estimate_sqnr(t, sparsity):
+def estimate_snr(t, sparsity):
     # Apply Top-K masking directly
     k = int(t.numel() * (1 - sparsity))  # Number of non-zero elements to retain
     if k == 0:
@@ -43,13 +43,13 @@ def estimate_sqnr(t, sparsity):
     mse = torch.mean((t - t_s) ** 2)
     tensor_norm = torch.mean(t ** 2)
     
-    # Compute SQNR
+    # Compute SNR
     if mse.item() > 0.0:
-        pruning_sqnr = 10 * np.log10(tensor_norm.item() / mse.item())
+        pruning_snr = 10 * np.log10(tensor_norm.item() / mse.item())
     else:
-        pruning_sqnr = np.Inf
+        pruning_snr = np.Inf
     
-    return mse, pruning_sqnr
+    return mse, pruning_snr
 
 def main():
     print("Script started successfully.")
@@ -104,14 +104,14 @@ def main():
             prune_ablate(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         print("Pruning completed.")
 
-        print("Estimating SQNR after pruning...")
+        print("Estimating SNR after pruning...")
         with torch.no_grad():
             for name, param in model.named_parameters():
                 if 'weight' in name and param.requires_grad:  # Focus on weight tensors
                     t = param.data  # Extract the pruned weight tensor
                     sparsity = args.sparsity_ratio
-                    mse, pruning_sqnr = estimate_sqnr(t, sparsity)
-                    print(f"Layer: {name} | MSE: {mse.item():.6f} | SQNR: {pruning_sqnr:.6f}")
+                    mse, pruning_snr = estimate_snr(t, sparsity)
+                    print(f"Layer: {name} | MSE: {mse.item():.6f} | SNR: {pruning_snr:.6f}")
                     break  # Only process the first matching weight tensor
 
     ################################################################
@@ -128,8 +128,8 @@ def main():
         os.makedirs(args.save)
     save_filepath = os.path.join(args.save, f"log_{args.prune_method}.txt")
     with open(save_filepath, "w") as f:
-        print("method\tactual_sparsity\tppl_test\tMSE\tSQNR", file=f, flush=True)
-        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_sqnr:.6f}", file=f, flush=True)
+        print("method\tactual_sparsity\tppl_test\tMSE\tSNR", file=f, flush=True)
+        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_snr:.6f}", file=f, flush=True)
 
     if args.eval_zero_shot:
         print("Starting zero-shot evaluation.")
