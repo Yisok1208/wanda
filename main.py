@@ -28,15 +28,27 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
     return model
 
 def estimate_sqnr(t, sparsity):
-    from lib.prune import TopKMaskStraightThrough  # Assuming it's part of lib.prune
-    ste = TopKMaskStraightThrough()
-    t_s = ste.forward(None, torch.abs(t), sparsity) * t
+    # Apply Top-K masking directly
+    k = int(t.numel() * (1 - sparsity))  # Number of non-zero elements to retain
+    if k == 0:
+        t_s = torch.zeros_like(t)
+    else:
+        t_abs = torch.abs(t)
+        topk_values, _ = torch.topk(t_abs.view(-1), k)
+        threshold = topk_values[-1]  # Threshold for Top-K
+        mask = (t_abs >= threshold).float()
+        t_s = mask * t  # Masked tensor
+
+    # Calculate Mean Squared Error (MSE) and Tensor Norm
     mse = torch.mean((t - t_s) ** 2)
     tensor_norm = torch.mean(t ** 2)
+    
+    # Compute SQNR
     if mse.item() > 0.0:
         pruning_sqnr = 10 * np.log10(tensor_norm.item() / mse.item())
     else:
         pruning_sqnr = np.Inf
+    
     return mse, pruning_sqnr
 
 def main():
