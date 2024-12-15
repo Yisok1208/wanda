@@ -79,6 +79,17 @@ def main():
         elif "ablate" in args.prune_method:
             prune_ablate(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         print("Pruning completed.")
+
+        print("Estimating SQNR after pruning...")
+        with torch.no_grad():
+            for name, param in model.named_parameters():
+                if 'weight' in name and param.requires_grad:  # Focus on weight tensors
+                    t = param.data  # Extract the pruned weight tensor
+                    sparsity = args.sparsity_ratio
+                    mse, pruning_sqnr = estimate_sqnr(t, sparsity)
+                    print(f"Layer: {name} | MSE: {mse.item():.6f} | SQNR: {pruning_sqnr:.6f}")
+                    break  # Only process the first matching weight tensor
+
     ################################################################
     print("*"*30)
     sparsity_ratio = check_sparsity(model)
@@ -93,8 +104,8 @@ def main():
         os.makedirs(args.save)
     save_filepath = os.path.join(args.save, f"log_{args.prune_method}.txt")
     with open(save_filepath, "w") as f:
-        print("method\tactual_sparsity\tppl_test", file=f, flush=True)
-        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}", file=f, flush=True)
+        print("method\tactual_sparsity\tppl_test\tMSE\tSQNR", file=f, flush=True)
+        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_sqnr:.6f}", file=f, flush=True)
 
     if args.eval_zero_shot:
         print("Starting zero-shot evaluation.")
