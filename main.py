@@ -27,6 +27,18 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
     model.seqlen = model.config.max_position_embeddings 
     return model
 
+def estimate_sqnr(t, sparsity):
+    from lib.prune import TopKMaskStraightThrough  # Assuming it's part of lib.prune
+    ste = TopKMaskStraightThrough()
+    t_s = ste.forward(None, torch.abs(t), sparsity) * t
+    mse = torch.mean((t - t_s) ** 2)
+    tensor_norm = torch.mean(t ** 2)
+    if mse.item() > 0.0:
+        pruning_sqnr = 10 * np.log10(tensor_norm.item() / mse.item())
+    else:
+        pruning_sqnr = np.Inf
+    return mse, pruning_sqnr
+
 def main():
     print("Script started successfully.")
     parser = argparse.ArgumentParser()
