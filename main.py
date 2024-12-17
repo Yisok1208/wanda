@@ -51,7 +51,7 @@ def estimate_snr(t, sparsity):
     
     return mse, pruning_snr
 
-def compute_pruning_error(model):
+def compute_pruning_error(model, original_weights):
     total_error = 0.0
     with torch.no_grad():
         for name, param in model.named_parameters():
