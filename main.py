@@ -56,11 +56,11 @@ def compute_pruning_error(model):
     with torch.no_grad():
         for name, param in model.named_parameters():
             if 'weight' in name and param.requires_grad:
-                # Retrieve original and pruned weights
-                original_weight = original_weights[name]  # Original weights saved before pruning
-                pruned_weight = param.data  # Current (pruned) weights
+                # Retrieve the original and pruned weights
+                original_weight = original_weights[name]
+                pruned_weight = param.data
 
-                # Compute pruning error (L2 difference)
+                # Compute the L2 difference (pruning error)
                 error = torch.sum((original_weight - pruned_weight) ** 2).item()
                 total_error += error
                 print(f"Layer: {name} | Pruning Error: {error:.6f}")
@@ -108,7 +108,7 @@ def main():
     print("use device ", device)
 
     original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
-
+    
     if args.sparsity_ratio != 0:
         print("Starting pruning with method:", args.prune_method)
         if args.prune_method == "wanda":
@@ -132,7 +132,7 @@ def main():
                     break  # Only process the first matching weight tensor
 
         print("Computing pruning error...")
-        total_pruning_error = compute_pruning_error(model)
+        total_pruning_error = compute_pruning_error(model, original_weights)
         print(f"Total Pruning Error: {total_pruning_error:.6f}")
 
     ################################################################
