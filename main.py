@@ -51,6 +51,18 @@ def estimate_snr(t, sparsity):
     
     return mse, pruning_snr
 
+def compute_pruning_error(model):
+    total_error = 0.0
+    with torch.no_grad():
+        for name, param in model.named_parameters():
+            if 'weight' in name and param.requires_grad:  # Focus only on weight tensors
+                original_weight = param.data.clone()  # Copy of the original weights
+                pruned_weight = param.data  # Pruned weights
+                error = torch.sum((original_weight - pruned_weight) ** 2).item()
+                total_error += error
+                print(f"Layer: {name} | Pruning Error: {error:.6f}")
+    return total_error
+
 def main():
     print("Script started successfully.")
     parser = argparse.ArgumentParser()
@@ -114,6 +126,10 @@ def main():
                     print(f"Layer: {name} | MSE: {mse.item():.6f} | SNR: {pruning_snr:.6f}")
                     break  # Only process the first matching weight tensor
 
+        print("Computing pruning error...")
+        total_pruning_error = compute_pruning_error(model)
+        print(f"Total Pruning Error: {total_pruning_error:.6f}")
+
     ################################################################
     print("*"*30)
     sparsity_ratio = check_sparsity(model)
@@ -128,8 +144,8 @@ def main():
         os.makedirs(args.save)
     save_filepath = os.path.join(args.save, f"log_{args.prune_method}.txt")
     with open(save_filepath, "w") as f:
-        print("method\tactual_sparsity\tppl_test\tMSE\tSNR", file=f, flush=True)
-        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_snr:.6f}", file=f, flush=True)
+        print("method\tactual_sparsity\tppl_test\tMSE\tSNR\tPruning_Error", file=f, flush=True)
+        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_snr:.6f}\t{total_pruning_error:.6f}", file=f, flush=True)
 
     if args.eval_zero_shot:
         print("Starting zero-shot evaluation.")
