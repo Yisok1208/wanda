@@ -55,9 +55,12 @@ def compute_pruning_error(model):
     total_error = 0.0
     with torch.no_grad():
         for name, param in model.named_parameters():
-            if 'weight' in name and param.requires_grad:  # Focus only on weight tensors
-                original_weight = param.data.clone()  # Copy of the original weights
-                pruned_weight = param.data  # Pruned weights
+            if 'weight' in name and param.requires_grad:
+                # Retrieve original and pruned weights
+                original_weight = original_weights[name]  # Original weights saved before pruning
+                pruned_weight = param.data  # Current (pruned) weights
+
+                # Compute pruning error (L2 difference)
                 error = torch.sum((original_weight - pruned_weight) ** 2).item()
                 total_error += error
                 print(f"Layer: {name} | Pruning Error: {error:.6f}")
@@ -103,6 +106,8 @@ def main():
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
         device = model.hf_device_map["lm_head"]
     print("use device ", device)
+
+    original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
 
     if args.sparsity_ratio != 0:
         print("Starting pruning with method:", args.prune_method)
