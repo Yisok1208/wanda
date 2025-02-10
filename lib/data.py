@@ -10,6 +10,46 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.random.manual_seed(seed)
 
+# Load and process SST-2 (Sentiment Analysis) dataset
+def get_sst2(nsamples, seed, tokenizer):
+    dataset = load_dataset("stanfordnlp/sst2")
+    
+    # Shuffle and sample the dataset
+    random.seed(seed)
+    sampled_data = random.sample(list(dataset["train"]), nsamples)
+
+    # Tokenize sentences
+    inputs = tokenizer([ex["sentence"] for ex in sampled_data], padding=True, truncation=True, return_tensors="pt")
+    labels = torch.tensor([ex["label"] for ex in sampled_data])
+
+    return inputs, labels
+
+# Load and process SQuAD (Question Answering) dataset
+def get_squad(nsamples, seed, tokenizer):
+    dataset = load_dataset("rajpurkar/squad")
+
+    # Shuffle and sample the dataset
+    random.seed(seed)
+    sampled_data = random.sample(list(dataset["train"]), nsamples)
+
+    # Prepare question-context pairs
+    questions = [ex["question"] for ex in sampled_data]
+    contexts = [ex["context"] for ex in sampled_data]
+
+    # Tokenize
+    inputs = tokenizer(questions, contexts, padding=True, truncation=True, return_tensors="pt")
+
+    return inputs, sampled_data  # Keep original for answer extraction
+
+# Function to select dataset loader
+def get_loaders(name, nsamples=128, seed=0, tokenizer=None):
+    if "sst2" in name:
+        return get_sst2(nsamples, seed, tokenizer)
+    elif "squad" in name:
+        return get_squad(nsamples, seed, tokenizer)
+    else:
+        raise ValueError("Unknown dataset name!")
+
 # Wrapper for tokenized input IDs
 class TokenizerWrapper:
     def __init__(self, input_ids):
