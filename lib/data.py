@@ -21,6 +21,13 @@ def get_sst2(nsamples, seed, tokenizer):
         print(f"ERROR: Failed to load SST-2 dataset: {e}")
         return None
 
+    # Check dataset keys
+    print(f"DEBUG: Available dataset splits: {list(dataset.keys())}")
+
+    if "train" not in dataset:
+        print("ERROR: No 'train' split found in SST-2 dataset!")
+        return None
+
     # Ensure dataset has enough samples
     if len(dataset["train"]) < nsamples:
         print(f"ERROR: Not enough samples. Requested: {nsamples}, Available: {len(dataset['train'])}")
