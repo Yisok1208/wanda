@@ -77,15 +77,21 @@ def get_squad(nsamples, seed, tokenizer):
     return inputs, sampled_data  # Keep original data for evaluation
 
 # Function to select dataset loader
-def get_loaders(name, nsamples=128, seed=0, tokenizer=None):
-    print(f"DEBUG: Requested dataset '{name}'")
+def get_loaders(name, nsamples=128, seed=0, seqlen=2048, tokenizer=None):
+    # Handle SST-2 and SQuAD
     if "sst2" in name:
         return get_sst2(nsamples, seed, tokenizer)
     elif "squad" in name:
         return get_squad(nsamples, seed, tokenizer)
+    # Handle wikitext2 and c4
+    elif 'wikitext2' in name:
+        return get_wikitext2(nsamples, seed, seqlen, tokenizer)
+    elif "c4" in name:
+        return get_c4(nsamples, seed, seqlen, tokenizer)
     else:
         print(f"ERROR: Unknown dataset '{name}'")
         return None
+    
 # Wrapper for tokenized input IDs
 class TokenizerWrapper:
     def __init__(self, input_ids):
