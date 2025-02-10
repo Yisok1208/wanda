@@ -145,13 +145,27 @@ def main():
     print("Tokenizer loaded successfully.")
 
     # Load datasets
-    print("Loading SST-2 dataset...")
-    sst2_inputs, sst2_labels = get_loaders("sst2", nsamples=128, seed=args.seed, tokenizer=tokenizer)
-    print("SST-2 dataset loaded successfully.")
+    print("DEBUG: Calling get_loaders() for SST-2...")
+    sst2_result = get_loaders("sst2", nsamples=128, seed=args.seed, tokenizer=tokenizer)
 
-    print("Loading SQuAD dataset...")
-    squad_inputs, squad_data = get_loaders("squad", nsamples=128, seed=args.seed, tokenizer=tokenizer)
-    print("SQuAD dataset loaded successfully.")
+    # ✅ Check if dataset loading failed
+    if sst2_result is None:
+        raise ValueError("ERROR: SST-2 dataset could not be loaded! `get_loaders()` returned None.")
+
+    # ✅ Unpack the dataset
+    sst2_inputs, sst2_labels = sst2_result
+    print(f"DEBUG: SST-2 dataset loaded successfully. Shapes: Inputs={sst2_inputs['input_ids'].shape}, Labels={sst2_labels.shape}")
+    
+    print("DEBUG: Calling get_loaders() for SQuAD...")
+    squad_result = get_loaders("squad", nsamples=128, seed=args.seed, tokenizer=tokenizer)
+
+    # ✅ Check if dataset loading failed
+    if squad_result is None:
+        raise ValueError("ERROR: SQuAD dataset could not be loaded! `get_loaders()` returned None.")
+
+    # ✅ Unpack the dataset
+    squad_inputs, squad_data = squad_result
+    print("DEBUG: SQuAD dataset loaded successfully.")
 
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
