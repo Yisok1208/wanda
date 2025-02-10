@@ -77,7 +77,7 @@ def get_squad(nsamples, seed, tokenizer):
     return inputs, sampled_data  # Keep original data for evaluation
 
 # Function to select dataset loader
-def get_loaders(name, nsamples=128, seed=0, seqlen=2048, tokenizer=None):
+def get_loaders(name, nsamples=128, seed=0, tokenizer=None, seqlen=2048):
     # Handle SST-2 and SQuAD
     if "sst2" in name:
         return get_sst2(nsamples, seed, tokenizer)
