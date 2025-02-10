@@ -12,16 +12,18 @@ def set_seed(seed):
 
 # Load and process SST-2 (Sentiment Analysis) dataset
 def get_sst2(nsamples, seed, tokenizer):
-    print("DEBUG: Attempting to load SST-2 dataset from cache...")
+    print("DEBUG: Loading SST-2 dataset from cache...")
 
     try:
-        dataset = load_dataset("glue", "sst2", cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_mode="reuse_cache_if_exists")
+        dataset = load_dataset("glue", "sst2", 
+                               cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", 
+                               keep_in_memory=True)
         print("DEBUG: SST-2 dataset loaded successfully!")
     except Exception as e:
         print(f"ERROR: Failed to load SST-2 dataset: {e}")
         return None
 
-    # Check dataset keys
+    # Debug available dataset splits
     print(f"DEBUG: Available dataset splits: {list(dataset.keys())}")
 
     if "train" not in dataset:
@@ -30,7 +32,7 @@ def get_sst2(nsamples, seed, tokenizer):
 
     # Ensure dataset has enough samples
     if len(dataset["train"]) < nsamples:
-        print(f"ERROR: Not enough samples. Requested: {nsamples}, Available: {len(dataset['train'])}")
+        print(f"ERROR: Not enough samples in SST-2. Requested: {nsamples}, Available: {len(dataset['train'])}")
         return None
 
     # Sample and tokenize
@@ -42,25 +44,32 @@ def get_sst2(nsamples, seed, tokenizer):
     return inputs, labels
 
 def get_squad(nsamples, seed, tokenizer):
-    print("DEBUG: Attempting to load SQuAD dataset from cache...")
+    print("DEBUG: Loading SQuAD dataset from cache...")
 
     try:
-        dataset = load_dataset("squad", cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_mode="reuse_cache_if_exists")
+        dataset = load_dataset("squad", 
+                               cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", 
+                               keep_in_memory=True)
         print("DEBUG: SQuAD dataset loaded successfully!")
     except Exception as e:
         print(f"ERROR: Failed to load SQuAD dataset: {e}")
         return None
 
+    # Debug available dataset splits
+    print(f"DEBUG: Available dataset splits: {list(dataset.keys())}")
+
+    if "train" not in dataset:
+        print("ERROR: No 'train' split found in SQuAD dataset!")
+        return None
+
     # Ensure dataset has enough samples
     if len(dataset["train"]) < nsamples:
-        print(f"ERROR: Not enough samples. Requested: {nsamples}, Available: {len(dataset['train'])}")
+        print(f"ERROR: Not enough samples in SQuAD. Requested: {nsamples}, Available: {len(dataset['train'])}")
         return None
 
     # Sample and tokenize
     random.seed(seed)
     sampled_data = random.sample(list(dataset["train"]), nsamples)
-
-    # Tokenization
     questions = [ex["question"] for ex in sampled_data]
     contexts = [ex["context"] for ex in sampled_data]
     inputs = tokenizer(questions, contexts, padding=True, truncation=True, return_tensors="pt")
