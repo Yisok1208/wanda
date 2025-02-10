@@ -12,13 +12,24 @@ def set_seed(seed):
 
 # Load and process SST-2 (Sentiment Analysis) dataset
 def get_sst2(nsamples, seed, tokenizer):
-    dataset = load_dataset("stanfordnlp/sst2")
-    
-    # Shuffle and sample the dataset
+    print("DEBUG: Loading SST-2 dataset...")
+    try:
+        dataset = load_dataset("stanfordnlp/sst2")  # ✅ Ensure correct dataset ID
+        print("DEBUG: SST-2 dataset loaded successfully.")
+    except Exception as e:
+        print(f"ERROR: Failed to load SST-2 dataset: {e}")
+        return None  # Return None on failure
+
+    # Ensure there are enough samples
+    if len(dataset["train"]) < nsamples:
+        print(f"ERROR: Not enough samples in SST-2 dataset. Requested: {nsamples}, Available: {len(dataset['train'])}")
+        return None
+
+    # Sample data
     random.seed(seed)
     sampled_data = random.sample(list(dataset["train"]), nsamples)
 
-    # Tokenize sentences
+    # Tokenization
     inputs = tokenizer([ex["sentence"] for ex in sampled_data], padding=True, truncation=True, return_tensors="pt")
     labels = torch.tensor([ex["label"] for ex in sampled_data])
 
@@ -43,13 +54,14 @@ def get_squad(nsamples, seed, tokenizer):
 
 # Function to select dataset loader
 def get_loaders(name, nsamples=128, seed=0, tokenizer=None):
+    print(f"DEBUG: Requested dataset '{name}'")
     if "sst2" in name:
         return get_sst2(nsamples, seed, tokenizer)
     elif "squad" in name:
         return get_squad(nsamples, seed, tokenizer)
     else:
-        raise ValueError("Unknown dataset name!")
-
+        print(f"ERROR: Unknown dataset '{name}'")
+        return None
 # Wrapper for tokenized input IDs
 class TokenizerWrapper:
     def __init__(self, input_ids):
