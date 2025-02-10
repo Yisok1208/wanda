@@ -1,2 +1,2 @@
-method	actual_sparsity	ppl_test
-wanda	0.6999	80.0827
+method	actual_sparsity	ppl_test	MSE	SNR
+wanda	0.6999	80.0827	0.000085	6.790974

@@ -1,2 +1,2 @@
-method	actual_sparsity	ppl_test
-sparsegpt	0.7000	26.6331
+method	actual_sparsity	ppl_test	MSE	SNR
+sparsegpt	0.7000	26.6331	0.000085	6.790974
