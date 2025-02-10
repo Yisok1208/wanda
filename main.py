@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from importlib.metadata import version
-from data import get_loaders
+from lib.data import get_loaders
 from sklearn.metrics import accuracy_score
 
 from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
