@@ -13,24 +13,26 @@ def set_seed(seed):
 # Load and process SST-2 (Sentiment Analysis) dataset
 def get_sst2(nsamples, seed, tokenizer):
     print("DEBUG: Loading SST-2 dataset from LOCAL CACHE...")
-    cache_path = "/mnt/parscratch/users/aca22yn/cache/datasets/glue/sst2"  # 👈 Your confirmed path
+    cache_path = "/mnt/parscratch/users/aca22yn/cache/datasets/glue"  # 👈 Use the parent directory
     
-    # Debug: Check if cache directory exists
+    # Debug: Verify cache directory exists
     if not os.path.exists(cache_path):
         print(f"ERROR: Cache directory {cache_path} does not exist!")
         return None
+    else:
+        print(f"DEBUG: Contents of {cache_path}: {os.listdir(cache_path)}")
     
     try:
         dataset = load_dataset(
             "glue", "sst2",
-            cache_dir=cache_path,  # Directly use the SST-2 subdirectory
-            keep_in_memory=True,
-            download_mode="force_redownload"
+            cache_dir=cache_path,  # Point to the parent glue directory
+            download_mode="force_redownload",
+            keep_in_memory=True
         )
         print(f"DEBUG: Dataset splits: {dataset.keys()}")
-        print(f"DEBUG: Train split samples: {len(dataset['train'])}")
+        print(f"DEBUG: Train samples: {len(dataset['train'])}")
     except Exception as e:
-        print(f"ERROR: Failed to load SST-2: {str(e)}")
+        print(f"CRITICAL ERROR: {str(e)}")
         return None
 
     # Ensure dataset has enough samples
