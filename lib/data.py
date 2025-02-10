@@ -12,45 +12,53 @@ def set_seed(seed):
 
 # Load and process SST-2 (Sentiment Analysis) dataset
 def get_sst2(nsamples, seed, tokenizer):
-    print("DEBUG: Loading SST-2 dataset...")
+    print("DEBUG: Attempting to load SST-2 dataset from cache...")
+
     try:
-        dataset = load_dataset("stanfordnlp/sst2")  # ✅ Ensure correct dataset ID
-        print("DEBUG: SST-2 dataset loaded successfully.")
+        dataset = load_dataset("glue", "sst2", cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_mode="reuse_cache_if_exists")
+        print("DEBUG: SST-2 dataset loaded successfully!")
     except Exception as e:
         print(f"ERROR: Failed to load SST-2 dataset: {e}")
-        return None  # Return None on failure
-
-    # Ensure there are enough samples
-    if len(dataset["train"]) < nsamples:
-        print(f"ERROR: Not enough samples in SST-2 dataset. Requested: {nsamples}, Available: {len(dataset['train'])}")
         return None
 
-    # Sample data
+    # Ensure dataset has enough samples
+    if len(dataset["train"]) < nsamples:
+        print(f"ERROR: Not enough samples. Requested: {nsamples}, Available: {len(dataset['train'])}")
+        return None
+
+    # Sample and tokenize
     random.seed(seed)
     sampled_data = random.sample(list(dataset["train"]), nsamples)
-
-    # Tokenization
     inputs = tokenizer([ex["sentence"] for ex in sampled_data], padding=True, truncation=True, return_tensors="pt")
     labels = torch.tensor([ex["label"] for ex in sampled_data])
 
     return inputs, labels
 
-# Load and process SQuAD (Question Answering) dataset
 def get_squad(nsamples, seed, tokenizer):
-    dataset = load_dataset("rajpurkar/squad")
+    print("DEBUG: Attempting to load SQuAD dataset from cache...")
 
-    # Shuffle and sample the dataset
+    try:
+        dataset = load_dataset("squad", cache_dir="/mnt/parscratch/users/aca22yn/cache/datasets", download_mode="reuse_cache_if_exists")
+        print("DEBUG: SQuAD dataset loaded successfully!")
+    except Exception as e:
+        print(f"ERROR: Failed to load SQuAD dataset: {e}")
+        return None
+
+    # Ensure dataset has enough samples
+    if len(dataset["train"]) < nsamples:
+        print(f"ERROR: Not enough samples. Requested: {nsamples}, Available: {len(dataset['train'])}")
+        return None
+
+    # Sample and tokenize
     random.seed(seed)
     sampled_data = random.sample(list(dataset["train"]), nsamples)
 
-    # Prepare question-context pairs
+    # Tokenization
     questions = [ex["question"] for ex in sampled_data]
     contexts = [ex["context"] for ex in sampled_data]
-
-    # Tokenize
     inputs = tokenizer(questions, contexts, padding=True, truncation=True, return_tensors="pt")
 
-    return inputs, sampled_data  # Keep original for answer extraction
+    return inputs, sampled_data  # Keep original data for evaluation
 
 # Function to select dataset loader
 def get_loaders(name, nsamples=128, seed=0, tokenizer=None):
