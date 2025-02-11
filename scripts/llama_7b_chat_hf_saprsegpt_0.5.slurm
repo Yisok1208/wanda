@@ -33,6 +33,7 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
+          --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/wanda/results/llama-2-7b-chat-hf_sgpt_0.5/" \
           --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/sgpt/llama-2-7b-chat-hf_sgpt_0.5/" \
-          --eval_zero_shot
+          

@@ -4,6 +4,7 @@ import numpy as np
 import random
 import torch
 from datasets import load_dataset
+from evaluate import load
 
 # Set seed for reproducibility
 def set_seed(seed):

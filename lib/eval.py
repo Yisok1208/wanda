@@ -2,6 +2,8 @@
 import time
 import torch
 import torch.nn as nn
+from datasets import load_dataset
+from evaluate import load
 
 # Import get_loaders function from data module within the same directory
 from .data import get_loaders 
@@ -9,6 +11,65 @@ from .data import get_loaders
 from collections import defaultdict
 import fnmatch
 
+def evaluate_triviaqa(model, tokenizer, max_samples=500):
+    """
+    Evaluate pruned LLM on TriviaQA dataset using Exact Match (EM) and F1 metrics.
+    
+    Args:
+        model: Pruned language model
+        tokenizer: Model's tokenizer
+        max_samples: Maximum samples to evaluate (for faster testing)
+    
+    Returns:
+        exact_match (float): EM score
+        f1_score (float): F1 score
+    """
+    # Load TriviaQA dataset (unfiltered split)
+    dataset = load_dataset("trivia_qa", "unfiltered")["test"]
+    dataset = dataset.select(range(max_samples))  # Limit samples for quick evaluation
+    
+    # Load evaluation metric (SQuAD-style EM/F1)
+    qa_metric = load("squad")
+    
+    predictions = []
+    references = []
+    
+    for example in dataset:
+        # Construct prompt with explicit instruction
+        prompt = (
+            f"Question: {example['question']}\n"
+            "Answer in 1-5 words:"  # Force concise answers
+        )
+        
+        # Tokenize and generate
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        output = model.generate(
+            **inputs,
+            max_new_tokens=20,  # Restrict answer length
+            pad_token_id=tokenizer.eos_token_id
+        )
+        
+        # Decode and clean answer
+        full_response = tokenizer.decode(output[0], skip_special_tokens=True)
+        answer = full_response.split("Answer in 1-5 words:")[-1].strip()
+        
+        # Store predictions and references
+        predictions.append({"id": example["id"], "prediction_text": answer})
+        references.append({
+            "id": example["id"], 
+            "answers": {
+                "text": [example["answer"]["value"]],  # Required format for SQuAD metric
+                "answer_start": [0]
+            }
+        })
+    
+    # Compute metrics
+    results = qa_metric.compute(
+        predictions=predictions,
+        references=references
+    )
+    
+    return results["exact_match"], results["f1"]
 
 # Function to evaluate perplexity (ppl) on a specified model and tokenizer
 def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
@@ -130,37 +191,61 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     return ppl.item()
 
 
-def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
+def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","triviaqa","winogrande","arc_challenge","arc_easy","openbookqa"], 
         num_fewshot=0, use_accelerate=False, add_special_tokens=False):
-    from lm_eval import tasks, evaluator 
-    def pattern_match(patterns, source_list):
-        task_names = set()
-        for pattern in patterns:
-            for matching in fnmatch.filter(source_list, pattern):
-                task_names.add(matching)
-        return list(task_names)
-    task_names = pattern_match(task_list, tasks.ALL_TASKS)
-    model_args = f"pretrained={model_name},cache_dir=./llm_weights"
-    limit = None 
-    if "70b" in model_name or "65b" in model_name:
-        limit = 2000
-    if use_accelerate:
-        model_args = f"pretrained={model_name},cache_dir=./llm_weights,use_accelerate=True"
-    results = evaluator.simple_evaluate(
-        model="hf-causal-experimental",
-        model_args=model_args,
-        tasks=task_names,
-        num_fewshot=num_fewshot,
-        batch_size=None,
-        device=None,
-        no_cache=True,
-        limit=limit,
-        description_dict={},
-        decontamination_ngrams_path=None,
-        check_integrity=False,
-        pretrained_model=model,
-        tokenizer=tokenizer, 
-        add_special_tokens=add_special_tokens
-    )
+    from lm_eval import tasks, evaluator
+    from .your_custom_module import evaluate_triviaqa  # 导入自定义评估函数
 
-    return results 
+    # 分离内置任务和自定义任务
+    builtin_tasks = [t for t in task_list if t in tasks.ALL_TASKS]
+    custom_tasks = [t for t in task_list if t not in tasks.ALL_TASKS]
+
+    results = {}
+
+    # 评估内置任务
+    if builtin_tasks:
+        def pattern_match(patterns, source_list):
+            task_names = set()
+            for pattern in patterns:
+                for matching in fnmatch.filter(source_list, pattern):
+                    task_names.add(matching)
+            return list(task_names)
+
+        task_names = pattern_match(builtin_tasks, tasks.ALL_TASKS)
+        model_args = f"pretrained={model_name},cache_dir=./llm_weights"
+        
+        if "70b" in model_name or "65b" in model_name:
+            limit = 2000
+        else:
+            limit = None
+            
+        if use_accelerate:
+            model_args += ",use_accelerate=True"
+
+        builtin_results = evaluator.simple_evaluate(
+            model="hf-causal-experimental",
+            model_args=model_args,
+            tasks=task_names,
+            num_fewshot=num_fewshot,
+            batch_size=None,
+            device=None,
+            no_cache=True,
+            limit=limit,
+            description_dict={},
+            decontamination_ngrams_path=None,
+            check_integrity=False,
+            pretrained_model=model,
+            tokenizer=tokenizer,
+            add_special_tokens=add_special_tokens
+        )
+        results.update(builtin_results["results"])
+
+    # 评估自定义任务
+    if "triviaqa" in custom_tasks:
+        em_score, f1_score = evaluate_triviaqa(model, tokenizer)
+        results["triviaqa"] = {
+            "exact_match": em_score,
+            "f1": f1_score
+        }
+
+    return results

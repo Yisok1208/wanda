@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from importlib.metadata import version
+from datasets import load_dataset
+from evaluate import load
 
 from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
 from lib.eval import eval_ppl, eval_zero_shot
@@ -161,9 +163,16 @@ def main():
         if "30b" in args.model or "65b" in args.model or "70b" in args.model:
             accelerate=True
 
-        task_list = ["boolq", "rte","hellaswag","winogrande", "arc_easy","arc_challenge", "openbookqa"]
+        task_list = ["boolq", "rte","hellaswag","triviaqa","winogrande", "arc_easy","arc_challenge", "openbookqa"]
         num_shot = 0
         results = eval_zero_shot(args.model, model, tokenizer, task_list, num_shot, accelerate)
+        if "triviaqa" in args.custom_tasks:  # 需添加 --custom_tasks 参数
+            em, f1 = evaluate_triviaqa(model, tokenizer)
+            print(f"\nAdditional Evaluation:")
+            print(f"TriviaQA - EM: {em:.2f}, F1: {f1:.2f}")
+        # 保存到日志文件
+            with open(args.save + "/log.txt", "a") as f:
+                f.write(f"TriviaQA_EM: {em}\nTriviaQA_F1: {f1}\n")
         print("********************************")
         print("zero_shot evaluation results")
         print(results)
