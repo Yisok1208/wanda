@@ -2,10 +2,8 @@ import argparse
 import os 
 import numpy as np
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from importlib.metadata import version
-from lib.data import get_loaders
-from sklearn.metrics import accuracy_score
 
 from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
 from lib.eval import eval_ppl, eval_zero_shot
@@ -28,43 +26,6 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
 
     model.seqlen = model.config.max_position_embeddings 
     return model
-
-def evaluate_sst2(model, tokenizer, inputs, labels):
-    """Evaluates the pruned model on SST-2 (Sentiment Analysis) dataset."""
-    print("Evaluating SST-2...")
-    classifier = pipeline("text-classification", model=model, tokenizer=tokenizer, device=0 if torch.cuda.is_available() else -1)
-    
-    predictions = []
-    for text in inputs["input_ids"]:
-        result = classifier(tokenizer.decode(text))
-        predictions.append(1 if result[0]["label"] == "POSITIVE" else 0)
-
-    accuracy = accuracy_score(labels.numpy(), predictions)
-    print(f"SST-2 Accuracy: {accuracy:.4f}")
-    return accuracy
-
-def evaluate_squad(model, tokenizer, inputs, data):
-    """Evaluates the pruned model on SQuAD (Question Answering) dataset."""
-    print("Evaluating SQuAD...")
-    qa_pipeline = pipeline("question-answering", model=model, tokenizer=tokenizer, device=0 if torch.cuda.is_available() else -1)
-    
-    correct = 0
-    total = len(data)
-
-    for i in range(total):
-        question = data[i]["question"]
-        context = data[i]["context"]
-        ground_truth = data[i]["answers"]["text"][0]  # First correct answer
-
-        result = qa_pipeline(question=question, context=context)
-        prediction = result["answer"]
-
-        if prediction.lower() == ground_truth.lower():
-            correct += 1
-
-    accuracy = correct / total
-    print(f"SQuAD Accuracy: {accuracy:.4f}")
-    return accuracy
 
 def estimate_snr(t, sparsity):
     # Apply Top-K masking directly
@@ -143,29 +104,6 @@ def main():
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", use_fast=False)
     print("Tokenizer loaded successfully.")
-
-    # Load datasets
-    print("DEBUG: Calling get_loaders() for SST-2...")
-    sst2_result = get_loaders("sst2", nsamples=128, seed=args.seed, tokenizer=tokenizer)
-
-    # ✅ Check if dataset loading failed
-    if sst2_result is None:
-        raise ValueError("ERROR: SST-2 dataset could not be loaded! `get_loaders()` returned None.")
-
-    # ✅ Unpack the dataset
-    sst2_inputs, sst2_labels = sst2_result
-    print(f"DEBUG: SST-2 dataset loaded successfully. Shapes: Inputs={sst2_inputs['input_ids'].shape}, Labels={sst2_labels.shape}")
-    
-    print("DEBUG: Calling get_loaders() for SQuAD...")
-    squad_result = get_loaders("squad", nsamples=128, seed=args.seed, tokenizer=tokenizer)
-
-    # ✅ Check if dataset loading failed
-    if squad_result is None:
-        raise ValueError("ERROR: SQuAD dataset could not be loaded! `get_loaders()` returned None.")
-
-    # ✅ Unpack the dataset
-    squad_inputs, squad_data = squad_result
-    print("DEBUG: SQuAD dataset loaded successfully.")
 
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
