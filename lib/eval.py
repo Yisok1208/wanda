@@ -240,16 +240,13 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     return ppl.item()
 
 
-def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","triviaqa","winogrande","arc_challenge","arc_easy","openbookqa"], 
-        num_fewshot=0, use_accelerate=False, add_special_tokens=False):
+def eval_zero_shot(model_name, model, tokenizer, task_list, num_fewshot=0, accelerate=False):
     from lm_eval import tasks, evaluator
-    from .your_custom_module import evaluate_triviaqa  # 导入自定义评估函数
+    results = {}
 
     # 分离内置任务和自定义任务
     builtin_tasks = [t for t in task_list if t in tasks.ALL_TASKS]
     custom_tasks = [t for t in task_list if t not in tasks.ALL_TASKS]
-
-    results = {}
 
     # 评估内置任务
     if builtin_tasks:
@@ -291,10 +288,11 @@ def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hella
 
     # 评估自定义任务
     if "triviaqa" in custom_tasks:
-        em_score, f1_score = evaluate_triviaqa(model, tokenizer)
-        results["triviaqa"] = {
-            "exact_match": em_score,
-            "f1": f1_score
-        }
+        try:
+            em, f1 = evaluate_triviaqa(model, tokenizer)
+            results["triviaqa"] = {"exact_match": em, "f1": f1}
+        except Exception as e:
+            print(f"TriviaQA evaluation failed: {str(e)}")
+            results["triviaqa"] = {"exact_match": 0.0, "f1": 0.0}
 
     return results
