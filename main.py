@@ -163,13 +163,19 @@ def main():
         if "30b" in args.model or "65b" in args.model or "70b" in args.model:
             accelerate=True
 
-        task_list = ["boolq", "rte","hellaswag","triviaqa","winogrande", "arc_easy","arc_challenge", "openbookqa"]
+        task_list = ["hellaswag", "triviaqa"]
         num_shot = 0
-        results = eval_zero_shot(args.model, model, tokenizer, task_list, num_shot, accelerate)
-        if "triviaqa" in args.custom_tasks:  # 需添加 --custom_tasks 参数
-            em, f1 = evaluate_triviaqa(model, tokenizer)
-            print(f"\nAdditional Evaluation:")
-            print(f"TriviaQA - EM: {em:.2f}, F1: {f1:.2f}")
+        results = eval_zero_shot(args.model, model, tokenizer, task_list, num_shot=0, accelerate=accelerate)
+
+        if "triviaqa" in results:
+            em = results["triviaqa"]["exact_match"]
+            f1 = results["triviaqa"]["f1"]
+            print(f"\nTriviaQA Results:")
+            print(f"- Exact Match: {em:.4f}")
+            print(f"- F1 Score: {f1:.4f}")
+            with open(os.path.join(args.save, "log.txt"), "a") as f:
+                f.write(f"TriviaQA_EM: {em}\nTriviaQA_F1: {f1}\n")
+
         # 保存到日志文件
             with open(args.save + "/log.txt", "a") as f:
                 f.write(f"TriviaQA_EM: {em}\nTriviaQA_F1: {f1}\n")

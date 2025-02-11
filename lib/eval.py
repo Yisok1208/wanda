@@ -11,65 +11,114 @@ from .data import get_loaders
 from collections import defaultdict
 import fnmatch
 
-def evaluate_triviaqa(model, tokenizer, max_samples=500):
+def evaluate_triviaqa(model, tokenizer, max_samples=500, batch_size=4):
     """
-    Evaluate pruned LLM on TriviaQA dataset using Exact Match (EM) and F1 metrics.
+    Evaluate pruned LLM on TriviaQA dataset with enhanced robustness and multi-answer support.
     
     Args:
         model: Pruned language model
         tokenizer: Model's tokenizer
-        max_samples: Maximum samples to evaluate (for faster testing)
-    
+        max_samples: Maximum samples to evaluate
+        batch_size: Batch size for generation
+        
     Returns:
         exact_match (float): EM score
         f1_score (float): F1 score
     """
-    # Load TriviaQA dataset (unfiltered split)
-    dataset = load_dataset("trivia_qa", "unfiltered")["test"]
-    dataset = dataset.select(range(max_samples))  # Limit samples for quick evaluation
-    
-    # Load evaluation metric (SQuAD-style EM/F1)
-    qa_metric = load("squad")
-    
-    predictions = []
-    references = []
-    
-    for example in dataset:
-        # Construct prompt with explicit instruction
-        prompt = (
-            f"Question: {example['question']}\n"
-            "Answer in 1-5 words:"  # Force concise answers
+    try:
+        # Load dataset with verification
+        dataset = load_dataset("trivia_qa", "unfiltered", verification_mode="all_checks")["test"]
+        dataset = dataset.select(range(min(max_samples, len(dataset))))
+        
+        # Load metric with all possible answers
+        qa_metric = load("squad")
+        
+        predictions = []
+        references = []
+        
+        # Batch processing
+        for i in range(0, len(dataset), batch_size):
+            batch = dataset[i:i+batch_size]
+            batch_prompts = [
+                f"Question: {example['question']}\n"
+                "Answer with 1-5 words exactly from the context:"  # Stronger instruction
+                for example in batch
+            ]
+            
+            # Batch encoding
+            inputs = tokenizer(
+                batch_prompts, 
+                return_tensors="pt", 
+                padding=True, 
+                truncation=True,
+                max_length=model.seqlen
+            ).to(model.device)
+            
+            # Generation with fallback
+            try:
+                outputs = model.generate(
+                    **inputs,
+                    max_new_tokens=20,
+                    pad_token_id=tokenizer.eos_token_id,
+                    num_return_sequences=1,
+                    do_sample=False  # Better reproducibility
+                )
+            except RuntimeError as e:
+                print(f"Generation failed: {str(e)}")
+                continue
+                
+            # Process responses
+            for idx, output in enumerate(outputs):
+                example = batch[idx]
+                full_response = tokenizer.decode(output, skip_special_tokens=True)
+                
+                # Robust answer extraction
+                answer = re.search(
+                    r"Answer with 1-5 words exactly from the context:\s*(.*?)(\n|$)", 
+                    full_response, 
+                    re.IGNORECASE
+                )
+                pred_text = answer.group(1).strip() if answer else ""
+                
+                # Handle multiple correct answers
+                all_answers = [a["value"] for a in example["answer"]["aliases"]]
+                all_answers.append(example["answer"]["value"])  # Include canonical answer
+                
+                predictions.append({"id": example["id"], "prediction_text": pred_text})
+                references.append({
+                    "id": example["id"],
+                    "answers": {
+                        "text": list(set(all_answers)),  # Deduplicate
+                        "answer_start": [0]*len(all_answers)
+                    }
+                })
+                
+                # Debug output
+                if idx < 2:  # Print first 2 samples
+                    print(f"\nSample {example['id']}:")
+                    print(f"Prompt: {batch_prompts[idx][:100]}...")
+                    print(f"Generated: {full_response[:200]}...")
+                    print(f"Prediction: {pred_text}")
+                    print(f"References: {all_answers}")
+        
+        # Compute metrics
+        if len(predictions) == 0:
+            raise ValueError("No valid predictions generated")
+            
+        results = qa_metric.compute(
+            predictions=predictions,
+            references=references
         )
         
-        # Tokenize and generate
-        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-        output = model.generate(
-            **inputs,
-            max_new_tokens=20,  # Restrict answer length
-            pad_token_id=tokenizer.eos_token_id
-        )
+        print(f"\nEvaluation completed on {len(predictions)} samples")
+        print(f"Exact Match: {results['exact_match']:.2%}")
+        print(f"F1 Score: {results['f1']:.2%}")
         
-        # Decode and clean answer
-        full_response = tokenizer.decode(output[0], skip_special_tokens=True)
-        answer = full_response.split("Answer in 1-5 words:")[-1].strip()
+        return results["exact_match"], results["f1"]
         
-        # Store predictions and references
-        predictions.append({"id": example["id"], "prediction_text": answer})
-        references.append({
-            "id": example["id"], 
-            "answers": {
-                "text": [example["answer"]["value"]],  # Required format for SQuAD metric
-                "answer_start": [0]
-            }
-        })
-    
-    # Compute metrics
-    results = qa_metric.compute(
-        predictions=predictions,
-        references=references
-    )
-    
-    return results["exact_match"], results["f1"]
+    except Exception as e:
+        print(f"Evaluation failed: {str(e)}")
+        return 0.0, 0.0
 
 # Function to evaluate perplexity (ppl) on a specified model and tokenizer
 def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
