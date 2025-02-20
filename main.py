@@ -86,6 +86,8 @@ def main():
 
     parser.add_argument("--eval_zero_shot", action="store_true")
     args = parser.parse_args()
+    print(f"Debug: eval_zero_shot flag received? {args.eval_zero_shot}")
+
 
     # Setting seeds for reproducibility
     np.random.seed(args.seed)
