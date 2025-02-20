@@ -2,9 +2,6 @@
 import time
 import torch
 import torch.nn as nn
-from datasets import load_dataset
-from evaluate import load
-import re
 
 # Import get_loaders function from data module within the same directory
 from .data import get_loaders 
@@ -12,114 +9,6 @@ from .data import get_loaders
 from collections import defaultdict
 import fnmatch
 
-def evaluate_triviaqa(model, tokenizer, max_samples=500, batch_size=4):
-    """
-    Evaluate pruned LLM on TriviaQA dataset with enhanced robustness and multi-answer support.
-    
-    Args:
-        model: Pruned language model
-        tokenizer: Model's tokenizer
-        max_samples: Maximum samples to evaluate
-        batch_size: Batch size for generation
-        
-    Returns:
-        exact_match (float): EM score
-        f1_score (float): F1 score
-    """
-    try:
-        # Load dataset with verification
-        dataset = load_dataset("trivia_qa", "unfiltered", verification_mode="all_checks")["test"]
-        dataset = dataset.select(range(min(max_samples, len(dataset))))
-        
-        # Load metric with all possible answers
-        qa_metric = load("squad")
-        
-        predictions = []
-        references = []
-        
-        # Batch processing
-        for i in range(0, len(dataset), batch_size):
-            batch = dataset[i:i+batch_size]
-            batch_prompts = [
-                f"Question: {example['question']}\n"
-                "Answer with 1-5 words exactly from the context:"  # Stronger instruction
-                for example in batch
-            ]
-            
-            # Batch encoding
-            inputs = tokenizer(
-                batch_prompts, 
-                return_tensors="pt", 
-                padding=True, 
-                truncation=True,
-                max_length=model.seqlen
-            ).to(model.device)
-            
-            # Generation with fallback
-            try:
-                outputs = model.generate(
-                    **inputs,
-                    max_new_tokens=20,
-                    pad_token_id=tokenizer.eos_token_id,
-                    num_return_sequences=1,
-                    do_sample=False  # Better reproducibility
-                )
-            except RuntimeError as e:
-                print(f"Generation failed: {str(e)}")
-                continue
-                
-            # Process responses
-            for idx, output in enumerate(outputs):
-                example = batch[idx]
-                full_response = tokenizer.decode(output, skip_special_tokens=True)
-                
-                # Robust answer extraction
-                answer = re.search(
-                    r"Answer with 1-5 words exactly from the context:\s*(.*?)(\n|$)", 
-                    full_response, 
-                    re.IGNORECASE
-                )
-                pred_text = answer.group(1).strip() if answer else ""
-                
-                # Handle multiple correct answers
-                all_answers = [a["value"] for a in example["answer"]["aliases"]]
-                all_answers.append(example["answer"]["value"])  # Include canonical answer
-                
-                predictions.append({"id": example["id"], "prediction_text": pred_text})
-                references.append({
-                    "id": example["id"],
-                    "answers": {
-                        "text": list(set(all_answers)),  # Deduplicate
-                        "answer_start": [0]*len(all_answers)
-                    }
-                })
-                
-                # Debug output
-                if idx < 2:  # Print first 2 samples
-                    print(f"\nSample {example['id']}:")
-                    print(f"Prompt: {batch_prompts[idx][:100]}...")
-                    print(f"Generated: {full_response[:200]}...")
-                    print(f"Prediction: {pred_text}")
-                    print(f"References: {all_answers}")
-        
-        # Compute metrics
-        if len(predictions) == 0:
-            raise ValueError("No valid predictions generated")
-            
-        results = qa_metric.compute(
-            predictions=predictions,
-            references=references
-        )
-        
-        print(f"\nEvaluation completed on {len(predictions)} samples")
-        print(f"Exact Match: {results['exact_match']:.2%}")
-        print(f"F1 Score: {results['f1']:.2%}")
-        
-        return results["exact_match"], results["f1"]
-        
-    except Exception as e:
-        print(f"Evaluation failed: {str(e)}")
-        return 0.0, 0.0
 
 # Function to evaluate perplexity (ppl) on a specified model and tokenizer
 def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
@@ -241,59 +130,37 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     return ppl.item()
 
 
-def eval_zero_shot(model_name, model, tokenizer, task_list, num_fewshot=0, accelerate=False):
-    from lm_eval import tasks, evaluator
-    results = {}
+def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
+        num_fewshot=0, use_accelerate=False, add_special_tokens=False):
+    from lm_eval import tasks, evaluator 
+    def pattern_match(patterns, source_list):
+        task_names = set()
+        for pattern in patterns:
+            for matching in fnmatch.filter(source_list, pattern):
+                task_names.add(matching)
+        return list(task_names)
+    task_names = pattern_match(task_list, tasks.ALL_TASKS)
+    model_args = f"pretrained={model_name},cache_dir=./llm_weights"
+    limit = None 
+    if "70b" in model_name or "65b" in model_name:
+        limit = 2000
+    if use_accelerate:
+        model_args = f"pretrained={model_name},cache_dir=./llm_weights,use_accelerate=True"
+    results = evaluator.simple_evaluate(
+        model="hf-causal-experimental",
+        model_args=model_args,
+        tasks=task_names,
+        num_fewshot=num_fewshot,
+        batch_size=None,
+        device=None,
+        no_cache=True,
+        limit=limit,
+        description_dict={},
+        decontamination_ngrams_path=None,
+        check_integrity=False,
+        pretrained_model=model,
+        tokenizer=tokenizer, 
+        add_special_tokens=add_special_tokens
+    )
 
-    # 分离内置任务和自定义任务
-    builtin_tasks = [t for t in task_list if t in tasks.ALL_TASKS]
-    custom_tasks = [t for t in task_list if t not in tasks.ALL_TASKS]
-
-    # 评估内置任务
-    if builtin_tasks:
-        def pattern_match(patterns, source_list):
-            task_names = set()
-            for pattern in patterns:
-                for matching in fnmatch.filter(source_list, pattern):
-                    task_names.add(matching)
-            return list(task_names)
-
-        task_names = pattern_match(builtin_tasks, tasks.ALL_TASKS)
-        model_args = f"pretrained={model_name},cache_dir=./llm_weights"
-        
-        if "70b" in model_name or "65b" in model_name:
-            limit = 2000
-        else:
-            limit = None
-            
-        if use_accelerate:
-            model_args += ",use_accelerate=True"
-
-        builtin_results = evaluator.simple_evaluate(
-            model="hf-causal-experimental",
-            model_args=model_args,
-            tasks=task_names,
-            num_fewshot=num_fewshot,
-            batch_size=None,
-            device=None,
-            no_cache=True,
-            limit=limit,
-            description_dict={},
-            decontamination_ngrams_path=None,
-            check_integrity=False,
-            pretrained_model=model,
-            tokenizer=tokenizer,
-            add_special_tokens=add_special_tokens
-        )
-        results.update(builtin_results["results"])
-
-    # 评估自定义任务
-    if "triviaqa" in custom_tasks:
-        try:
-            em, f1 = evaluate_triviaqa(model, tokenizer)
-            results["triviaqa"] = {"exact_match": em, "f1": f1}
-        except Exception as e:
-            print(f"TriviaQA evaluation failed: {str(e)}")
-            results["triviaqa"] = {"exact_match": 0.0, "f1": 0.0}
-
-    return results
+    return results 

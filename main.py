@@ -4,8 +4,6 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from importlib.metadata import version
-from datasets import load_dataset
-from evaluate import load
 
 from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
 from lib.eval import eval_ppl, eval_zero_shot
@@ -159,32 +157,21 @@ def main():
 
     if args.eval_zero_shot:
         print("Starting zero-shot evaluation.")
-        accelerate = "30b" in args.model or "65b" in args.model or "70b" in args.model
-    
-        # 明确定义要评估的任务列表
-        task_list = ["hellaswag", "triviaqa"]  # 包含 HellaSwag 和 TriviaQA
-    
-        # 调用评估函数
-        results = eval_zero_shot(
-            args.model, 
-            model, 
-            tokenizer, 
-            task_list=task_list,  # 传入明确的任务列表
-            num_shot=0, 
-            accelerate=accelerate
-        )
-    
-        # 记录 TriviaQA 结果
-        if "triviaqa" in results:
-            em = results["triviaqa"]["exact_match"]
-            f1 = results["triviaqa"]["f1"]
-            print(f"\nTriviaQA Evaluation:")
-            print(f"- Exact Match: {em:.4f}")
-            print(f"- F1 Score: {f1:.4f}")
-        
-            # 写入日志文件
-            with open(os.path.join(args.save, "log.txt"), "a") as f:
-                f.write(f"TriviaQA_EM: {em}\nTriviaQA_F1: {f1}\n")
+        accelerate=False
+        if "30b" in args.model or "65b" in args.model or "70b" in args.model:
+            accelerate=True
+
+        task_list = ["boolq", "rte","hellaswag","winogrande", "arc_easy","arc_challenge", "openbookqa"]
+        num_shot = 0
+        results = eval_zero_shot(args.model, model, tokenizer, task_list, num_shot, accelerate)
+        print("********************************")
+        print("zero_shot evaluation results")
+        print(results)
+
+    if args.save_model:
+        model.save_pretrained(args.save_model)
+        tokenizer.save_pretrained(args.save_model)
+        print("Model and tokenizer saved successfully.")
 
 if __name__ == '__main__':
     main()
