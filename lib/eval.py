@@ -158,7 +158,6 @@ def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hella
         description_dict={},
         decontamination_ngrams_path=None,
         check_integrity=False,
-        pretrained_model=model,
         tokenizer=tokenizer, 
         add_special_tokens=add_special_tokens
     )
