@@ -5,7 +5,7 @@ import torch.nn as nn
 
 # Import get_loaders function from data module within the same directory
 from .data import get_loaders 
-
+from lm_eval.list_tasks import get_all_tasks
 from collections import defaultdict
 import fnmatch
 
