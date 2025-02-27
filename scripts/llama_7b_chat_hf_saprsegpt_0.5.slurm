@@ -2,7 +2,7 @@
 #SBATCH --job-name=llama_3.2_1B_job
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=12
-#SBATCH --mem=128G
+#SBATCH --mem=512G
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
