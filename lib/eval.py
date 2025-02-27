@@ -139,7 +139,7 @@ def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hella
             for matching in fnmatch.filter(source_list, pattern):
                 task_names.add(matching)
         return list(task_names)
-    task_names = pattern_match(task_list, list(get_task_dict().keys()))
+    task_names = pattern_match(task_list, list(get_task_dict(task_list).keys()))
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     limit = None 
     if "70b" in model_name or "65b" in model_name:
