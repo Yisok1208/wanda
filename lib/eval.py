@@ -5,7 +5,7 @@ import torch.nn as nn
 
 # Import get_loaders function from data module within the same directory
 from .data import get_loaders 
-from lm_eval.list_tasks import get_all_tasks
+from lm_eval.tasks import get_task_dict
 from collections import defaultdict
 import fnmatch
 
@@ -139,7 +139,7 @@ def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hella
             for matching in fnmatch.filter(source_list, pattern):
                 task_names.add(matching)
         return list(task_names)
-    task_names = pattern_match(task_list, tasks.ALL_TASKS)
+    task_names = pattern_match(task_list, list(get_task_dict().keys()))
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     limit = None 
     if "70b" in model_name or "65b" in model_name:
