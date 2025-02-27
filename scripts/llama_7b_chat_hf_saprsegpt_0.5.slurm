@@ -6,7 +6,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=12:00:00
+#SBATCH --time=2:00:00
 #SBATCH --output=job_output_llama_3.2_1B_%j.log
 #SBATCH --mail-user=yng9@sheffield.ac.uk
 #SBATCH --mail-type=ALL
