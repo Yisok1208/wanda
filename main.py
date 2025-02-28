@@ -139,7 +139,11 @@ def main():
         print("Computing pruning error...")
         pruning_error = compute_pruning_error(model, original_weights)
         print(f"Total Pruning Error: {pruning_error:.6f}")
-
+    else:
+        mse = torch.tensor(0.0)
+        pruning_snr = 0.0
+        pruning_error = 0.0
+        
     ################################################################
     print("*"*30)
     sparsity_ratio = check_sparsity(model)
