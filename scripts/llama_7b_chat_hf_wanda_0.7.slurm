@@ -6,9 +6,8 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=12:00:00
-#SBATCH --output=job_output_llama_3.2_1B_%j.log
-#SBATCH --mail-user=yng9@sheffield.ac.uk
+#SBATCH --time=6:00:00
+#SBATCH --output=job_output_llama_2_7B_hf_wanda_0.7%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
@@ -33,5 +32,6 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
           --prune_method wanda \
           --sparsity_ratio 0.7 \
           --sparsity_type unstructured \
+          --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/wanda/results/llama-2-7b-chat-hf_wanda_0.7/" \
           --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/wanda/llama-2-7b-chat-hf_wanda_0.7/"
