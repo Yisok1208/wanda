@@ -21,6 +21,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         low_cpu_mem_usage=True,
         device_map="auto",
         use_auth_token=hf_token,
+        trust_remote_code=True,
         force_download=True
     )
 
