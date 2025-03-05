@@ -32,6 +32,5 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
           --prune_method sparsegpt \
           --sparsity_ratio 0.7 \
           --sparsity_type unstructured \
-          --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/wanda/results/llama-3.2-3b-instruct-sgpt-0.7/" \
           --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/sgpt/llama-3.2-3b-instruct-sgpt-0.7/" \

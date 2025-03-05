@@ -18,11 +18,9 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         model_name,
         torch_dtype=torch.float16,
         cache_dir=cache_dir,
-        low_cpu_mem_usage=True,
         device_map="auto",
         use_auth_token=hf_token,
         trust_remote_code=True,
-        force_download=True
     )
 
     model.seqlen = model.config.max_position_embeddings 
@@ -105,7 +103,7 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct", use_fast=False)
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
