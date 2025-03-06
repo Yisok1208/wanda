@@ -71,7 +71,7 @@ def compute_pruning_error(model, original_weights):
 def main():
     print("Script started successfully.")
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default="meta-llama/Llama-3.2-3B-Instruct", help='LLaMA model')
+    parser.add_argument('--model', type=str, default="meta-llama/Llama-3.2-3B", help='LLaMA model')
     parser.add_argument('--seed', type=int, default=0, help='Seed for sampling the calibration data.')
     parser.add_argument('--nsamples', type=int, default=128, help='Number of calibration samples.')
     parser.add_argument('--sparsity_ratio', type=float, default=0, help='Sparsity level')
@@ -103,7 +103,7 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B")
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
