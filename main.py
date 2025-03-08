@@ -18,8 +18,10 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         "/mnt/parscratch/users/aca22yn/cache/transformers/Llama-3.2-3B",
         torch_dtype=torch.float16,
         cache_dir=cache_dir,
-        device_map={"": torch.cuda.current_device()},
+        low_cpu_mem_usage=True, 
+        device_map="auto",
         use_auth_token=hf_token,
+        force_download=False,
         trust_remote_code=True,
     )
 
