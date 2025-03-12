@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=llama_3.2_1B_job
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
+#SBATCH --cpus-per-task=12
+#SBATCH --mem=128G
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=4:00:00
+#SBATCH --time=6:00:00
 #SBATCH --output=job_output_llama_2_7B_hf_sparse_0.5%j.log
 #SBATCH --mail-type=ALL
 
