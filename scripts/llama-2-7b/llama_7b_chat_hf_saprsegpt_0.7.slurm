@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=llama_3.2_1B_job
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=12
-#SBATCH --mem=128G
-#SBATCH --partition=gpu
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=64G
+#SBATCH --partition=gpu-h100
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --output=job_output_llama_2_7B_hf_sparse_0.7%j.log
+#SBATCH --output=job_output_llama_2_7B_hf_sparse_0.5%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
