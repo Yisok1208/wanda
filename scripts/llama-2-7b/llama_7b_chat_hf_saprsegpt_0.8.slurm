@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=llama_3.2_1B_job
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=64G
-#SBATCH --partition=gpu-h100
+#SBATCH --cpus-per-task=12
+#SBATCH --mem=128G
+#SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
