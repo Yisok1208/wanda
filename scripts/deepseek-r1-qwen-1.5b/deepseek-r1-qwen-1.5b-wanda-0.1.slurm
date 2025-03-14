@@ -34,4 +34,4 @@ srun python /mnt/parscratch/users/aca22yn/wanda/main_deepseek.py \
           --sparsity_type unstructured \
           --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/wanda/results/deepseek-r1-qwen-1.5b-wanda-0.1/" \
-          --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/sgpt/deepseek-r1-qwen-1.5b-wanda-0.1/" \
+          --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/wanda/deepseek-r1-qwen-1.5b-wanda-0.1/" \
