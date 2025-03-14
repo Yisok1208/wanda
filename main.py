@@ -161,6 +161,12 @@ def main():
         print("method\tactual_sparsity\tppl_test\tMSE\tSNR\tPruning_Error", file=f, flush=True)
         print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_snr:.6f}\t{pruning_error:.6f}", file=f, flush=True)
 
+    if args.sparsity_ratio != 0:
+        if args.save_model:
+            print(f"Reloading the pruned model from {args.save_model} for zero-shot evaluation...")
+            model = AutoModelForCausalLM.from_pretrained(args.save_model)
+            model.eval()
+
     if args.eval_zero_shot:
         print("Starting zero-shot evaluation.")
         accelerate=False
@@ -174,10 +180,19 @@ def main():
         print("zero_shot evaluation results")
         print(results)
 
-    if args.save_model:
-        model.save_pretrained(args.save_model)
-        tokenizer.save_pretrained(args.save_model)
-        print("Model and tokenizer saved successfully.")
+        zero_shot_results_path = os.path.join(args.save, f"zero_shot_{args.prune_method}.txt")
+        with open(zero_shot_results_path, "w") as f:
+            f.write("Zero-shot Evaluation Results:\n")
+            f.write(str(results) + "\n")
+        print(f"Zero-shot results saved to {zero_shot_results_path}")
+
+    if args.sparsity_ratio != 0:
+        if args.save_model:
+            print(f"Saving pruned model to {args.save_model}...")
+            model.save_pretrained(args.save_model)
+            tokenizer.save_pretrained(args.save_model)
+            print("Pruned model saved successfully.")
+            print("Model and tokenizer saved successfully.")
 
 if __name__ == '__main__':
     main()
