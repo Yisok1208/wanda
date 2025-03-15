@@ -54,6 +54,7 @@ def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
         # inputs = testenc[:,(i * model.seqlen):(j * model.seqlen)].to(device)
         inputs = trainloader[i][0].to(device)
         inputs = inputs.reshape(j-i, model.seqlen)
+        inputs = inputs[:, :16384]
 
         # Forward pass through the model
         lm_logits = model(inputs).logits
@@ -83,7 +84,7 @@ def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
 def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     # Get input IDs
-    testenc = testenc.input_ids
+    testenc = testenc.input_ids[:, :16384]
 
     # Calculate number of samples
     nsamples = testenc.numel() // model.seqlen

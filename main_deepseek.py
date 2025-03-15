@@ -104,7 +104,11 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
-    tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", use_fast=False)
+    tokenizer = AutoTokenizer.from_pretrained(
+        "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", 
+        use_fast=False,
+        model_max_length=16384
+        )
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
