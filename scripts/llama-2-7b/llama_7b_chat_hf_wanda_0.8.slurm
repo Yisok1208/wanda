@@ -5,7 +5,7 @@
 #SBATCH --mem=128G
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
-#SBATCH --gres=gpu:3
+#SBATCH --gres=gpu:2
 #SBATCH --time=6:00:00
 #SBATCH --output=job_output_llama_2_7B_hf_sparse_0.5%j.log
 #SBATCH --mail-type=ALL
