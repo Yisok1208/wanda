@@ -31,7 +31,9 @@ def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
 def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
     # Get input IDs
-    # testenc = testenc.input_ids
+    max_length = getattr(model.config, "max_position_embeddings", 16384)  # 获取模型最大序列长度，默认16384
+    testenc = testenc.input_ids[:, :max_length]  # 限制输入最大长度
+    print(f"Limiting input to max_length={max_length}")
 
     # Calculate number of samples
     # nsamples = testenc.numel() // model.seqlen

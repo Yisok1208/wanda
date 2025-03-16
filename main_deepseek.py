@@ -104,11 +104,13 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
+    model_max_length = getattr(model.config, "max_position_embeddings", 16384)
     tokenizer = AutoTokenizer.from_pretrained(
         "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", 
         use_fast=False,
-        model_max_length=16384
-        )
+        model_max_length=16384,
+        truncation=True
+    )
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")

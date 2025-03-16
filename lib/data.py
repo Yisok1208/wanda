@@ -23,7 +23,10 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 
     # Encode datasets
     trainenc = tokenizer(" ".join(traindata['text']), return_tensors='pt')
+    max_length = getattr(tokenizer, "model_max_length", 16384)
     testenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
+    testenc.input_ids = testenc.input_ids[:, :max_length]
+    print(f"Limiting Wikitext2 input to max_length={max_length}")
 
     # Generate samples from training set
     random.seed(seed)
@@ -60,14 +63,21 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
         tar[:, :-1] = -100
         trainloader.append((inp, tar))
 
+    max_length = getattr(tokenizer, "model_max_length", 16384)
+
     # Prepare validation dataset
     valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
-    valenc = valenc.input_ids[:, :(256 * seqlen)]
+    valenc = valenc.input_ids[:, :max_length]
+    print(f"Limiting C4 input to max_length={max_length}")
     valenc = TokenizerWrapper(valenc)
     return trainloader, valenc
 
 # Function to select the appropriate loader based on dataset name
 def get_loaders(name, nsamples=128, seed=0, seqlen=2048, tokenizer=None):
+    max_length = getattr(tokenizer, "model_max_length", 16384)
+    seqlen = min(seqlen, max_length)
+    print(f"Adjusted seqlen to max_length={max_length}")
+    
     if 'wikitext2' in name:
         return get_wikitext2(nsamples, seed, seqlen, tokenizer)
     if "c4" in name:
