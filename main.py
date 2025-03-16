@@ -111,6 +111,10 @@ def main():
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
         device = model.hf_device_map["lm_head"]
     print("use device ", device)
+    model.to(device)
+    for name, param in model.named_parameters():
+        assert param.device == device, f"Parameter {name} is on {param.device}, expected {device}"
+    print("Model moved to device successfully.")
 
     original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
     
@@ -125,6 +129,10 @@ def main():
         elif "ablate" in args.prune_method:
             prune_ablate(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         print("Pruning completed.")
+        print("Checking model structure after pruning:")
+        for name, param in model.named_parameters():
+            sparsity = (param == 0).sum().item() / param.numel()
+            print(f"{name}: shape={param.shape}, sparsity={sparsity:.4f}")
 
         print("Estimating SNR after pruning...")
         with torch.no_grad():
@@ -151,6 +159,8 @@ def main():
     print("*"*30)
     ################################################################
     print("Starting perplexity evaluation on wikitext.")
+    args.batch_size = 1
+    print(f"Using batch size: {args.batch_size}")
     ppl_test = eval_ppl(args, model, tokenizer, device)
     print(f"wikitext perplexity {ppl_test}")
 

@@ -77,7 +77,7 @@ def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
     ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
 
     # Empty CUDA cache to save memory
-    torch.cuda.empty_cache()
+    #torch.cuda.empty_cache()
 
     return ppl.item()
 
