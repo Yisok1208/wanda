@@ -15,13 +15,12 @@ print('# of gpus: ', torch.cuda.device_count())
 
 def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
-        "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+        "/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B",
         torch_dtype=torch.float16,
         cache_dir=cache_dir,
         low_cpu_mem_usage=True,
         device_map="auto",
-        use_auth_token=hf_token,
-        force_download=True
+        use_auth_token=hf_token
     )
 
     model.seqlen = model.config.max_position_embeddings 
@@ -72,7 +71,7 @@ def compute_pruning_error(model, original_weights):
 def main():
     print("Script started successfully.")
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default="deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", help='LLaMA model')
+    parser.add_argument('--model', type=str, default="/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B", help='LLaMA model')
     parser.add_argument('--seed', type=int, default=0, help='Seed for sampling the calibration data.')
     parser.add_argument('--nsamples', type=int, default=128, help='Number of calibration samples.')
     parser.add_argument('--sparsity_ratio', type=float, default=0, help='Sparsity level')
@@ -106,7 +105,7 @@ def main():
     model.eval()
     model_max_length = getattr(model.config, "max_position_embeddings", 16384)
     tokenizer = AutoTokenizer.from_pretrained(
-        "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", 
+        "/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B", 
         use_fast=False,
         model_max_length=model_max_length,
         truncation=True

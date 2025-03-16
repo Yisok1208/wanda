@@ -74,17 +74,14 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
 
 # Function to select the appropriate loader based on dataset name
 def get_loaders(name, nsamples=128, seed=0, seqlen=2048, tokenizer=None):
-    max_length = None
-    if hasattr(tokenizer, "model_max_length"):
-        max_length = tokenizer.model_max_length
-    elif hasattr(model.config, "max_position_embeddings"):
-        max_length = model.config.max_position_embeddings
-    else:
-        max_length = 16384  # 默认值
+    if tokenizer is None:
+        raise ValueError("tokenizer cannot be empty")
 
-    print(f"Using max_length={max_length} for model {model.config._name_or_path}")
+    max_length = getattr(tokenizer, "model_max_length", 16384)
+    print(f"Using max_length={max_length} for dataset {name}")
+
     seqlen = min(seqlen, max_length)
-    print(f"Adjusted seqlen to max_length={max_length}")
+    print(f"Adjusted seqlen to {seqlen}")
 
     if 'wikitext2' in name:
         return get_wikitext2(nsamples, seed, seqlen, tokenizer)
