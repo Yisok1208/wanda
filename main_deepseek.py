@@ -2,12 +2,17 @@ import argparse
 import os 
 import numpy as np
 import torch
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cuda.enable_mem_efficient_sdp(False)
+torch.backends.cuda.enable_flash_sdp(False)
+torch.backends.cuda.enable_math_sdp(False)
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from importlib.metadata import version
 
 from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
 from lib.eval import eval_ppl, eval_zero_shot
 
+print("sdpa disabled")
 print('torch', version('torch'))
 print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
@@ -20,6 +25,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         cache_dir=cache_dir,
         low_cpu_mem_usage=True,
         device_map="auto",
+        local_files_only=True,
         use_auth_token=hf_token
     )
 
@@ -108,7 +114,9 @@ def main():
         "/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B", 
         use_fast=False,
         model_max_length=model_max_length,
-        truncation=True
+        truncation=True,
+        trust_remote_code=True,
+        local_files_only=True
     )
     print(f"Tokenizer set to max_length={model_max_length}")
     print("Tokenizer loaded successfully.")
