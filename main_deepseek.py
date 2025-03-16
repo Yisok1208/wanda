@@ -108,9 +108,10 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(
         "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", 
         use_fast=False,
-        model_max_length=16384,
+        model_max_length=model_max_length,
         truncation=True
     )
+    print(f"Tokenizer set to max_length={model_max_length}")
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
