@@ -168,7 +168,7 @@ def main():
     print("*"*30)
     ################################################################
     print("Starting perplexity evaluation on wikitext.")
-    ppl_test = eval_ppl(args, model, tokenizer, device)
+    ppl_test = eval_ppl(args, model, tokenizer,bs=4, device=device)
     print(f"wikitext perplexity {ppl_test}")
 
     if not os.path.exists(args.save):

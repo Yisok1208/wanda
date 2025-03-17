@@ -84,8 +84,8 @@ def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
     return ppl.item()
 
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
-def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
-    # 调试：检查 testenc
+def eval_ppl_wikitext(model, testenc, tokenizer, bs=min(bs, nsamples), device=None):
+
     if hasattr(testenc, 'input_ids'):
         print(f"testenc.input_ids.shape: {testenc.input_ids.shape}")
     else:
@@ -94,7 +94,7 @@ def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
     
     print(f"testenc Type: {type(testenc)}")
     print(f"testenc.input_ids.shape: {testenc.input_ids.shape}" if hasattr(testenc, "input_ids") else "testenc.input_ids Not Exist")
-    
+
     max_length = getattr(tokenizer, "model_max_length", 16384)
     testenc.input_ids = testenc.input_ids[:, :max_length]
     print(f"Limiting testenc to max_length={max_length}")
