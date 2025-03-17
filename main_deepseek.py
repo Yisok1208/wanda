@@ -2,17 +2,20 @@ import argparse
 import os 
 import numpy as np
 import torch
+
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from importlib.metadata import version
+from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
+from lib.eval import eval_ppl, eval_zero_shot
+
+os.environ["TORCH_FORCE_SDPA"] = "0"
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 torch.backends.cuda.matmul.allow_tf32 = False
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_flash_sdp(False)
 torch.backends.cuda.enable_math_sdp(False)
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from importlib.metadata import version
-
-from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
-from lib.eval import eval_ppl, eval_zero_shot
-
 print("sdpa disabled")
+
 print('torch', version('torch'))
 print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
