@@ -25,7 +25,7 @@ def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
     print(f"Loaded {len(testloader)} samples in testloader.")
     # Evaluate ppl in no grad context to avoid updating the model
     with torch.no_grad():
-        ppl_test = eval_ppl_wikitext(model, testloader, 1, device)
+        ppl_test = eval_ppl_wikitext(model, testloader,tokenizer, bs=1, device=device)
     return ppl_test 
 
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
@@ -44,6 +44,10 @@ def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
     nsamples = testenc.input_ids.numel() // model.seqlen
     nlls = []
     print(f"nsamples: {nsamples}")
+
+    if not isinstance(bs, int):
+        print(f"WARNING: bs is {type(bs)}, fixing it to integer 1")
+        bs=1
 
     for i in range(0, nsamples, bs):
         if i % 50 == 0:
