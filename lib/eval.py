@@ -31,16 +31,17 @@ def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
 def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
     if not hasattr(testenc, "input_ids") or testenc.input_ids is None:
-        print("ERROR: testenc.input_ids empty or not exist")
+        print("ERROR: testenc.input_ids is missing!")
         return None
-    
+
+    print(f"testenc Type: {type(testenc)}")
     print(f"testenc.input_ids.shape: {testenc.input_ids.shape}")
 
     max_length = getattr(tokenizer, "model_max_length", 16384)
-    testenc_ids = testenc.input_ids[:, :max_length].clone().detach()
+    testenc.input_ids = testenc.input_ids[:, :max_length] 
     print(f"Limiting testenc to max_length={max_length}")
 
-    nsamples = testenc_ids.numel() // model.seqlen
+    nsamples = testenc.input_ids.numel() // model.seqlen
     nlls = []
     print(f"nsamples: {nsamples}")
 
@@ -49,7 +50,7 @@ def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
             print(f"Processing sample {i}")
 
         j = min(i + bs, nsamples)
-        inputs = testenc_ids[:, (i * model.seqlen):(j * model.seqlen)].to(device)
+        inputs = testenc.input_ids[:, (i * model.seqlen):(j * model.seqlen)].to(device)
 
         print(f"Batch {i//bs}: inputs.shape before reshape: {inputs.shape}")
         inputs = inputs.reshape(j - i, model.seqlen)
@@ -74,61 +75,6 @@ def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
     ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
     return ppl.item()
 
-# Function to evaluate perplexity (ppl) specifically on the wikitext dataset
-def eval_ppl_wikitext(model, testenc, tokenizer, bs=min(bs, nsamples), device=None):
-
-    if hasattr(testenc, 'input_ids'):
-        print(f"testenc.input_ids.shape: {testenc.input_ids.shape}")
-    else:
-        print("WARNING: testenc does not have input_ids!")
-        return None
-    
-    print(f"testenc Type: {type(testenc)}")
-    print(f"testenc.input_ids.shape: {testenc.input_ids.shape}" if hasattr(testenc, "input_ids") else "testenc.input_ids Not Exist")
-
-    max_length = getattr(tokenizer, "model_max_length", 16384)
-    testenc.input_ids = testenc.input_ids[:, :max_length]
-    print(f"Limiting testenc to max_length={max_length}")
-
-    nsamples = testenc.input_ids.numel() // model.seqlen
-    nlls = []
-    print(f"nsamples {nsamples}")
-
-    for i in range(0, nsamples, bs):
-        if i % 50 == 0:
-            print(f"sample {i}")
-
-        j = min(i+bs, nsamples)
-
-        inputs = testenc[:,(i * model.seqlen):(j * model.seqlen)].to(device)
-
-        # 调试：检查 inputs 形状
-        print(f"Batch {i//bs}: inputs.shape before reshape: {inputs.shape}")
-        inputs = inputs.reshape(j-i, model.seqlen)
-        print(f"Batch {i//bs}: inputs.shape after reshape: {inputs.shape}")
-
-        try:
-            lm_logits = model(inputs).logits
-            print(f"Batch {i//bs}: Forward pass successful! logits shape: {lm_logits.shape}")
-        except Exception as e:
-            print(f"Batch {i//bs}: Error in model forward pass: {e}")
-            return None  # 避免 CUDA 崩溃
-
-        shift_logits = lm_logits[:, :-1, :].contiguous()
-        shift_labels = inputs[:, 1:]
-
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1))
-
-        neg_log_likelihood = loss.float() * model.seqlen * (j-i)
-        nlls.append(neg_log_likelihood)
-
-    ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
-
-    # # 避免 CUDA 崩溃，先注释掉 empty_cache()
-    # torch.cuda.empty_cache()
-
-    return ppl.item()
 
 def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
         num_fewshot=0, use_accelerate=False, add_special_tokens=False):
