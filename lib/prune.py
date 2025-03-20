@@ -235,7 +235,15 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             super().__init__()
             self.module = module
         def forward(self, inp, **kwargs):
+            
+            if inp.shape[0] > inps.shape[1]:  # 如果超出 model.seqlen，就裁剪
+                inp = inp[:inps.shape[1]]
+            elif inp.shape[0] < inps.shape[1]:  # 如果太小，补零
+                pad_size = inps.shape[1] - inp.shape[0]
+                inp = torch.cat([inp, torch.zeros((pad_size, inp.shape[1]), device=inp.device)], dim=0)
+
             inps[cache['i']] = inp
+
             cache['i'] += 1
             cache['attention_mask'] = kwargs['attention_mask']
             cache['position_ids'] = kwargs['position_ids']
@@ -306,7 +314,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/tree/f5c25005a61f96a0933ca2f95705a963585aafaa
     print('Starting ...')
-    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
+    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer, batch_size=1)
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
