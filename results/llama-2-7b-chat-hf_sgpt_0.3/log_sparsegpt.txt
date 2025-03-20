@@ -1,0 +1,2 @@
+method	actual_sparsity	ppl_test	MSE	SNR	Pruning_Error
+sparsegpt	0.3000	6.8759	0.000004	18.641719	0.000006

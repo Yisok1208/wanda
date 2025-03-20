@@ -1,0 +1,2 @@
+method	actual_sparsity	ppl_test	MSE	SNR	Pruning_Error
+wanda	0.8999	235883.6094	0.000156	2.573047	0.000241
