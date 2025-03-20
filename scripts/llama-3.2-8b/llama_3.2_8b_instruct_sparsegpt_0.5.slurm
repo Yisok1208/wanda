@@ -17,7 +17,7 @@ module load cuDNN/8.9.2.26-CUDA-12.1.1
 module load Anaconda3/2024.02-1
 
 #Activate conda
-source activate prune_llm
+source activate prune_llm_backup
 
 # Set Hugging Face cache environment variables
 export HF_HOME="/mnt/parscratch/users/aca22yn/cache"
@@ -28,9 +28,9 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
-          --model "/mnt/parscratch/users/aca22yn/cache/transformers/Llama-3.2-3B", \
+          --model "meta-llama/Llama-3.1-8B" \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama-3.2-3b-sgpt-0.5/" \
-          --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/sgpt/llama-3.2-3b-sgpt-0.5/" \
+          --save "/mnt/parscratch/users/aca22yn/wanda/results/llama-3.1-8b-sgpt-0.5/" \
+          --save_model "/mnt/parscratch/users/aca22yn/wanda/pruned/sgpt/llama-3.1-8b-sgpt-0.5/" \
