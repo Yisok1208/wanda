@@ -2,34 +2,26 @@ import argparse
 import os 
 import numpy as np
 import torch
-
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from importlib.metadata import version
+
 from lib.prune import prune_wanda, prune_magnitude, prune_sparsegpt, prune_ablate, check_sparsity, find_layers
 from lib.eval import eval_ppl, eval_zero_shot
-
-os.environ["TORCH_FORCE_SDPA"] = "0"
-os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
-torch.backends.cuda.matmul.allow_tf32 = False
-torch.backends.cuda.enable_mem_efficient_sdp(False)
-torch.backends.cuda.enable_flash_sdp(False)
-torch.backends.cuda.enable_math_sdp(False)
-print("sdpa disabled")
 
 print('torch', version('torch'))
 print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
 print('# of gpus: ', torch.cuda.device_count())
 
-def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
+def get_llm(model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
-        "/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B",
+        model_name,
         torch_dtype=torch.float16,
         cache_dir=cache_dir,
         low_cpu_mem_usage=True,
         device_map="auto",
-        local_files_only=True,
-        use_auth_token=hf_token
+        use_auth_token=hf_token,
+        force_download=True
     )
 
     model.seqlen = model.config.max_position_embeddings 
@@ -80,7 +72,7 @@ def compute_pruning_error(model, original_weights):
 def main():
     print("Script started successfully.")
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default="/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B", help='LLaMA model')
+    parser.add_argument('--model', type=str, default="deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B")
     parser.add_argument('--seed', type=int, default=0, help='Seed for sampling the calibration data.')
     parser.add_argument('--nsamples', type=int, default=128, help='Number of calibration samples.')
     parser.add_argument('--sparsity_ratio', type=float, default=0, help='Sparsity level')
@@ -112,22 +104,17 @@ def main():
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
     print("Model loaded successfully.")
     model.eval()
-    model_max_length = getattr(model.config, "max_position_embeddings", 16384)
-    tokenizer = AutoTokenizer.from_pretrained(
-        "/mnt/parscratch/users/aca22yn/cache/transformers/deepseek-R1-1.5B", 
-        use_fast=False,
-        model_max_length=model_max_length,
-        truncation=True,
-        trust_remote_code=True,
-        local_files_only=True
-    )
-    print(f"Tokenizer set to max_length={model_max_length}")
+    tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", use_fast=False)
     print("Tokenizer loaded successfully.")
 
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
         device = model.hf_device_map["lm_head"]
     print("use device ", device)
+    model.to(device)
+    for name, param in model.named_parameters():
+        assert param.device == device, f"Parameter {name} is on {param.device}, expected {device}"
+    print("Model moved to device successfully.")
 
     original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
     
@@ -142,6 +129,10 @@ def main():
         elif "ablate" in args.prune_method:
             prune_ablate(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         print("Pruning completed.")
+        print("Checking model structure after pruning:")
+        for name, param in model.named_parameters():
+            sparsity = (param == 0).sum().item() / param.numel()
+            print(f"{name}: shape={param.shape}, sparsity={sparsity:.4f}")
 
         print("Estimating SNR after pruning...")
         with torch.no_grad():
@@ -168,7 +159,9 @@ def main():
     print("*"*30)
     ################################################################
     print("Starting perplexity evaluation on wikitext.")
-    ppl_test = eval_ppl(args, model, tokenizer,bs=4, device=device)
+    args.batch_size = 1
+    print(f"Using batch size: {args.batch_size}")
+    ppl_test = eval_ppl(args, model, tokenizer, bs=1, device=device)
     print(f"wikitext perplexity {ppl_test}")
 
     if not os.path.exists(args.save):
