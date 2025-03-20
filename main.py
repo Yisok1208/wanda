@@ -161,7 +161,7 @@ def main():
     print("Starting perplexity evaluation on wikitext.")
     args.batch_size = 1
     print(f"Using batch size: {args.batch_size}")
-    ppl_test = eval_ppl(args, model, tokenizer, device)
+    ppl_test = eval_ppl(args, model, tokenizer, bs=1, device=device)
     print(f"wikitext perplexity {ppl_test}")
 
     if not os.path.exists(args.save):

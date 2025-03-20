@@ -30,6 +30,13 @@ def eval_ppl(args, model, tokenizer, device=torch.device("cuda:0")):
 
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
 def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
+    print(f"DEBUG: Received bs={bs}, type={type(bs)}")
+    print(f"DEBUG: Received device={device}, type={type(device)}")
+
+    if not isinstance(bs, int):
+        print(f"WARNING: bs is {type(bs)}, fixing it to integer 1")
+        bs = 1
+        
     if not hasattr(testenc, "input_ids") or testenc.input_ids is None:
         print("ERROR: testenc.input_ids is missing!")
         return None
@@ -78,7 +85,6 @@ def eval_ppl_wikitext(model, testenc, tokenizer, bs=1, device=None):
 
     ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
     return ppl.item()
-
 
 def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
         num_fewshot=0, use_accelerate=False, add_special_tokens=False):
