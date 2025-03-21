@@ -1,0 +1,157 @@
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+torch 1.10.1+cu113
+transformers 4.28.0
+accelerate 0.18.0
+# of gpus:  2
+Script started successfully.
+Debug: eval_zero_shot flag received? True
+loading llm model meta-llama/Llama-2-7b-chat-hf
+Downloading shards:   0%|          | 0/2 [00:00<?, ?it/s]Downloading shards:  50%|█████     | 1/2 [00:47<00:47, 47.17s/it]Downloading shards: 100%|██████████| 2/2 [01:03<00:00, 28.90s/it]Downloading shards: 100%|██████████| 2/2 [01:03<00:00, 31.64s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.24s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.59s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.84s/it]
+Model loaded successfully.
+Tokenizer loaded successfully.
+use device  cuda:0
+Model moved to device successfully.
+Starting pruning with method: wanda
+loading calibration data
+Using max_length=1000000000000000019884624838656 for dataset c4
+Adjusted seqlen to 4096
+Limiting C4 input to max_length=1000000000000000019884624838656
+dataset loading complete
+  0%|          | 0/32 [00:00<?, ?it/s]  3%|▎         | 1/32 [00:05<02:53,  5.60s/it]  6%|▋         | 2/32 [00:11<02:54,  5.81s/it]  9%|▉         | 3/32 [00:17<02:50,  5.88s/it] 12%|█▎        | 4/32 [00:23<02:45,  5.91s/it] 16%|█▌        | 5/32 [00:29<02:40,  5.93s/it] 19%|█▉        | 6/32 [00:35<02:34,  5.94s/it] 22%|██▏       | 7/32 [00:41<02:28,  5.94s/it] 25%|██▌       | 8/32 [00:47<02:22,  5.95s/it] 28%|██▊       | 9/32 [00:53<02:16,  5.95s/it] 31%|███▏      | 10/32 [00:59<02:10,  5.95s/it] 34%|███▍      | 11/32 [01:05<02:05,  5.95s/it] 38%|███▊      | 12/32 [01:11<01:59,  5.95s/it] 41%|████      | 13/32 [01:17<01:53,  5.95s/it] 44%|████▍     | 14/32 [01:23<01:47,  5.96s/it] 47%|████▋     | 15/32 [01:29<01:41,  5.96s/it] 50%|█████     | 16/32 [01:34<01:35,  5.96s/it] 50%|█████     | 16/32 [01:35<01:35,  5.94s/it]
+pruning layer 0 name self_attn.q_proj
+pruning layer 0 name self_attn.k_proj
+pruning layer 0 name self_attn.v_proj
+pruning layer 0 name self_attn.o_proj
+pruning layer 0 name mlp.gate_proj
+pruning layer 0 name mlp.down_proj
+pruning layer 0 name mlp.up_proj
+pruning layer 1 name self_attn.q_proj
+pruning layer 1 name self_attn.k_proj
+pruning layer 1 name self_attn.v_proj
+pruning layer 1 name self_attn.o_proj
+pruning layer 1 name mlp.gate_proj
+pruning layer 1 name mlp.down_proj
+pruning layer 1 name mlp.up_proj
+pruning layer 2 name self_attn.q_proj
+pruning layer 2 name self_attn.k_proj
+pruning layer 2 name self_attn.v_proj
+pruning layer 2 name self_attn.o_proj
+pruning layer 2 name mlp.gate_proj
+pruning layer 2 name mlp.down_proj
+pruning layer 2 name mlp.up_proj
+pruning layer 3 name self_attn.q_proj
+pruning layer 3 name self_attn.k_proj
+pruning layer 3 name self_attn.v_proj
+pruning layer 3 name self_attn.o_proj
+pruning layer 3 name mlp.gate_proj
+pruning layer 3 name mlp.down_proj
+pruning layer 3 name mlp.up_proj
+pruning layer 4 name self_attn.q_proj
+pruning layer 4 name self_attn.k_proj
+pruning layer 4 name self_attn.v_proj
+pruning layer 4 name self_attn.o_proj
+pruning layer 4 name mlp.gate_proj
+pruning layer 4 name mlp.down_proj
+pruning layer 4 name mlp.up_proj
+pruning layer 5 name self_attn.q_proj
+pruning layer 5 name self_attn.k_proj
+pruning layer 5 name self_attn.v_proj
+pruning layer 5 name self_attn.o_proj
+pruning layer 5 name mlp.gate_proj
+pruning layer 5 name mlp.down_proj
+pruning layer 5 name mlp.up_proj
+pruning layer 6 name self_attn.q_proj
+pruning layer 6 name self_attn.k_proj
+pruning layer 6 name self_attn.v_proj
+pruning layer 6 name self_attn.o_proj
+pruning layer 6 name mlp.gate_proj
+pruning layer 6 name mlp.down_proj
+pruning layer 6 name mlp.up_proj
+pruning layer 7 name self_attn.q_proj
+pruning layer 7 name self_attn.k_proj
+pruning layer 7 name self_attn.v_proj
+pruning layer 7 name self_attn.o_proj
+pruning layer 7 name mlp.gate_proj
+pruning layer 7 name mlp.down_proj
+pruning layer 7 name mlp.up_proj
+pruning layer 8 name self_attn.q_proj
+pruning layer 8 name self_attn.k_proj
+pruning layer 8 name self_attn.v_proj
+pruning layer 8 name self_attn.o_proj
+pruning layer 8 name mlp.gate_proj
+pruning layer 8 name mlp.down_proj
+pruning layer 8 name mlp.up_proj
+pruning layer 9 name self_attn.q_proj
+pruning layer 9 name self_attn.k_proj
+pruning layer 9 name self_attn.v_proj
+pruning layer 9 name self_attn.o_proj
+pruning layer 9 name mlp.gate_proj
+pruning layer 9 name mlp.down_proj
+pruning layer 9 name mlp.up_proj
+pruning layer 10 name self_attn.q_proj
+pruning layer 10 name self_attn.k_proj
+pruning layer 10 name self_attn.v_proj
+pruning layer 10 name self_attn.o_proj
+pruning layer 10 name mlp.gate_proj
+pruning layer 10 name mlp.down_proj
+pruning layer 10 name mlp.up_proj
+pruning layer 11 name self_attn.q_proj
+pruning layer 11 name self_attn.k_proj
+pruning layer 11 name self_attn.v_proj
+pruning layer 11 name self_attn.o_proj
+pruning layer 11 name mlp.gate_proj
+pruning layer 11 name mlp.down_proj
+pruning layer 11 name mlp.up_proj
+pruning layer 12 name self_attn.q_proj
+pruning layer 12 name self_attn.k_proj
+pruning layer 12 name self_attn.v_proj
+pruning layer 12 name self_attn.o_proj
+pruning layer 12 name mlp.gate_proj
+pruning layer 12 name mlp.down_proj
+pruning layer 12 name mlp.up_proj
+pruning layer 13 name self_attn.q_proj
+pruning layer 13 name self_attn.k_proj
+pruning layer 13 name self_attn.v_proj
+pruning layer 13 name self_attn.o_proj
+pruning layer 13 name mlp.gate_proj
+pruning layer 13 name mlp.down_proj
+pruning layer 13 name mlp.up_proj
+pruning layer 14 name self_attn.q_proj
+pruning layer 14 name self_attn.k_proj
+pruning layer 14 name self_attn.v_proj
+pruning layer 14 name self_attn.o_proj
+pruning layer 14 name mlp.gate_proj
+pruning layer 14 name mlp.down_proj
+pruning layer 14 name mlp.up_proj
+pruning layer 15 name self_attn.q_proj
+pruning layer 15 name self_attn.k_proj
+pruning layer 15 name self_attn.v_proj
+pruning layer 15 name self_attn.o_proj
+pruning layer 15 name mlp.gate_proj
+pruning layer 15 name mlp.down_proj
+pruning layer 15 name mlp.up_proj
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 208, in <module>
+    main()
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 124, in main
+    prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
+  File "/mnt/parscratch/users/aca22yn/wanda/lib/prune.py", line 161, in prune_wanda
+    outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/accelerate/hooks.py", line 165, in new_forward
+    output = old_forward(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 289, in forward
+    hidden_states = self.input_layernorm(hidden_states)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/accelerate/hooks.py", line 165, in new_forward
+    output = old_forward(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 91, in forward
+    return self.weight * hidden_states
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
+srun: error: gpu08: task 0: Exited with exit code 1

@@ -1,0 +1,28 @@
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/utils/hub.py:106: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py:471: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers. Please use `token` instead.
+  warnings.warn(
+/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/torchvision/io/image.py:11: UserWarning: Failed to load image Python extension: libc10_hip.so: cannot open shared object file: No such file or directory
+  warn(f"Failed to load image Python extension: {e}")
+torch 1.10.1+cu113
+transformers 4.49.0
+accelerate 0.18.0
+# of gpus:  1
+Script started successfully.
+Debug: eval_zero_shot flag received? True
+loading llm model meta-llama/Llama-2-7b-chat-hf
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 208, in <module>
+    main()
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 104, in main
+    model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
+  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 17, in get_llm
+    model = AutoModelForCausalLM.from_pretrained(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+    return model_class.from_pretrained(
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/modeling_utils.py", line 262, in _wrapper
+    return func(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/transformers/modeling_utils.py", line 3611, in from_pretrained
+    raise ImportError(
+ImportError: Using `low_cpu_mem_usage=True` or a `device_map` requires Accelerate: `pip install 'accelerate>=0.26.0'`
+srun: error: gpu15: task 0: Exited with exit code 1
