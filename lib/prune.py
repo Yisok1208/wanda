@@ -230,21 +230,26 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     )
     cache = {'i': 0, 'attention_mask': None, "position_ids": None}
 
+    MAX_PAD_SIZE = 2048
+
     class Catcher(nn.Module):
         def __init__(self, module):
             super().__init__()
             self.module = module
         def forward(self, inp, **kwargs):
-            
+            print(f"[Debug] Input shape: {inp.shape}")
+
             if inp.shape[0] > inps.shape[1]:
                 inp = inp[:inps.shape[1]]
-            elif inp.shape[0] < inps.shape[1]:  # 如果太小，补零
+            elif inp.shape[0] < inps.shape[1]:
                 pad_size = inps.shape[1] - inp.shape[0]
+                if pad_size > MAX_PAD_SIZE:
+                    print(f"[Warning] pad_size={pad_size} too large, skipping sample.")
+                    raise ValueError
                 pad_tensor = torch.zeros((pad_size, inp.shape[1], inp.shape[2]), device=inp.device, dtype=inp.dtype)
                 inp = torch.cat([inp, pad_tensor], dim=0)
 
             inps[cache['i']] = inp
-
             cache['i'] += 1
             cache['attention_mask'] = kwargs['attention_mask']
             cache['position_ids'] = kwargs['position_ids']

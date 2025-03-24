@@ -1,34 +1,0 @@
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/torch/cuda/__init__.py:80: UserWarning: CUDA initialization: CUDA driver initialization failed, you might not have a CUDA gpu. (Triggered internally at  ../c10/cuda/CUDAFunctions.cpp:112.)
-  return torch._C._cuda_getDeviceCount() > 0
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-torch 1.10.1+cu113
-transformers 4.28.0
-accelerate 0.18.0
-# of gpus:  0
-Script started successfully.
-Debug: eval_zero_shot flag received? True
-loading llm model meta-llama/Llama-2-7b-chat-hf
-Downloading shards:   0%|          | 0/2 [00:00<?, ?it/s]Downloading shards:  50%|█████     | 1/2 [00:47<00:47, 47.94s/it]Downloading shards: 100%|██████████| 2/2 [01:04<00:00, 29.49s/it]Downloading shards: 100%|██████████| 2/2 [01:04<00:00, 32.26s/it]
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.95s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.65s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.99s/it]
-Model loaded successfully.
-Tokenizer loaded successfully.
-use device  cuda:0
-Starting pruning with method: wanda
-loading calibration data
-dataset loading complete
-Traceback (most recent call last):
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 198, in <module>
-    main()
-  File "/mnt/parscratch/users/aca22yn/wanda/main.py", line 120, in main
-    prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/prune.py", line 136, in prune_wanda
-    inps, outs, attention_mask, position_ids = prepare_calibration_input(model, dataloader, device)
-  File "/mnt/parscratch/users/aca22yn/wanda/lib/prune.py", line 69, in prepare_calibration_input
-    inps = torch.zeros((128, model.seqlen, model.config.hidden_size), dtype=dtype, device=device)
-  File "/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm/lib/python3.9/site-packages/torch/cuda/__init__.py", line 214, in _lazy_init
-    torch._C._cuda_init()
-RuntimeError: CUDA driver initialization failed, you might not have a CUDA gpu.
-srun: error: gpu01: task 0: Exited with exit code 1

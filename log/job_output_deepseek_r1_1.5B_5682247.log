@@ -1,9 +1,0 @@
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm_backup/lib/python3.9/site-packages/transformers/utils/hub.py:106: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
-  warnings.warn(
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm_backup/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py:471: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers. Please use `token` instead.
-  warnings.warn(
-Sliding Window Attention is enabled but not implemented for `sdpa`; unexpected results may be encountered.
-Token indices sequence length is longer than the specified maximum sequence length for this model (16431 > 16384). Running this sequence through the model will result in indexing errors
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-slurmstepd: error: *** JOB 5682247 ON gpu12 CANCELLED AT 2025-03-16T00:58:40 DUE TO TIME LIMIT ***
-slurmstepd: error: *** STEP 5682247.0 ON gpu12 CANCELLED AT 2025-03-16T00:58:40 DUE TO TIME LIMIT ***

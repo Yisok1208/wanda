@@ -53,7 +53,7 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
     for _ in range(nsamples):
         while True:
             i = random.randint(0, len(traindata) - 1)
-            trainenc = tokenizer(traindata[i]['text'], return_tensors='pt')
+            trainenc = tokenizer(traindata[i]['text'], return_tensors='pt', truncation=True, max_length=seqlen)
             if trainenc.input_ids.shape[1] > seqlen:
                 break
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
@@ -66,7 +66,7 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
     max_length = getattr(tokenizer, "model_max_length", 16384)
 
     # Prepare validation dataset
-    valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
+    valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt', truncation=True, max_length=seqlen)
     valenc = valenc.input_ids[:, :max_length]
     print(f"Limiting C4 input to max_length={max_length}")
     valenc = TokenizerWrapper(valenc)

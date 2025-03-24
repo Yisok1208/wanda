@@ -1,8 +1,0 @@
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm_backup/lib/python3.9/site-packages/transformers/utils/hub.py:106: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
-  warnings.warn(
-/mnt/parscratch/users/aca22yn/anaconda/envs/prune_llm_backup/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py:471: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers. Please use `token` instead.
-  warnings.warn(
-Sliding Window Attention is enabled but not implemented for `sdpa`; unexpected results may be encountered.
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-slurmstepd: error: *** STEP 5720694.0 ON gpu14 CANCELLED AT 2025-03-17T08:36:24 DUE TO TIME LIMIT ***
-slurmstepd: error: *** JOB 5720694 ON gpu14 CANCELLED AT 2025-03-17T08:36:24 DUE TO TIME LIMIT ***
