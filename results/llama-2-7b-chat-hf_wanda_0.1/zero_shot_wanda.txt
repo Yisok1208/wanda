@@ -1,2 +1,17 @@
 Zero-shot Evaluation Results:
-{'results': {'rte': {'acc': 0.7075812274368231, 'acc_stderr': 0.027380175972575617}, 'arc_easy': {'acc': 0.7032828282828283, 'acc_stderr': 0.009373559492986853, 'acc_norm': 0.6018518518518519, 'acc_norm_stderr': 0.010044662374653393}, 'openbookqa': {'acc': 0.324, 'acc_stderr': 0.02095055731247745, 'acc_norm': 0.414, 'acc_norm_stderr': 0.02204949796982787}, 'boolq': {'acc': 0.8039755351681958, 'acc_stderr': 0.006943350594129114}, 'arc_challenge': {'acc': 0.4121160409556314, 'acc_stderr': 0.014383915302225396, 'acc_norm': 0.42150170648464164, 'acc_norm_stderr': 0.014430197069326014}, 'winogrande': {'acc': 0.6503551696921863, 'acc_stderr': 0.013402073680850503}, 'hellaswag': {'acc': 0.574088826926907, 'acc_stderr': 0.004934698012050242, 'acc_norm': 0.7350129456283608, 'acc_norm_stderr': 0.004404243675486019}}, 'versions': {'rte': 0, 'arc_easy': 0, 'openbookqa': 0, 'boolq': 1, 'arc_challenge': 0, 'winogrande': 0, 'hellaswag': 0}, 'config': {'model': 'hf', 'model_args': 'pretrained=meta-llama/Llama-2-7b-chat-hf', 'num_fewshot': 0, 'batch_size': None, 'device': None, 'no_cache': True, 'limit': None, 'bootstrap_iters': 100000, 'description_dict': {}}}
+{'results': {
+'rte': {'acc': 0.7075812274368231, 'acc_stderr': 0.027380175972575617}, 
+
+'arc_easy': {'acc': 0.7032828282828283, 'acc_stderr': 0.009373559492986853, 'acc_norm': 0.6018518518518519, 'acc_norm_stderr': 0.010044662374653393}, 
+
+'openbookqa': {'acc': 0.324, 'acc_stderr': 0.02095055731247745, 'acc_norm': 0.414, 'acc_norm_stderr': 0.02204949796982787}, 
+
+'boolq': {'acc': 0.8039755351681958, 'acc_stderr': 0.006943350594129114}, 
+
+'arc_challenge': {'acc': 0.4121160409556314, 'acc_stderr': 0.014383915302225396, 'acc_norm': 0.42150170648464164, 'acc_norm_stderr': 0.014430197069326014}, 
+
+'winogrande': {'acc': 0.6503551696921863, 'acc_stderr': 0.013402073680850503}, 
+
+'hellaswag': {'acc': 0.574088826926907, 'acc_stderr': 0.004934698012050242, 'acc_norm': 0.7350129456283608, 'acc_norm_stderr': 0.004404243675486019}}, 
+
+'versions': {'rte': 0, 'arc_easy': 0, 'openbookqa': 0, 'boolq': 1, 'arc_challenge': 0, 'winogrande': 0, 'hellaswag': 0}, 'config': {'model': 'hf', 'model_args': 'pretrained=meta-llama/Llama-2-7b-chat-hf', 'num_fewshot': 0, 'batch_size': None, 'device': None, 'no_cache': True, 'limit': None, 'bootstrap_iters': 100000, 'description_dict': {}}}

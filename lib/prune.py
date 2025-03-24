@@ -236,11 +236,12 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             self.module = module
         def forward(self, inp, **kwargs):
             
-            if inp.shape[0] > inps.shape[1]:  # 如果超出 model.seqlen，就裁剪
+            if inp.shape[0] > inps.shape[1]:
                 inp = inp[:inps.shape[1]]
             elif inp.shape[0] < inps.shape[1]:  # 如果太小，补零
                 pad_size = inps.shape[1] - inp.shape[0]
-                inp = torch.cat([inp, torch.zeros((pad_size, inp.shape[1]), device=inp.device)], dim=0)
+                pad_tensor = torch.zeros((pad_size, inp.shape[1], inp.shape[2]), device=inp.device, dtype=inp.dtype)
+                inp = torch.cat([inp, pad_tensor], dim=0)
 
             inps[cache['i']] = inp
 
