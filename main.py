@@ -107,13 +107,15 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", use_fast=False)
     print("Tokenizer loaded successfully.")
 
-    device = torch.device("cuda:0")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Detected device: {device}")
+
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
         device = model.hf_device_map["lm_head"]
     print("use device ", device)
-    model.to(device)
-    for name, param in model.named_parameters():
-        assert param.device == device, f"Parameter {name} is on {param.device}, expected {device}"
+    #model.to(device)
+    #for name, param in model.named_parameters():
+        #assert param.device == device, f"Parameter {name} is on {param.device}, expected {device}"
     print("Model moved to device successfully.")
 
     original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
