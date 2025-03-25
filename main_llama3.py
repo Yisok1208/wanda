@@ -14,18 +14,26 @@ print('accelerate', version('accelerate'))
 print('# of gpus: ', torch.cuda.device_count())
 
 def get_llm(model_name="meta-llama/Llama-3.1-8B", cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype=torch.float16,
-        cache_dir=cache_dir,
-        low_cpu_mem_usage=True,
-        device_map="auto",
-        use_auth_token=hf_token,
-        force_download=True
-    )
+    print("Starting model load...")
 
-    model.seqlen = model.config.max_position_embeddings 
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch.float16,
+            cache_dir=cache_dir,
+            low_cpu_mem_usage=True,
+            # device_map="auto",  #  Disable this for now
+            token=hf_token,
+            force_download=False
+        )
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        raise
+
+    print("Model object created. Checking config...")  # ✅ Debug print
+    model.seqlen = model.config.max_position_embeddings
     return model
+
 
 def estimate_snr(t, sparsity):
     # Apply Top-K masking directly
@@ -102,6 +110,8 @@ def main():
     model_name = args.model.split("/")[-1]
     print(f"loading llm model {args.model}")
     model = get_llm(args.model, args.cache_dir, hf_token=os.getenv("HF_TOKEN"))
+    print("Model returned from get_llm(), now evaluating.")
+    print(f"Model loaded to device map: {model.hf_device_map if hasattr(model, 'hf_device_map') else 'N/A'}")
     print("Model loaded successfully.")
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B", use_fast=False)
