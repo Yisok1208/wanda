@@ -22,7 +22,8 @@ def get_llm(model_name="meta-llama/Llama-3.1-8B", cache_dir="/mnt/parscratch/use
             torch_dtype=torch.float16,
             cache_dir=cache_dir,
             low_cpu_mem_usage=True,
-            # device_map="auto",  #  Disable this for now
+            #device_map="None",
+            max_memory={0: "70GiB"},
             token=hf_token,
             force_download=False
         )
@@ -116,15 +117,6 @@ def main():
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B", use_fast=False)
     print("Tokenizer loaded successfully.")
-
-    device = torch.device("cuda:0")
-    if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
-        device = model.hf_device_map["lm_head"]
-    print("use device ", device)
-    model.to(device)
-    for name, param in model.named_parameters():
-        assert param.device == device, f"Parameter {name} is on {param.device}, expected {device}"
-    print("Model moved to device successfully.")
 
     original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
     
