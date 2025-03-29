@@ -18,6 +18,7 @@ module load Anaconda3/2024.02-1
 
 #Activate conda
 source activate dissertation_llm
+conda activate dissertation_llm
 
 # Set Hugging Face cache environment variables
 export HF_HOME="/mnt/parscratch/users/aca22yn/cache"
