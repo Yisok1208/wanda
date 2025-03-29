@@ -13,17 +13,60 @@ print('transformers', version('transformers'))
 print('accelerate', version('accelerate'))
 print('# of gpus: ', torch.cuda.device_count())
 
-def get_llm(model_name, cache_dir="llm_weights"):
+def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transformers", hf_token=None):
     model = AutoModelForCausalLM.from_pretrained(
         model_name, 
         torch_dtype=torch.float16, 
         cache_dir=cache_dir, 
         low_cpu_mem_usage=True, 
-        device_map="auto"
+        device_map="auto",
+        token=hf_token
     )
 
     model.seqlen = model.config.max_position_embeddings 
     return model
+
+def estimate_snr(t, sparsity):
+    # Apply Top-K masking directly
+    k = int(t.numel() * (1 - sparsity))  # Number of non-zero elements to retain
+    if k == 0:
+        t_s = torch.zeros_like(t)
+    else:
+        t_abs = torch.abs(t)
+        topk_values, _ = torch.topk(t_abs.view(-1), k)
+        threshold = topk_values[-1]  # Threshold for Top-K
+        mask = (t_abs >= threshold).float()
+        t_s = mask * t  # Masked tensor
+
+    # Calculate Mean Squared Error (MSE) and Tensor Norm
+    mse = torch.mean((t - t_s) ** 2)
+    tensor_norm = torch.mean(t ** 2)
+    
+    # Compute SNR
+    if mse.item() > 0.0:
+        pruning_snr = 10 * np.log10(tensor_norm.item() / mse.item())
+    else:
+        pruning_snr = np.Inf
+    
+    return mse, pruning_snr
+
+def compute_pruning_error(model, original_weights):
+    total_error = 0.0
+    total_elements = 0
+    with torch.no_grad():
+        for name, param in model.named_parameters():
+            if 'weight' in name and param.requires_grad:
+                # Retrieve the original and pruned weights
+                original_weight = original_weights[name]
+                pruned_weight = param.data
+
+                # Compute the L2 difference (pruning error)
+                error = torch.sum((original_weight - pruned_weight) ** 2).item()
+                total_error += error
+                total_elements += param.numel()  # Count the total number of weights
+                print(f"Layer: {name} | Pruning Error: {error:.6f}")
+    avg_error = total_error / total_elements if total_elements > 0 else 0.0
+    return avg_error
 
 def main():
     parser = argparse.ArgumentParser()
@@ -34,7 +77,7 @@ def main():
     parser.add_argument("--sparsity_type", type=str, choices=["unstructured", "4:8", "2:4"])
     parser.add_argument("--prune_method", type=str, choices=["magnitude", "wanda", "sparsegpt", 
                         "ablate_mag_seq", "ablate_wanda_seq", "ablate_mag_iter", "ablate_wanda_iter", "search"])
-    parser.add_argument("--cache_dir", default="llm_weights", type=str )
+    parser.add_argument("--cache_dir", default="/mnt/parscratch/users/aca22yn/cache/transformers", type=str )
     parser.add_argument('--use_variant', action="store_true", help="whether to use the wanda variant described in the appendix")
     parser.add_argument('--save', type=str, default=None, help='Path to save results.')
     parser.add_argument('--save_model', type=str, default=None, help='Path to save the pruned model.')
