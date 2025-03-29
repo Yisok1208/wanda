@@ -17,7 +17,7 @@ module load cuDNN/8.7.0.84-CUDA-11.8.0
 module load Anaconda3/2024.02-1
 
 #Activate conda
-source $(conda info --base)/etc/profile.d/conda.sh
+source /mnt/parscratch/users/aca22yn/anaconda/etc/profile.d/conda.sh
 conda activate dissertation_llm
 
 # Set Hugging Face cache environment variables
