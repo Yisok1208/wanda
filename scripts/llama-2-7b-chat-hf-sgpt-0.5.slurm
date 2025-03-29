@@ -28,7 +28,7 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 # Set the HF_TOKEN environment variable by reading the file
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
-srun python /mnt/parscratch/users/aca22yn/wanda/main.py \
+srun python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
           --model meta-llama/Llama-2-7b-chat-hf \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
