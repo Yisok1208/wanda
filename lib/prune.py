@@ -157,7 +157,10 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
             handles.append(subset[name].register_forward_hook(add_batch(name)))
         for j in range(args.nsamples):
             with torch.no_grad():
-                outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+                batch = inps[j].unsqueeze(0)
+                seq_len = batch.shape[1]
+                position_ids_j = torch.arange(0, seq_len, dtype=torch.long, device=batch.device).unsqueeze(0)
+                outs[j] = layer(batch, position_ids=position_ids_j)[0]
         for h in handles:
             h.remove()
 
@@ -277,7 +280,10 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             handles.append(subset[name].register_forward_hook(add_batch(name)))
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            batch = inps[j].unsqueeze(0)
+            seq_len = batch.shape[1]
+            position_ids_j = torch.arange(0, seq_len, dtype=torch.long, device=batch.device).unsqueeze(0)
+            outs[j] = layer(batch, position_ids=position_ids_j)[0]
         for h in handles:
             h.remove()
 
