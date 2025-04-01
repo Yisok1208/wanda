@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=deepseek_1.5b_job
+#SBATCH --job-name=deepseek_7b_job
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=128G
@@ -7,7 +7,7 @@
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --output=job_output_deepseek_1.5b_sparse_0.5%j.log
+#SBATCH --output=job_output_deepseek_7b_sparse_0.5%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
@@ -29,10 +29,10 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
-          --model "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B" \
+          --model "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B" \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
           --eval_zero_shot \
-          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/deepseek_1.5b_sgpt_0.5/" \
-          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/deepseek_1.5b_sgpt_0.5/" \
+          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/deepseek_7b_sgpt_0.5/" \
+          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/deepseek_7b_sgpt_0.5/" \
