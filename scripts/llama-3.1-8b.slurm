@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=deepseek_7b_job
+#SBATCH --job-name=llama_3.1_8b_job
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=128G
@@ -7,7 +7,7 @@
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --output=job_output_deepseek_7b_sparse_0.5%j.log
+#SBATCH --output=job_output_llama_3.1_8b_sparse_0.5%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
@@ -34,5 +34,5 @@ srun python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
           --eval_zero_shot \
-          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/llama-3.1-8b_sgpt_0.5/" \
-          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/llama-3.1-8b_sgpt_0.5/" \
+          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/llama_3.1_8b_sgpt_0.5/" \
+          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/llama_3.1_8b_sgpt_0.5/" \
