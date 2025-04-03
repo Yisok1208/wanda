@@ -97,9 +97,13 @@ def main():
 
     model_name = args.model.split("/")[-1]
     print(f"loading llm model {args.model}")
+    print(f"loading llm model {args.model}", flush=True)
     model = get_llm(args.model, args.cache_dir)
+    print("model loaded!", flush=True)
     model.eval()
+    print("model.eval() called", flush=True)
     tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=False)
+    print("tokenizer loaded!", flush=True)
 
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
@@ -107,7 +111,7 @@ def main():
     print("use device ", device)
 
     if args.sparsity_ratio != 0:
-        print("pruning starts")
+        print("pruning starts", flush=True)
         if args.prune_method == "wanda":
             prune_wanda(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         elif args.prune_method == "magnitude":
@@ -123,8 +127,9 @@ def main():
     print(f"sparsity sanity check {sparsity_ratio:.4f}")
     print("*"*30)
     ################################################################
+    print("calling eval_ppl...", flush=True)
     ppl_test = eval_ppl(args, model, tokenizer, device)
-    print(f"wikitext perplexity {ppl_test}")
+    print(f"wikitext perplexity {ppl_test}", flush=True)
 
     if not os.path.exists(args.save):
         os.makedirs(args.save)
