@@ -31,6 +31,7 @@ export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 srun python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
           --model "meta-llama/Llama-3.1-8B" \
           --prune_method sparsegpt \
+          --nsamples 32 \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
           --eval_zero_shot \

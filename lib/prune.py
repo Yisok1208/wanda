@@ -222,8 +222,9 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 @torch.no_grad()
 def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/tree/f5c25005a61f96a0933ca2f95705a963585aafaa
-    print('Starting ...')
+    print('Starting prune_sparsegpt...', flush=True)
     dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
+    print('Calibration dataloader loaded.', flush=True)
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
@@ -249,10 +250,13 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             cache['position_ids'] = kwargs['position_ids']
             raise ValueError
     layers[0] = Catcher(layers[0])
+    print("Running model forward pass to collect calibration inputs...", flush=True)
     for batch in dataloader:
+        print("Batch fetched", flush=True)
         try:
             model(batch[0].to(dev))
         except ValueError:
+            print("Batch passed through catcher", flush=True)
             pass
     layers[0] = layers[0].module
     torch.cuda.empty_cache()
