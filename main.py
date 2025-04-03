@@ -23,7 +23,7 @@ def get_llm(model_name, cache_dir="/mnt/parscratch/users/aca22yn/cache/transform
         token=hf_token
     )
 
-    model.seqlen = model.config.max_position_embeddings 
+    model.seqlen = min(model.config.max_position_embeddings, 2048)
     return model
 
 def estimate_snr(t, sparsity):
@@ -77,11 +77,11 @@ def main():
     parser.add_argument("--sparsity_type", type=str, choices=["unstructured", "4:8", "2:4"])
     parser.add_argument("--prune_method", type=str, choices=["magnitude", "wanda", "sparsegpt", 
                         "ablate_mag_seq", "ablate_wanda_seq", "ablate_mag_iter", "ablate_wanda_iter", "search"])
+    parser.add_argument('--dataset', type=str, default='wikitext2', choices=['wikitext2', 'c4'], help='Calibration dataset')
     parser.add_argument("--cache_dir", default="/mnt/parscratch/users/aca22yn/cache/transformers", type=str )
     parser.add_argument('--use_variant', action="store_true", help="whether to use the wanda variant described in the appendix")
     parser.add_argument('--save', type=str, default=None, help='Path to save results.')
     parser.add_argument('--save_model', type=str, default=None, help='Path to save the pruned model.')
-
     parser.add_argument("--eval_zero_shot", action="store_true")
     args = parser.parse_args()
 
