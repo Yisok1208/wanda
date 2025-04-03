@@ -17,27 +17,41 @@ class TokenizerWrapper:
 
 # Load and process wikitext2 dataset
 def get_wikitext2(nsamples, seed, seqlen, tokenizer):
+    from datasets import load_dataset
+    import random
+    import torch
+
     # Load train and test datasets
     traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 
-    # Encode datasets
-    trainenc = tokenizer(" ".join(traindata['text']), return_tensors='pt')
+    # Encode test dataset for evaluation
     print("Tokenizing wikitext2 test set...")
     test_text = "\n\n".join(testdata['text'][:200])
     testenc = tokenizer(test_text, return_tensors='pt', truncation=True, max_length=256 * seqlen)
     print("Tokenization complete.")
 
-    # Generate samples from training set
+    # Generate training samples (each sample from a single document)
     random.seed(seed)
     trainloader = []
     for _ in range(nsamples):
-        i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
-        j = i + seqlen
-        inp = trainenc.input_ids[:, i:j]
+        while True:
+            idx = random.randint(0, len(traindata) - 1)
+            encoded = tokenizer(
+                traindata[idx]["text"],
+                return_tensors="pt",
+                truncation=True,
+                max_length=seqlen
+            )
+            if encoded.input_ids.shape[1] >= seqlen:
+                break
+        start = random.randint(0, encoded.input_ids.shape[1] - seqlen)
+        end = start + seqlen
+        inp = encoded.input_ids[:, start:end]
         tar = inp.clone()
         tar[:, :-1] = -100
         trainloader.append((inp, tar))
+
     return trainloader, testenc
 
 # Load and process c4 dataset
