@@ -31,10 +31,10 @@ export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 srun python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
           --model "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B" \
           --prune_method sparsegpt \
-          --nsamples 32 \
+          --nsamples 16 \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
-          --dataset wikitext2 \
+          --dataset c4 \
           --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/deepseek_7b_sgpt_0.5/" \
           --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/deepseek_7b_sgpt_0.5/" \
