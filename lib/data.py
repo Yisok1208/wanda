@@ -40,8 +40,8 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
             encoded = tokenizer(
                 traindata[idx]["text"],
                 return_tensors="pt",
-                truncation=True,
-                max_length=seqlen
+               #truncation=True,
+               #max_length=seqlen
             )
             if encoded.input_ids.shape[1] >= seqlen:
                 break
