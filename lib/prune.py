@@ -165,6 +165,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
                     position_ids=curr_position_ids
+                    use_cache=True
                 )[0]
 
         for h in handles:
@@ -212,7 +213,12 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 
         for j in range(args.nsamples):
             with torch.no_grad():
-                outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask)[0]
+                outs[j] = layer(
+                    inps[j].unsqueeze(0),
+                    attention_mask=attention_mask,
+                    position_ids=curr_position_ids
+                    use_cache=True
+                )[0]
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache 
@@ -294,10 +300,11 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
             outs[j] = layer(
-                inps[j].unsqueeze(0),
-                attention_mask=attention_mask,
-                position_ids=curr_position_ids
-            )[0]
+                    inps[j].unsqueeze(0),
+                    attention_mask=attention_mask,
+                    position_ids=curr_position_ids
+                    use_cache=True
+                )[0]
 
         for h in handles:
             h.remove()
@@ -314,10 +321,11 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
             outs[j] = layer(
-                inps[j].unsqueeze(0),
-                attention_mask=attention_mask,
-                position_ids=curr_position_ids
-            )[0]
+                    inps[j].unsqueeze(0),
+                    attention_mask=attention_mask,
+                    position_ids=curr_position_ids
+                    use_cache=True
+                )[0]
 
         layers[i] = layer 
         torch.cuda.empty_cache()
@@ -396,7 +404,12 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             handles.append(subset[name].register_forward_hook(add_batch(name)))
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            outs[j] = layer(
+                    inps[j].unsqueeze(0),
+                    attention_mask=attention_mask,
+                    position_ids=curr_position_ids
+                    use_cache=True
+                )[0]
         for h in handles:
             h.remove()
 
@@ -415,7 +428,12 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             gpts[name].free()
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            outs[j] = layer(
+                    inps[j].unsqueeze(0),
+                    attention_mask=attention_mask,
+                    position_ids=curr_position_ids
+                    use_cache=True
+                )[0]
 
         layers[i] = layer 
         torch.cuda.empty_cache()
