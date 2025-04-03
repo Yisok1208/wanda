@@ -40,8 +40,6 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
             encoded = tokenizer(
                 traindata[idx]["text"],
                 return_tensors="pt",
-               #truncation=True,
-               #max_length=seqlen
             )
             if encoded.input_ids.shape[1] >= seqlen:
                 break
@@ -69,8 +67,6 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
             trainenc = tokenizer(
                 traindata[i]['text'],
                 return_tensors='pt',
-                truncation=True,
-                max_length=seqlen
             )
             if trainenc.input_ids.shape[1] >= seqlen:
                 break
