@@ -165,7 +165,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                     inputs_embeds=inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
                     use_cache=False
-                ).last_hidden_state[0]
+                ).logits[0]
 
         for h in handles:
             h.remove()
@@ -216,7 +216,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                     inputs_embeds=inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
                     use_cache=False
-                ).last_hidden_state[0]
+                ).logits[0]
 
         inps, outs = outs, inps
 
@@ -302,7 +302,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
                 inputs_embeds=inps[j].unsqueeze(0),
                 attention_mask=attention_mask,
                 use_cache=False
-            ).last_hidden_state[0]
+            ).logits[0]
 
 
         for h in handles:
@@ -323,7 +323,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
                 inputs_embeds=inps[j].unsqueeze(0),
                 attention_mask=attention_mask,
                 use_cache=False
-            ).last_hidden_state[0]
+            ).logits[0]
 
 
         layers[i] = layer 
