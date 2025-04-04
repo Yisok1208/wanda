@@ -162,10 +162,11 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                 curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
                 outs[j] = model(
-                    input_ids=inps[j].unsqueeze(0),
+                    input_ids=inps[j].unsqueeze(0).long(),
                     attention_mask=attention_mask,
                     use_cache=False
                 ).logits[0]
+
 
         for h in handles:
             h.remove()
@@ -213,10 +214,11 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
         for j in range(args.nsamples):
             with torch.no_grad():
                 outs[j] = model(
-                    input_ids=inps[j].unsqueeze(0),
+                    input_ids=inps[j].unsqueeze(0).long(),
                     attention_mask=attention_mask,
                     use_cache=False
                 ).logits[0]
+
 
         inps, outs = outs, inps
 
@@ -299,7 +301,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
             outs[j] = model(
-                input_ids=inps[j].unsqueeze(0),
+                input_ids=inps[j].unsqueeze(0).long(),
                 attention_mask=attention_mask,
                 use_cache=False
             ).logits[0]
@@ -320,10 +322,11 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
             outs[j] = model(
-                inputs_embeds=inps[j].unsqueeze(0),
+                input_ids=inps[j].unsqueeze(0).long(),
                 attention_mask=attention_mask,
                 use_cache=False
             ).logits[0]
+
 
 
         layers[i] = layer 
