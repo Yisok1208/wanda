@@ -161,12 +161,11 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                 seq_len = inps[j].shape[0]
                 curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
-                outs[j] = layer(
-                    inps[j].unsqueeze(0),
+                outs[j] = model(
+                    inputs_embeds=inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    past_key_values=None
-                )[0]
+                    use_cache=False
+                ).last_hidden_state[0]
 
         for h in handles:
             h.remove()
@@ -213,12 +212,12 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 
         for j in range(args.nsamples):
             with torch.no_grad():
-                outs[j] = layer(
-                    inps[j].unsqueeze(0),
+                outs[j] = model(
+                    inputs_embeds=inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    past_key_values=None
-                )[0]
+                    use_cache=False
+                ).last_hidden_state[0]
+
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache 
@@ -299,12 +298,12 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             seq_len = inps[j].shape[0]
             curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
-            outs[j] = layer(
-                    inps[j].unsqueeze(0),
-                    attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    past_key_values=None
-                )[0]
+            outs[j] = model(
+                inputs_embeds=inps[j].unsqueeze(0),
+                attention_mask=attention_mask,
+                use_cache=False
+            ).last_hidden_state[0]
+
 
         for h in handles:
             h.remove()
@@ -320,12 +319,12 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             seq_len = inps[j].shape[0]
             curr_position_ids = torch.arange(seq_len, dtype=torch.long, device=inps[j].device).unsqueeze(0)
 
-            outs[j] = layer(
-                    inps[j].unsqueeze(0),
-                    attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    past_key_values=None
-                )[0]
+            outs[j] = model(
+                inputs_embeds=inps[j].unsqueeze(0),
+                attention_mask=attention_mask,
+                use_cache=False
+            ).last_hidden_state[0]
+
 
         layers[i] = layer 
         torch.cuda.empty_cache()
