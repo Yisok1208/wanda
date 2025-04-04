@@ -16,10 +16,6 @@ export SLURM_EXPORT_ENV=ALL
 module load cuDNN/8.7.0.84-CUDA-11.8.0
 module load Anaconda3/2024.02-1
 
-#Activate conda
-source /mnt/parscratch/users/aca22yn/anaconda/etc/profile.d/conda.sh
-conda activate dissertation_llm
-
 # Set Hugging Face cache environment variables
 export HF_HOME="/mnt/parscratch/users/aca22yn/cache"
 export HF_DATASETS_CACHE="/mnt/parscratch/users/aca22yn/cache/datasets"
@@ -28,7 +24,7 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 # Set the HF_TOKEN environment variable by reading the file
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
-srun python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
+conda run -n dissertation_llm python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
           --model "meta-llama/Llama-3.1-8B" \
           --prune_method sparsegpt \
           --nsamples 16 \
