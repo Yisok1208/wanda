@@ -1,0 +1,110 @@
+/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/utils/hub.py:105: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+torch 2.5.1+cu118
+transformers 4.50.3
+accelerate 1.6.0
+# of gpus:  1
+loading llm model deepseek-ai/DeepSeek-R1-Distill-Qwen-7B
+loading llm model deepseek-ai/DeepSeek-R1-Distill-Qwen-7B
+Sliding Window Attention is enabled but not implemented for `sdpa`; unexpected results may be encountered.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:11<00:11, 11.04s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:13<00:00,  5.83s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:13<00:00,  6.61s/it]
+model loaded!
+model.eval() called
+tokenizer loaded!
+use device  cuda:0
+pruning starts
+Starting prune_sparsegpt...
+Calibration dataloader loaded.
+Running model forward pass to collect calibration inputs...
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Ready.
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda2/wanda/main.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/parscratch/users/aca22yn/wanda2/wanda/main.py", line 120, in main
+    prune_sparsegpt(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/wanda2/wanda/lib/prune.py", line 301, in prune_sparsegpt
+    outs[j] = model(
+              ~~~~~^
+        input_ids=inps[j].unsqueeze(0),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        attention_mask=attention_mask,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        use_cache=False
+        ^^^^^^^^^^^^^^^
+    ).logits[0]
+    ^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/models/qwen2/modeling_qwen2.py", line 855, in forward
+    outputs = self.model(
+        input_ids=input_ids,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/models/qwen2/modeling_qwen2.py", line 535, in forward
+    inputs_embeds = self.embed_tokens(input_ids)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/sparse.py", line 190, in forward
+    return F.embedding(
+           ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<5 lines>...
+        self.sparse,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/functional.py", line 2551, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected tensor for argument #1 'indices' to have one of the following scalar types: Long, Int; but got torch.cuda.HalfTensor instead (while checking arguments for embedding)

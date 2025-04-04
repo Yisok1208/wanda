@@ -1,0 +1,94 @@
+/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/utils/hub.py:105: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+torch 2.5.1+cu118
+transformers 4.50.3
+accelerate 1.6.0
+# of gpus:  1
+loading llm model meta-llama/Llama-3.1-8B
+loading llm model meta-llama/Llama-3.1-8B
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:07<00:22,  7.61s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:16<00:16,  8.48s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:22<00:07,  7.41s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:25<00:00,  5.42s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:25<00:00,  6.30s/it]
+model loaded!
+model.eval() called
+tokenizer loaded!
+use device  cuda:0
+pruning starts
+Starting prune_sparsegpt...
+Calibration dataloader loaded.
+Running model forward pass to collect calibration inputs...
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Batch fetched
+Batch passed through catcher
+Ready.
+Traceback (most recent call last):
+  File "/mnt/parscratch/users/aca22yn/wanda2/wanda/main.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/parscratch/users/aca22yn/wanda2/wanda/main.py", line 120, in main
+    prune_sparsegpt(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/wanda2/wanda/lib/prune.py", line 300, in prune_sparsegpt
+    outs[j] = layer(
+              ~~~~~^
+            inps[j].unsqueeze(0),
+            ^^^^^^^^^^^^^^^^^^^^^
+            attention_mask=attention_mask,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            position_ids=curr_position_ids
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        )[0]
+        ^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/models/llama/modeling_llama.py", line 343, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+                                       ~~~~~~~~~~~~~~^
+        hidden_states=hidden_states,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/lib/python3.13/site-packages/transformers/models/llama/modeling_llama.py", line 281, in forward
+    cos, sin = position_embeddings
+    ^^^^^^^^
+TypeError: cannot unpack non-iterable NoneType object
