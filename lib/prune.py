@@ -164,8 +164,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                 outs[j] = layer(
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    use_cache=True
+                    position_ids=curr_position_ids
                 )[0]
 
         for h in handles:
@@ -216,8 +215,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
                 outs[j] = layer(
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    use_cache=True
+                    position_ids=curr_position_ids
                 )[0]
         inps, outs = outs, inps
 
@@ -302,8 +300,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             outs[j] = layer(
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    use_cache=True
+                    position_ids=curr_position_ids
                 )[0]
 
         for h in handles:
@@ -323,8 +320,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             outs[j] = layer(
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    use_cache=True
+                    position_ids=curr_position_ids
                 )[0]
 
         layers[i] = layer 
@@ -407,8 +403,7 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             outs[j] = layer(
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    use_cache=True
+                    position_ids=curr_position_ids
                 )[0]
         for h in handles:
             h.remove()
@@ -431,8 +426,7 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             outs[j] = layer(
                     inps[j].unsqueeze(0),
                     attention_mask=attention_mask,
-                    position_ids=curr_position_ids,
-                    use_cache=True
+                    position_ids=curr_position_ids
                 )[0]
 
         layers[i] = layer 
