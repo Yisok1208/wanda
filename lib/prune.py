@@ -31,7 +31,7 @@ def find_layers(module, layers=[nn.Linear], name=''):
 
 def check_sparsity(model):
     use_cache = model.config.use_cache 
-    model.config.use_cache = False 
+   #model.config.use_cache = False 
 
     layers = model.model.layers
     count = 0 
@@ -57,7 +57,7 @@ def check_sparsity(model):
 
 def prepare_calibration_input(model, dataloader, device):
     use_cache = model.config.use_cache
-    model.config.use_cache = False
+   #model.config.use_cache = False
     layers = model.model.layers
 
     # dev = model.hf_device_map["model.embed_tokens"]
@@ -126,7 +126,7 @@ def prune_magnitude(args, model, tokenizer, device=torch.device("cuda:0"), prune
 
 def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0, prune_m=0):
     use_cache = model.config.use_cache 
-    model.config.use_cache = False 
+   #model.config.use_cache = False 
 
     print("loading calibdation data")
     dataloader, _ = get_loaders(args.dataset, nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
@@ -233,7 +233,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     print('Calibration dataloader loaded.', flush=True)
 
     use_cache = model.config.use_cache
-    model.config.use_cache = False
+   #model.config.use_cache = False
     layers = model.model.layers
 
     if "model.embed_tokens" in model.hf_device_map:
@@ -344,7 +344,7 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     dataloader, _ = get_loaders(args.dataset, nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
 
     use_cache = model.config.use_cache
-    model.config.use_cache = False
+   #model.config.use_cache = False
     layers = model.model.layers
 
     if "model.embed_tokens" in model.hf_device_map:
