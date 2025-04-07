@@ -19,8 +19,7 @@ def get_llm(model_name, cache_dir="llm_weights"):
         torch_dtype=torch.float16, 
         cache_dir=cache_dir, 
         low_cpu_mem_usage=True, 
-        device_map="auto",
-        token=hf_token
+        device_map="auto"
     )
 
     model.seqlen = model.config.max_position_embeddings 
