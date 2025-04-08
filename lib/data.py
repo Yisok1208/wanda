@@ -60,16 +60,10 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
         trainloader.append((inp, tar))
 
     # Prepare validation dataset
-    max_val_texts = 100 
-    joined_text = ' '.join(
-        valdata[i]['text'] for i in range(min(max_val_texts, len(valdata)))
-        if valdata[i]['text'].strip()
-    )
-
-    valenc_enc = tokenizer(joined_text, return_tensors='pt', truncation=True, max_length=256 * seqlen)
-    valenc = TokenizerWrapper(valenc_enc.input_ids)
+    valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
+    valenc = valenc.input_ids[:, :(256 * seqlen)]
+    valenc = TokenizerWrapper(valenc)
     return trainloader, valenc
-
 
 # Function to select the appropriate loader based on dataset name
 def get_loaders(name, nsamples=128, seed=0, seqlen=2048, tokenizer=None):
