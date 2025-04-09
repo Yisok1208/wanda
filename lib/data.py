@@ -41,14 +41,16 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 def get_c4(nsamples, seed, seqlen, tokenizer):
     # Load both train and validation datasets together
     datasets = load_dataset(
-        'allenai/c4', 'en',
-        data_files={
-            'train': 'en/c4-train.00000-of-01024.json.gz',
-            'validation': 'en/c4-validation.00000-of-00008.json.gz'
-        }
-    )
-    traindata = datasets['train']
-    valdata = datasets['validation']
+    'allenai/c4',
+    'en',
+    data_files={
+        'train': 'en/c4-train.00000-of-01024.json.gz',
+        'validation': 'en/c4-validation.00000-of-00008.json.gz'
+    },
+    verification_mode="no_checks"  # disables the integrity check for split sizes
+)
+traindata = datasets['train']
+valdata = datasets['validation']
 
     # Rest of the code to sample training data remains the same...
     random.seed(seed)
