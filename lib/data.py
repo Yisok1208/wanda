@@ -39,7 +39,6 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 
 # Load and process c4 dataset
 def get_c4(nsamples, seed, seqlen, tokenizer):
-    # Load both train and validation datasets together
     datasets = load_dataset(
         'allenai/c4',
         'en',
@@ -47,26 +46,23 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
             'train': 'en/c4-train.00000-of-01024.json.gz',
             'validation': 'en/c4-validation.00000-of-00008.json.gz'
         },
-        verification_mode="no_checks"  # disables the integrity check for split sizes
+        verification_mode="no_checks"
     )
     traindata = datasets['train']
     valdata = datasets['validation']
 
-    # Rest of the code to sample training data remains the same...
     random.seed(seed)
     trainloader = []
     for _ in range(nsamples):
-        attempts = 0
-        max_attempts = 1000  # adjust as needed
-        while attempts < max_attempts:
+        # Instead of selecting a single example, concatenate multiple examples until reaching seqlen
+        concatenated_text = ""
+        while True:
             i = random.randint(0, len(traindata) - 1)
-            trainenc = tokenizer(traindata[i]['text'], return_tensors='pt')
-            # Check if the tokenized sequence is long enough
+            concatenated_text += " " + traindata[i]['text']
+            trainenc = tokenizer(concatenated_text, return_tensors='pt')
             if trainenc.input_ids.shape[1] > seqlen:
                 break
-            attempts += 1
-        if attempts == max_attempts:
-            raise ValueError("Could not find a training example longer than seqlen after many attempts.")
+
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
@@ -74,7 +70,6 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
         tar[:, :-1] = -100
         trainloader.append((inp, tar))
 
-    # Process validation data similarly:
     valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
     valenc = valenc.input_ids[:, :(256 * seqlen)]
     valenc = TokenizerWrapper(valenc)
