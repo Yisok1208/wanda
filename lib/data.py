@@ -56,11 +56,17 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
     random.seed(seed)
     trainloader = []
     for _ in range(nsamples):
-        while True:
+        attempts = 0
+        max_attempts = 1000  # adjust as needed
+        while attempts < max_attempts:
             i = random.randint(0, len(traindata) - 1)
             trainenc = tokenizer(traindata[i]['text'], return_tensors='pt')
+            # Check if the tokenized sequence is long enough
             if trainenc.input_ids.shape[1] > seqlen:
                 break
+            attempts += 1
+        if attempts == max_attempts:
+            raise ValueError("Could not find a training example longer than seqlen after many attempts.")
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
