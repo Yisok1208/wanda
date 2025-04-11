@@ -25,10 +25,10 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 /mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/bin/python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
-          --model "meta-llama/Llama-3.1-8B" \
+          --model "meta-llama/Llama-3.2-3B" \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
           --eval_zero_shot \
-          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/llama_3.1_8b_sgpt_0.5/" \
-          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/llama_3.1_8b_sgpt_0.5/" \
+          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/llama_3.2_3b_sgpt_0.5/" \
+          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/llama_3.2_3b_sgpt_0.5/" \
