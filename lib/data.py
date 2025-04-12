@@ -18,15 +18,12 @@ class TokenizerWrapper:
 # Load and process wikitext2 dataset
 def get_wikitext2(nsamples, seed, seqlen, tokenizer):
     # Load train and test datasets
-    traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train', trust_remote_code=True)
-    testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test', trust_remote_code=True)
+    traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
+    testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 
     # Encode datasets
     trainenc = tokenizer(" ".join(traindata['text']), return_tensors='pt')
-    max_length = getattr(tokenizer, "model_max_length", 16384)
     testenc = tokenizer("\n\n".join(testdata['text']), return_tensors='pt')
-    testenc.input_ids = testenc.input_ids[:, :max_length]
-    print(f"Limiting Wikitext2 input to max_length={max_length}")
 
     # Generate samples from training set
     random.seed(seed)
@@ -42,20 +39,30 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 
 # Load and process c4 dataset
 def get_c4(nsamples, seed, seqlen, tokenizer):
-    cache_dir = '/mnt/parscratch/users/aca22yn/cache/datasets'
-    # Load train and validation datasets
-    traindata = load_dataset('allenai/c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train', cache_dir=cache_dir, trust_remote_code=True)
-    valdata = load_dataset('allenai/c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation', cache_dir=cache_dir, trust_remote_code=True)
+    datasets = load_dataset(
+        'allenai/c4',
+        'en',
+        data_files={
+            'train': 'en/c4-train.00000-of-01024.json.gz',
+            'validation': 'en/c4-validation.00000-of-00008.json.gz'
+        },
+        verification_mode="no_checks"
+    )
+    traindata = datasets['train']
+    valdata = datasets['validation']
 
-    # Generate samples from training set
     random.seed(seed)
     trainloader = []
     for _ in range(nsamples):
+        # Instead of selecting a single example, concatenate multiple examples until reaching seqlen
+        concatenated_text = ""
         while True:
             i = random.randint(0, len(traindata) - 1)
-            trainenc = tokenizer(traindata[i]['text'], return_tensors='pt', truncation=True, max_length=seqlen)
+            concatenated_text += " " + traindata[i]['text']
+            trainenc = tokenizer(concatenated_text, return_tensors='pt')
             if trainenc.input_ids.shape[1] > seqlen:
                 break
+
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
@@ -63,26 +70,13 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
         tar[:, :-1] = -100
         trainloader.append((inp, tar))
 
-    max_length = getattr(tokenizer, "model_max_length", 16384)
-
-    # Prepare validation dataset
-    valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt', truncation=True, max_length=seqlen)
-    valenc = valenc.input_ids[:, :max_length]
-    print(f"Limiting C4 input to max_length={max_length}")
+    valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
+    valenc = valenc.input_ids[:, :(256 * seqlen)]
     valenc = TokenizerWrapper(valenc)
     return trainloader, valenc
 
 # Function to select the appropriate loader based on dataset name
 def get_loaders(name, nsamples=128, seed=0, seqlen=2048, tokenizer=None):
-    if tokenizer is None:
-        raise ValueError("tokenizer cannot be empty")
-
-    max_length = getattr(tokenizer, "model_max_length", 16384)
-    print(f"Using max_length={max_length} for dataset {name}")
-
-    seqlen = min(seqlen, max_length)
-    print(f"Adjusted seqlen to {seqlen}")
-
     if 'wikitext2' in name:
         return get_wikitext2(nsamples, seed, seqlen, tokenizer)
     if "c4" in name:
