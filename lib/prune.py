@@ -266,11 +266,12 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
                 print("WARNING: attention_mask is None, 使用全1默认值")
             else:
                 attention_mask = attention_mask.to(dev)
-            if position_ids is not None:
-                position_ids = position_ids.to(dev)
+            if position_ids is None:
+                position_ids = torch.arange(inps.shape[1], device=dev).unsqueeze(0).expand(inps.shape[0], -1)
+                print("WARNING: position_ids is None, 使用默认的连续位置id")
             else:
-                position_ids = torch.zeros(inps.shape[0], inps.shape[1], dtype=torch.long, device=dev)
-                print("WARNING: position_ids is None, 使用全0默认值")
+                position_ids = position_ids.to(dev)
+
 
         subset = find_layers(layer)
 
