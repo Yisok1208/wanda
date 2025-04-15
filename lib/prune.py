@@ -76,9 +76,12 @@ def prepare_calibration_input(model, dataloader, device):
         def forward(self, inp, **kwargs):
             inps[cache['i']] = inp
             cache['i'] += 1
+            # 尝试获取 attention_mask 与 position_ids；如果没有，则设为 None
             cache['attention_mask'] = kwargs.get('attention_mask', None)
             cache['position_ids'] = kwargs.get('position_ids', None)
             raise ValueError
+
+    # 将第一个层替换为 Catcher 用于捕获输入
     layers[0] = Catcher(layers[0])
     for batch in dataloader:
         try:
@@ -91,14 +94,15 @@ def prepare_calibration_input(model, dataloader, device):
     attention_mask = cache['attention_mask']
     position_ids = cache['position_ids']
 
-    # 如果 attention_mask 仍为空，则采用全1默认值
+    # 如果 attention_mask 还是 None，则使用全1默认值
     if attention_mask is None:
         attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=device)
         print("WARNING: attention_mask is None, 使用全1默认值")
-    # 如果 position_ids 为空，则生成默认的连续索引，形状应为 (batch_size, seq_len)
+    # 如果 position_ids 还是 None，则生成默认的连续位置索引
     if position_ids is None:
+        # 创建一个 0 到 (seqlen - 1) 的连续序列，重复 batch_size 次
         position_ids = torch.arange(inps.shape[1], device=device).unsqueeze(0).expand(inps.shape[0], -1)
-        print("WARNING: position_ids is None, 使用默认的连续位置索引")
+        print("WARNING: position_ids 为 None, 使用默认的连续位置索引")
     
     model.config.use_cache = use_cache
 
