@@ -259,7 +259,14 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
         if f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             print(f"layer {i} device {dev}")
-            inps, outs, attention_mask, position_ids = inps.to(dev), outs.to(dev), attention_mask.to(dev), position_ids.to(dev)
+            inps = inps.to(dev)
+            outs = outs.to(dev)
+            attention_mask = attention_mask.to(dev)
+            if position_ids is not None:
+                position_ids = position_ids.to(dev)
+            else:
+                position_ids = torch.zeros_like(attention_mask) 
+                print("WARNING：position_ids is None")
 
         subset = find_layers(layer)
 
