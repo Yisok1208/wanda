@@ -225,10 +225,11 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 
 
 @torch.no_grad()
+@torch.no_grad()
 def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
-    ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/tree/f5c25005a61f96a0933ca2f95705a963585aafaa
+    ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/...
     print('Starting ...')
-    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
+    dataloader, _ = get_loaders("c4", nsamples=args.nsamples, seed=args.seed, seqlen=model.seqlen, tokenizer=tokenizer)
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
@@ -238,9 +239,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
         dev = model.hf_device_map["model.embed_tokens"]
 
     dtype = next(iter(model.parameters())).dtype
-    inps = torch.zeros(
-        (args.nsamples, model.seqlen, model.config.hidden_size), dtype=dtype, device=dev
-    )
+    inps = torch.zeros((args.nsamples, model.seqlen, model.config.hidden_size), dtype=dtype, device=dev)
     cache = {'i': 0, 'attention_mask': None, "position_ids": None}
 
     class Catcher(nn.Module):
@@ -286,9 +285,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             else:
                 position_ids = position_ids.to(dev)
 
-
         subset = find_layers(layer)
-
         gpts = {}
         for name in subset:
             gpts[name] = SparseGPT(subset[name])
@@ -302,34 +299,37 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
         for name in gpts:
             handles.append(subset[name].register_forward_hook(add_batch(name)))
 
+        # 在调用 forward 时，针对每个 sample 分别传入其对应的 attention_mask 与 position_ids
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            outs[j] = layer(
+                inps[j].unsqueeze(0),
+                attention_mask=attention_mask[j].unsqueeze(0),
+                position_ids=position_ids[j].unsqueeze(0)
+            )[0]
         for h in handles:
             h.remove()
 
         for name in gpts:
             print(i, name)
             print('Pruning ...')
-
             gpts[name].fasterprune(args.sparsity_ratio, prune_n=prune_n, prune_m=prune_m, percdamp=0.01, blocksize=128)
             gpts[name].free()
 
         for j in range(args.nsamples):
             with torch.no_grad():
-                if position_ids is None:
-                    outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask)[0]
-                else:
-                    outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+                # 同样这里分sample传入
+                outs[j] = layer(
+                    inps[j].unsqueeze(0),
+                    attention_mask=attention_mask[j].unsqueeze(0),
+                    position_ids=position_ids[j].unsqueeze(0)
+                )[0]
 
         layers[i] = layer 
         torch.cuda.empty_cache()
-
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache
     torch.cuda.empty_cache()
-
-
 
 @torch.no_grad()
 def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
