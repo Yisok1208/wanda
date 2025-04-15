@@ -47,6 +47,7 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
             'validation': 'en/c4-validation.00000-of-00008.json.gz'
         },
         verification_mode="no_checks"
+        download_mode="force_redownload"
     )
     traindata = datasets['train']
     valdata = datasets['validation']
