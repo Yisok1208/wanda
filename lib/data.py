@@ -46,6 +46,7 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
             'train': 'en/c4-train.00000-of-01024.json.gz',
             'validation': 'en/c4-validation.00000-of-00008.json.gz'
         },
+        cache_dir="./datasets_cache",
         verification_mode="no_checks",
         download_mode="force_redownload"
     )
