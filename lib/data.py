@@ -41,7 +41,7 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 def get_c4(nsamples, seed, seqlen, tokenizer):
     datasets = load_dataset(
         'allenai/c4',
-        'en',
+        'en-a3e66ef7800043cd',
         data_files={
             'train': 'en/c4-train.00000-of-01024.json.gz',
             'validation': 'en/c4-validation.00000-of-00008.json.gz'
