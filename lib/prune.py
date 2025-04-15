@@ -301,7 +301,11 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             gpts[name].free()
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            with torch.no_grad():
+                if position_ids is None:
+                    outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask)[0]
+                else:
+                    outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
 
         layers[i] = layer 
         torch.cuda.empty_cache()
