@@ -60,7 +60,7 @@ def prepare_calibration_input(model, dataloader, device):
     model.config.use_cache = False
     layers = model.model.layers
 
-    # dev = model.hf_device_map["model.embed_tokens"]
+    # 如果模型有 embed_tokens 的设备映射，则使用该设备
     if "model.embed_tokens" in model.hf_device_map:
         device = model.hf_device_map["model.embed_tokens"]
 
@@ -76,8 +76,8 @@ def prepare_calibration_input(model, dataloader, device):
         def forward(self, inp, **kwargs):
             inps[cache['i']] = inp
             cache['i'] += 1
-            cache['attention_mask'] = kwargs['attention_mask']
-            cache['position_ids'] = kwargs['position_ids']
+            cache['attention_mask'] = kwargs.get('attention_mask', None)
+            cache['position_ids'] = kwargs.get('position_ids', None)
             raise ValueError
     layers[0] = Catcher(layers[0])
     for batch in dataloader:
@@ -90,9 +90,19 @@ def prepare_calibration_input(model, dataloader, device):
     outs = torch.zeros_like(inps)
     attention_mask = cache['attention_mask']
     position_ids = cache['position_ids']
+
+    # 如果 attention_mask 仍为空，则采用全1默认值
+    if attention_mask is None:
+        attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=device)
+        print("WARNING: attention_mask is None, 使用全1默认值")
+    # 如果 position_ids 为空，则生成默认的连续索引，形状应为 (batch_size, seq_len)
+    if position_ids is None:
+        position_ids = torch.arange(inps.shape[1], device=device).unsqueeze(0).expand(inps.shape[0], -1)
+        print("WARNING: position_ids is None, 使用默认的连续位置索引")
+    
     model.config.use_cache = use_cache
 
-    return inps, outs, attention_mask, position_ids 
+    return inps, outs, attention_mask, position_ids
 
 def return_given_alpha(alpha, sort_res, W_metric, tmp_metric, sum_before):
     thres_cumsum = sum_before * alpha 
