@@ -261,12 +261,16 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             print(f"layer {i} device {dev}")
             inps = inps.to(dev)
             outs = outs.to(dev)
-            attention_mask = attention_mask.to(dev)
+            if attention_mask is None:
+                attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=dev)
+                print("WARNING: attention_mask is None, 使用全1默认值")
+            else:
+                attention_mask = attention_mask.to(dev)
             if position_ids is not None:
                 position_ids = position_ids.to(dev)
             else:
-                position_ids = torch.zeros_like(attention_mask) 
-                print("WARNING：position_ids is None")
+                position_ids = torch.zeros(inps.shape[0], inps.shape[1], dtype=torch.long, device=dev)
+                print("WARNING: position_ids is None, 使用全0默认值")
 
         subset = find_layers(layer)
 
