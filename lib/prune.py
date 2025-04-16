@@ -98,20 +98,19 @@ def prepare_calibration_input(model, dataloader, device):
     if inps.shape[1] > max_seqlen:
         print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen}")
         inps = inps[:, :max_seqlen]
+        
+        # Handle attention_mask truncation or creation
         if attention_mask is not None:
             attention_mask = attention_mask[:, :max_seqlen]
+        else:
+            attention_mask = torch.ones(inps.shape[0], max_seqlen, dtype=torch.long, device=device)
+        
+        # Handle position_ids truncation or creation
         if position_ids is not None:
             position_ids = position_ids[:, :max_seqlen]
+        else:
+            position_ids = torch.arange(max_seqlen, device=device).unsqueeze(0).expand(inps.shape[0], -1)
 
-    # Regenerate position_ids based on TRUNCATED length
-    if position_ids is None:
-        position_ids = torch.arange(max_seqlen, device=device)  # Use max_seqlen instead of inps.shape[1]
-        position_ids = position_ids.unsqueeze(0).expand(inps.shape[0], -1)
-        print("Generated position_ids after truncation")
-
-    if attention_mask is None:
-        attention_mask = torch.ones(inps.shape[0], max_seqlen, dtype=torch.long, device=device)
-    
     model.config.use_cache = use_cache
     return inps, outs, attention_mask, position_ids
 
@@ -237,10 +236,10 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/...
     print('Starting ...')
     dataloader, _ = get_loaders(
-        "c4", 
+        "c4",
         nsamples=args.nsamples,
         seed=args.seed,
-        seqlen=model.config.max_position_embeddings,
+        seqlen=model.config.max_position_embeddings,  # Critical fix
         tokenizer=tokenizer
     )
 
@@ -287,26 +286,17 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             dev = model.hf_device_map[f"model.layers.{i}"]
             print(f"layer {i} device {dev}")
 
-            # Enforce valid tensors before device transfer
+            # Guarantee valid tensors before device transfer
             max_seqlen = model.config.max_position_embeddings
-            
-            # Truncate if needed
             if inps.shape[1] > max_seqlen:
                 inps = inps[:, :max_seqlen]
-                if attention_mask is not None:
-                    attention_mask = attention_mask[:, :max_seqlen]
-                if position_ids is not None:
-                    position_ids = position_ids[:, :max_seqlen]
+                attention_mask = attention_mask[:, :max_seqlen]  # Now guaranteed to exist
+                position_ids = position_ids[:, :max_seqlen]  # Now guaranteed to exist
 
-            # Regenerate position_ids if missing
-            if position_ids is None:
-                position_ids = torch.arange(max_seqlen, device=inps.device)
-                position_ids = position_ids.unsqueeze(0).expand(inps.shape[0], -1)
-
-            # Device transfer
+            # Explicit device transfer
             inps = inps.to(dev)
             outs = outs.to(dev)
-            attention_mask = attention_mask.to(dev)  # Now guaranteed to exist
+            attention_mask = attention_mask.to(dev)
             position_ids = position_ids.to(dev)
 
         subset = find_layers(layer)
