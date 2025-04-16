@@ -277,35 +277,36 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 
     print('Ready.')
 
-     for i in range(len(layers)):
-    layer = layers[i]  # <-- This line MUST be indented under the for-loop
-    if f"model.layers.{i}" in model.hf_device_map:
-        dev = model.hf_device_map[f"model.layers.{i}"]
-        print(f"layer {i} device {dev}")
-        
-        # Truncation logic
-        max_seqlen = model.config.max_position_embeddings
-        if inps.shape[1] > max_seqlen:
-            inps = inps[:, :max_seqlen]
-            attention_mask = attention_mask[:, :max_seqlen] if attention_mask is not None else None
-            position_ids = position_ids[:, :max_seqlen] if position_ids is not None else None
-        
-        # Device transfer
-        inps = inps.to(dev)
-        outs = outs.to(dev)
-        
-        # Handle attention_mask
-        if attention_mask is None:
-            attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=dev)
-            print("WARNING: attention_mask is None, 使用全1默认值")
-        else:
-            attention_mask = attention_mask.to(dev)
-        
-        # Handle position_ids 
-        if position_ids is None:
-            position_ids = torch.arange(inps.shape[1], device=dev).unsqueeze(0).expand(inps.shape[0], -1)
-        else:
-            position_ids = position_ids.to(dev)
+    # FIXED INDENTATION ▼▼▼
+    for i in range(len(layers)):
+        layer = layers[i]  # Now properly indented under for-loop
+        if f"model.layers.{i}" in model.hf_device_map:
+            dev = model.hf_device_map[f"model.layers.{i}"]
+            print(f"layer {i} device {dev}")
+            
+            # Truncation logic
+            max_seqlen = model.config.max_position_embeddings
+            if inps.shape[1] > max_seqlen:
+                inps = inps[:, :max_seqlen]
+                attention_mask = attention_mask[:, :max_seqlen] if attention_mask is not None else None
+                position_ids = position_ids[:, :max_seqlen] if position_ids is not None else None
+            
+            # Device transfer
+            inps = inps.to(dev)
+            outs = outs.to(dev)
+            
+            # Handle attention_mask
+            if attention_mask is None:
+                attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=dev)
+                print("WARNING: attention_mask is None, 使用全1默认值")
+            else:
+                attention_mask = attention_mask.to(dev)
+            
+            # Handle position_ids 
+            if position_ids is None:
+                position_ids = torch.arange(inps.shape[1], device=dev).unsqueeze(0).expand(inps.shape[0], -1)
+            else:
+                position_ids = position_ids.to(dev)
 
         subset = find_layers(layer)
         gpts = {}
