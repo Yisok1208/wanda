@@ -85,19 +85,16 @@ def prepare_calibration_input(model, dataloader, device):
     layers[0] = Catcher(layers[0])
     for batch in dataloader:
     try:
-        # unpack batch safely
         if isinstance(batch, (list, tuple)):
-            input_ids = batch[0].to(dev)
-            attention_mask = batch[1].to(dev) if len(batch) > 1 and batch[1] is not None else None
-            position_ids = batch[2].to(dev) if len(batch) > 2 and batch[2] is not None else None
+            input_ids = batch[0].to(device)
+            attention_mask = batch[1].to(device) if len(batch) > 1 and batch[1] is not None else None
+            position_ids = batch[2].to(device) if len(batch) > 2 and batch[2] is not None else None
         else:
-            input_ids = batch.to(dev)
+            input_ids = batch.to(device)
             attention_mask = None
             position_ids = None
 
-        # forward pass with optional arguments
         model(input_ids, attention_mask=attention_mask, position_ids=position_ids)
-
     except ValueError:
         pass
 
@@ -281,10 +278,19 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             raise ValueError
     layers[0] = Catcher(layers[0])
     for batch in dataloader:
-        try:
-            model(batch[0].to(dev))
-        except ValueError:
-            pass
+    try:
+        if isinstance(batch, (list, tuple)):
+            input_ids = batch[0].to(dev)
+            attention_mask = batch[1].to(dev) if len(batch) > 1 and batch[1] is not None else None
+            position_ids = batch[2].to(dev) if len(batch) > 2 and batch[2] is not None else None
+        else:
+            input_ids = batch.to(dev)
+            attention_mask = None
+            position_ids = None
+
+        model(input_ids, attention_mask=attention_mask, position_ids=position_ids)
+    except ValueError:
+        pass
     layers[0] = layers[0].module
     torch.cuda.empty_cache()
 
