@@ -94,13 +94,13 @@ def prepare_calibration_input(model, dataloader, device):
     attention_mask = cache['attention_mask']
     position_ids = cache['position_ids']
 
-     max_seqlen = model.config.max_position_embeddings
+    max_seqlen = model.config.max_position_embeddings  # Now properly aligned
     if inps.shape[1] > max_seqlen:
-        print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen}")
+        print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen} tokens")
         inps = inps[:, :max_seqlen]
         if attention_mask is not None:
             attention_mask = attention_mask[:, :max_seqlen]
-        if position_ids is not None:  # Truncate existing position_ids if present
+        if position_ids is not None:
             position_ids = position_ids[:, :max_seqlen]
 
     if attention_mask is None:
