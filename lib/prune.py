@@ -236,11 +236,11 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/...
     print('Starting ...')
     dataloader, _ = get_loaders(
-        "c4",
-        nsamples=args.nsamples,
-        seed=args.seed,
-        seqlen=model.config.max_position_embeddings,  # Critical fix
-        tokenizer=tokenizer
+    "c4",
+    nsamples=args.nsamples,
+    seed=args.seed,
+    seqlen=model.config.max_position_embeddings,  # Critical fix
+    tokenizer=tokenizer
     )
 
     use_cache = model.config.use_cache
