@@ -32,9 +32,10 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
+        attention_mask = (inp != tokenizer.pad_token_id).long()  # 防止 position_ids 出错
         tar = inp.clone()
         tar[:, :-1] = -100
-        trainloader.append((inp, tar))
+        trainloader.append((inp, attention_mask, tar))
     return trainloader, testenc
 
 # Load and process c4 dataset
