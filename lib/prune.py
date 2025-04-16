@@ -94,24 +94,25 @@ def prepare_calibration_input(model, dataloader, device):
     attention_mask = cache['attention_mask']
     position_ids = cache['position_ids']
 
-    max_seqlen = model.config.max_position_embeddings  # Now properly aligned
+    max_seqlen = model.config.max_position_embeddings
     if inps.shape[1] > max_seqlen:
-        print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen} tokens")
+        print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen}")
         inps = inps[:, :max_seqlen]
-        if attention_mask is not None:
+        if attention_mask is not None:  # Handle attention_mask truncation
             attention_mask = attention_mask[:, :max_seqlen]
-        if position_ids is not None:
+        if position_ids is not None:  # Handle position_ids truncation
             position_ids = position_ids[:, :max_seqlen]
 
+    # Guarantee non-None masks
     if attention_mask is None:
         attention_mask = torch.ones(inps.shape[0], max_seqlen, dtype=torch.long, device=device)
-        print("WARNING: attention_mask is None, 使用全1默认值")
+        print("WARNING: Created default attention_mask")
+    
     if position_ids is None:
         position_ids = torch.arange(max_seqlen, device=device).unsqueeze(0).expand(inps.shape[0], -1)
-        print("WARNING: position_ids 为 None, 使用默认的连续位置索引")
-    
-    model.config.use_cache = use_cache
+        print("WARNING: Created default position_ids")
 
+    model.config.use_cache = use_cache
     return inps, outs, attention_mask, position_ids
 
 def return_given_alpha(alpha, sort_res, W_metric, tmp_metric, sum_before):
@@ -289,20 +290,15 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             # ======== CRITICAL FIX ========
             max_seqlen = model.config.max_position_embeddings
             if inps.shape[1] > max_seqlen:
-                print(f"Truncating layer {i} inputs to {max_seqlen}")
                 inps = inps[:, :max_seqlen]
-                if attention_mask is not None:
-                    attention_mask = attention_mask[:, :max_seqlen]
-                if position_ids is not None:
-                    position_ids = position_ids[:, :max_seqlen]
-                # Regenerate position_ids after truncation
-                position_ids = torch.arange(max_seqlen, device=dev).unsqueeze(0).expand(inps.shape[0], -1)
-            # ==============================
+                attention_mask = attention_mask[:, :max_seqlen]  # Now guaranteed non-None
+                position_ids = position_ids[:, :max_seqlen]  # Now guaranteed non-None
 
+        # Device transfer with guaranteed tensors
             inps = inps.to(dev)
             outs = outs.to(dev)
-            attention_mask = attention_mask.to(dev) if attention_mask is not None else None
-            position_ids = position_ids.to(dev) if position_ids is not None else None
+            attention_mask = attention_mask.to(dev)
+            position_ids = position_ids.to(dev)
 
         subset = find_layers(layer)
         gpts = {}
@@ -320,6 +316,9 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 
         # 在调用 forward 时，针对每个 sample 分别传入其对应的 attention_mask 与 position_ids
         for j in range(args.nsamples):
+            if attention_mask is None:
+                raise ValueError("attention_mask cannot be None at this stage")
+                
             outs[j] = layer(
                 inps[j].unsqueeze(0),
                 attention_mask=attention_mask[j].unsqueeze(0),
