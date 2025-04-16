@@ -98,20 +98,20 @@ def prepare_calibration_input(model, dataloader, device):
     if inps.shape[1] > max_seqlen:
         print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen}")
         inps = inps[:, :max_seqlen]
-        if attention_mask is not None:  # Handle attention_mask truncation
+        if attention_mask is not None:
             attention_mask = attention_mask[:, :max_seqlen]
-        if position_ids is not None:  # Handle position_ids truncation
+        if position_ids is not None:
             position_ids = position_ids[:, :max_seqlen]
 
-    # Guarantee non-None masks
+    # Regenerate position_ids based on TRUNCATED length
+    if position_ids is None:
+        position_ids = torch.arange(max_seqlen, device=device)  # Use max_seqlen instead of inps.shape[1]
+        position_ids = position_ids.unsqueeze(0).expand(inps.shape[0], -1)
+        print("Generated position_ids after truncation")
+
     if attention_mask is None:
         attention_mask = torch.ones(inps.shape[0], max_seqlen, dtype=torch.long, device=device)
-        print("WARNING: Created default attention_mask")
     
-    if position_ids is None:
-        position_ids = torch.arange(max_seqlen, device=device).unsqueeze(0).expand(inps.shape[0], -1)
-        print("WARNING: Created default position_ids")
-
     model.config.use_cache = use_cache
     return inps, outs, attention_mask, position_ids
 
@@ -287,19 +287,26 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             dev = model.hf_device_map[f"model.layers.{i}"]
             print(f"layer {i} device {dev}")
 
-            # Ensure tensors exist before device transfer
-            if attention_mask is None:
-                attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=inps.device)
-                print(f"Created default attention_mask for layer {i}")
+            # Enforce valid tensors before device transfer
+            max_seqlen = model.config.max_position_embeddings
+            
+            # Truncate if needed
+            if inps.shape[1] > max_seqlen:
+                inps = inps[:, :max_seqlen]
+                if attention_mask is not None:
+                    attention_mask = attention_mask[:, :max_seqlen]
+                if position_ids is not None:
+                    position_ids = position_ids[:, :max_seqlen]
 
+            # Regenerate position_ids if missing
             if position_ids is None:
-                position_ids = torch.arange(inps.shape[1], device=inps.device).unsqueeze(0).expand(inps.shape[0], -1)
-                print(f"Created default position_ids for layer {i}")
+                position_ids = torch.arange(max_seqlen, device=inps.device)
+                position_ids = position_ids.unsqueeze(0).expand(inps.shape[0], -1)
 
-            # Device transfer with guaranteed tensors
+            # Device transfer
             inps = inps.to(dev)
             outs = outs.to(dev)
-            attention_mask = attention_mask.to(dev)
+            attention_mask = attention_mask.to(dev)  # Now guaranteed to exist
             position_ids = position_ids.to(dev)
 
         subset = find_layers(layer)
@@ -336,9 +343,10 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             gpts[name].free()
 
         for j in range(args.nsamples):
-    # Final null check
-            if attention_mask is None or position_ids is None:
-                raise RuntimeError(f"Critical error: attention_mask={attention_mask}, position_ids={position_ids}")
+            # Final validation
+            assert attention_mask is not None, "attention_mask cannot be None"
+            assert position_ids is not None, "position_ids cannot be None"
+            assert inps[j].shape[0] == position_ids[j].shape[0], "Mismatched sequence lengths"
 
             outs[j] = layer(
                 inps[j].unsqueeze(0),
