@@ -286,15 +286,17 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
         if f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             print(f"layer {i} device {dev}")
-            
-            # ======== CRITICAL FIX ========
-            max_seqlen = model.config.max_position_embeddings
-            if inps.shape[1] > max_seqlen:
-                inps = inps[:, :max_seqlen]
-                attention_mask = attention_mask[:, :max_seqlen]  # Now guaranteed non-None
-                position_ids = position_ids[:, :max_seqlen]  # Now guaranteed non-None
 
-        # Device transfer with guaranteed tensors
+            # Ensure tensors exist before device transfer
+            if attention_mask is None:
+                attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=inps.device)
+                print(f"Created default attention_mask for layer {i}")
+
+            if position_ids is None:
+                position_ids = torch.arange(inps.shape[1], device=inps.device).unsqueeze(0).expand(inps.shape[0], -1)
+                print(f"Created default position_ids for layer {i}")
+
+            # Device transfer with guaranteed tensors
             inps = inps.to(dev)
             outs = outs.to(dev)
             attention_mask = attention_mask.to(dev)
@@ -334,13 +336,15 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             gpts[name].free()
 
         for j in range(args.nsamples):
-            with torch.no_grad():
-                # 同样这里分sample传入
-                outs[j] = layer(
-                    inps[j].unsqueeze(0),
-                    attention_mask=attention_mask[j].unsqueeze(0),
-                    position_ids=position_ids[j].unsqueeze(0)
-                )[0]
+    # Final null check
+            if attention_mask is None or position_ids is None:
+                raise RuntimeError(f"Critical error: attention_mask={attention_mask}, position_ids={position_ids}")
+
+            outs[j] = layer(
+                inps[j].unsqueeze(0),
+                attention_mask=attention_mask[j].unsqueeze(0),
+                position_ids=position_ids[j].unsqueeze(0)
+            )[0]
 
         layers[i] = layer 
         torch.cuda.empty_cache()
