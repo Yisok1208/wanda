@@ -94,14 +94,18 @@ def prepare_calibration_input(model, dataloader, device):
     attention_mask = cache['attention_mask']
     position_ids = cache['position_ids']
 
-    # 如果 attention_mask 还是 None，则使用全1默认值
+    max_seqlen = model.config.max_position_embeddings
+    if inps.shape[1] > max_seqlen:
+        print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen} tokens")
+        inps = inps[:, :max_seqlen]
+        if attention_mask is not None:
+            attention_mask = attention_mask[:, :max_seqlen]
+
     if attention_mask is None:
-        attention_mask = torch.ones(inps.shape[0], inps.shape[1], dtype=torch.long, device=device)
+        attention_mask = torch.ones(inps.shape[0], max_seqlen, dtype=torch.long, device=device)
         print("WARNING: attention_mask is None, 使用全1默认值")
-    # 如果 position_ids 还是 None，则生成默认的连续位置索引
     if position_ids is None:
-        # 创建一个 0 到 (seqlen - 1) 的连续序列，重复 batch_size 次
-        position_ids = torch.arange(inps.shape[1], device=device).unsqueeze(0).expand(inps.shape[0], -1)
+        position_ids = torch.arange(max_seqlen, device=device).unsqueeze(0).expand(inps.shape[0], -1)
         print("WARNING: position_ids 为 None, 使用默认的连续位置索引")
     
     model.config.use_cache = use_cache
@@ -229,7 +233,13 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/...
     print('Starting ...')
-    dataloader, _ = get_loaders("c4", nsamples=args.nsamples, seed=args.seed, seqlen=model.seqlen, tokenizer=tokenizer)
+   dataloader, _ = get_loaders(
+        "c4", 
+        nsamples=args.nsamples,
+        seed=args.seed,
+        seqlen=model.config.max_position_embeddings,  # <-- CRITICAL FIX
+        tokenizer=tokenizer
+    )
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
@@ -267,11 +277,20 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 
     print('Ready.')
 
-    for i in range(len(layers)):
+     for i in range(len(layers)):
         layer = layers[i]
         if f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             print(f"layer {i} device {dev}")
+            
+            # Add truncation when moving to device
+            max_seqlen = model.config.max_position_embeddings
+            if inps.shape[1] > max_seqlen:
+                print(f"Truncating layer {i} inputs to {max_seqlen}")
+                inps = inps[:, :max_seqlen]
+                attention_mask = attention_mask[:, :max_seqlen] if attention_mask is not None else None
+                position_ids = position_ids[:, :max_seqlen] if position_ids is not None else None
+                
             inps = inps.to(dev)
             outs = outs.to(dev)
             if attention_mask is None:
@@ -279,9 +298,8 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
                 print("WARNING: attention_mask is None, 使用全1默认值")
             else:
                 attention_mask = attention_mask.to(dev)
-            if position_ids is None:
-                position_ids = torch.arange(inps.shape[1], device=dev).unsqueeze(0).expand(inps.shape[0], -1)
-                print("WARNING: position_ids is None, 使用默认的连续位置id")
+                position_ids = torch.arange(inps.shape[1], device=dev)  # <-- NOW SAFE
+                position_ids = position_ids.unsqueeze(0).expand(inps.shape[0], -1)
             else:
                 position_ids = position_ids.to(dev)
 
