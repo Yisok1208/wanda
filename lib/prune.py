@@ -233,11 +233,11 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/...
     print('Starting ...')
-   dataloader, _ = get_loaders(
+    dataloader, _ = get_loaders(
         "c4", 
         nsamples=args.nsamples,
         seed=args.seed,
-        seqlen=model.config.max_position_embeddings,  # <-- CRITICAL FIX
+        seqlen=model.config.max_position_embeddings,
         tokenizer=tokenizer
     )
 
