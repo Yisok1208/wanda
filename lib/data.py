@@ -68,9 +68,10 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
+        attention_mask = (inp != tokenizer.pad_token_id).long()  # 如果 tokenizer 没有 pad_token，可设为 0
         tar = inp.clone()
         tar[:, :-1] = -100
-        trainloader.append((inp, tar))
+        trainloader.append((inp, attention_mask, tar))
 
     valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
     valenc = valenc.input_ids[:, :(256 * seqlen)]
