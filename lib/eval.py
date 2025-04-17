@@ -131,14 +131,16 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
 
 def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
         num_fewshot=0, use_accelerate=False, add_special_tokens=False):
-    from lm_eval import evaluator
-    from lm_eval.list_tasks import ALL_TASKS
+    from lm_eval import evaluator, tasks
+    ALL_TASKS = list(tasks.TaskRegistry.get_task_dict().keys())
+
     def pattern_match(patterns, source_list):
         task_names = set()
         for pattern in patterns:
             for matching in fnmatch.filter(source_list, pattern):
                 task_names.add(matching)
         return list(task_names)
+
     task_names = pattern_match(task_list, ALL_TASKS)
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     limit = None 
@@ -146,6 +148,7 @@ def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hella
         limit = 2000
     if use_accelerate:
         model_args = f"pretrained={model_name},cache_dir=./llm_weights,use_accelerate=True"
+
     results = evaluator.simple_evaluate(
         model="hf-causal-experimental",
         model_args=model_args,
@@ -163,4 +166,4 @@ def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hella
         add_special_tokens=add_special_tokens
     )
 
-    return results 
+    return results
