@@ -6,7 +6,25 @@ from .sparsegpt import SparseGPT
 from .layerwrapper import WrappedGPT
 from .data import get_loaders 
 
-from .ablate import AblateGPT 
+from .ablate import AblateGPT
+
+def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
+    """
+    Call a LlamaBlock regardless of HF version:
+    * < 4.50  – layer(..., attention_mask, position_ids)
+    * ≥ 4.50 – same args **plus** position_embeddings=(cos,sin)
+    """
+    kwargs = dict(attention_mask=attention_mask, position_ids=position_ids)
+
+    if "position_embeddings" in layer.forward.__code__.co_varnames:
+        # Newer HF expects rotary embeddings pre‑computed by the caller
+        seq_len = x.size(1)
+        rot = layer.self_attn.rotary_emb          # HuggingFace helper
+        cos = rot.cos_cached[:seq_len].to(x)
+        sin = rot.sin_cached[:seq_len].to(x)
+        kwargs["position_embeddings"] = (cos, sin)
+
+    return layer(x, **kwargs)[0]                  # keep original return
 
 def find_layers(module, layers=[nn.Linear], name=''):
     """
@@ -157,7 +175,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
             handles.append(subset[name].register_forward_hook(add_batch(name)))
         for j in range(args.nsamples):
             with torch.no_grad():
-                outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+                outs[j] = _call_llama_block(layer, inps[j].unsqueeze(0), attention_mask, position_ids)
         for h in handles:
             h.remove()
 
@@ -203,7 +221,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 
         for j in range(args.nsamples):
             with torch.no_grad():
-                outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+                outs[j] = _call_llama_block(layer, inps[j].unsqueeze(0), attention_mask, position_ids)
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache 
@@ -277,7 +295,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             handles.append(subset[name].register_forward_hook(add_batch(name)))
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            outs[j] = _call_llama_block(layer, inps[j].unsqueeze(0), attention_mask, position_ids)
         for h in handles:
             h.remove()
 
@@ -289,8 +307,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             gpts[name].free()
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
-
+            outs[j] = _call_llama_block(layer, inps[j].unsqueeze(0), attention_mask, position_ids)
         layers[i] = layer 
         torch.cuda.empty_cache()
 
@@ -368,7 +385,7 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             handles.append(subset[name].register_forward_hook(add_batch(name)))
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            outs[j] = _call_llama_block(layer, inps[j].unsqueeze(0), attention_mask, position_ids)
         for h in handles:
             h.remove()
 
@@ -387,7 +404,7 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
             gpts[name].free()
 
         for j in range(args.nsamples):
-            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
+            outs[j] = _call_llama_block(layer, inps[j].unsqueeze(0), attention_mask, position_ids)
 
         layers[i] = layer 
         torch.cuda.empty_cache()
