@@ -25,17 +25,19 @@ def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
             from inspect import signature
             from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding
 
-            # HF ≤ 4.50 → first parameter is 'dim'; 4.51+ → 'config'
-            if list(signature(LlamaRotaryEmbedding).parameters)[0] == "dim":
+            sig0 = list(signature(LlamaRotaryEmbedding).parameters)[0]
+
+            if sig0 == "dim":                      # ← old ≤ 4.50 signature
                 rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
-                    layer.self_attn.head_dim,
-                    layer.self_attn.config.max_position_embeddings,
+                    dim=layer.self_attn.head_dim,
+                    max_position_embeddings=layer.self_attn.config.max_position_embeddings,
+                    device=x.device,
                 )
-            else:   # HF ≥ 4.51 constructor (config, dim, *, base=..., device=None)
+            else:                                  # ← new ≥ 4.51 signature
                 rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
-                    layer.self_attn.config,      # config   (positional #1)
-                    layer.self_attn.head_dim,    # dim      (positional #2)
-                    device=x.device,             # keyword  (only once)
+                    config=layer.self_attn.config,
+                    dim=layer.self_attn.head_dim,
+                    device=x.device,
                 )
 
         # ❷ slice cached cos/sin for this sequence length
