@@ -35,7 +35,7 @@ def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
                 rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
                     layer.self_attn.config,
                     layer.self_attn.head_dim,
-                    device=x.device
+                    x.device
                 )
 
         # ❷ slice cached cos/sin for this sequence length
