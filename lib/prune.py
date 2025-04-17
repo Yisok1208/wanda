@@ -17,11 +17,19 @@ def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
     kwargs = dict(attention_mask=attention_mask, position_ids=position_ids)
 
     if "position_embeddings" in layer.forward.__code__.co_varnames:
-        # Newer HF expects rotary embeddings pre‑computed by the caller
-        seq_len = x.size(1)
-        rot = layer.self_attn.rotary_emb          # HuggingFace helper
-        cos = rot.cos_cached[:seq_len].to(x)
-        sin = rot.sin_cached[:seq_len].to(x)
+        seq_len = x.shape[-2]
+
+        # ❶ get or lazily create the rotary‐embedding helper
+        rot = getattr(layer.self_attn, "rotary_emb", None)
+        if rot is None:   # happens when flash‑attn is on
+            from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding
+            rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
+                layer.self_attn.head_dim, layer.self_attn.config.max_position_embeddings
+            )
+
+        # ❷ slice cached cos/sin for this sequence length
+        cos = rot.cos_cached[:seq_len].to(x, copy=False)
+        sin = rot.sin_cached[:seq_len].to(x, copy=False)
         kwargs["position_embeddings"] = (cos, sin)
 
     return layer(x, **kwargs)[0]                  # keep original return
