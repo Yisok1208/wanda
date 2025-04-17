@@ -131,14 +131,15 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
 
 def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
         num_fewshot=0, use_accelerate=False, add_special_tokens=False):
-    from lm_eval import tasks, evaluator 
+    from lm_eval import evaluator
+    from lm_eval.list_tasks import ALL_TASKS
     def pattern_match(patterns, source_list):
         task_names = set()
         for pattern in patterns:
             for matching in fnmatch.filter(source_list, pattern):
                 task_names.add(matching)
         return list(task_names)
-    task_names = pattern_match(task_list, tasks.ALL_TASKS)
+    task_names = pattern_match(task_list, ALL_TASKS)
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     limit = None 
     if "70b" in model_name or "65b" in model_name:
