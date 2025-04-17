@@ -13,11 +13,11 @@
 export SLURM_EXPORT_ENV=ALL
 
 # Load any required modules
-module load cuDNN/8.7.0.84-CUDA-11.8.0
+module load cuDNN/8.7.0.84-CUDA-12.4.0
 module load Anaconda3/2024.02-1
 
 #Activate conda
-source activate dissertation_llm
+source activate prune_llm
 
 # Set Hugging Face cache environment variables
 export HF_HOME="/mnt/parscratch/users/aca22yn/cache"
