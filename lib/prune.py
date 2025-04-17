@@ -31,11 +31,11 @@ def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
                     layer.self_attn.head_dim,
                     layer.self_attn.config.max_position_embeddings,
                 )
-            else:
+            else:   # HF ≥ 4.51 constructor (config, dim, *, base=..., device=None)
                 rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
-                    layer.self_attn.config,
-                    layer.self_attn.head_dim,
-                    device=x.device,
+                    layer.self_attn.config,          # config   (positional #1)
+                    layer.self_attn.head_dim,        # dim      (positional #2)
+                    device=x.device,                 # device   (keyword ONLY)
                 )
 
         # ❷ slice cached cos/sin for this sequence length
