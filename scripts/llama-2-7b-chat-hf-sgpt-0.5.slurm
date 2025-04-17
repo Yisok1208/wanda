@@ -13,7 +13,7 @@
 export SLURM_EXPORT_ENV=ALL
 
 # Load any required modules
-module load cuDNN/8.7.0.84-CUDA-12.4.0
+module load cuDNN/8.7.0.84-CUDA-11.8.0
 module load Anaconda3/2024.02-1
 
 #Activate conda
