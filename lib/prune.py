@@ -19,13 +19,23 @@ def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
     if "position_embeddings" in layer.forward.__code__.co_varnames:
         seq_len = x.shape[-2]
 
-        # ❶ get or lazily create the rotary‐embedding helper
+        # ❶ get (or lazily create) the rotary‑embedding helper
         rot = getattr(layer.self_attn, "rotary_emb", None)
-        if rot is None:   # happens when flash‑attn is on
+        if rot is None:                                   # happens when flash‑attn is on
+            from inspect import signature
             from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding
-            rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
-                layer.self_attn.head_dim, layer.self_attn.config.max_position_embeddings
-            )
+
+            # HF ≤ 4.50 → first parameter is 'dim'; 4.51+ → 'config'
+            if list(signature(LlamaRotaryEmbedding).parameters)[0] == "dim":
+                rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
+                    layer.self_attn.head_dim,
+                    layer.self_attn.config.max_position_embeddings,
+                )
+            else:
+                rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
+                    layer.self_attn.config,
+                    layer.self_attn.head_dim,
+                )
 
         # ❷ slice cached cos/sin for this sequence length
         cos = rot.cos_cached[:seq_len].to(x, copy=False)
