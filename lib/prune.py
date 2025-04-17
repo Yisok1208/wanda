@@ -27,17 +27,17 @@ def _call_llama_block(layer, x, attention_mask=None, position_ids=None):
 
             sig0 = list(signature(LlamaRotaryEmbedding).parameters)[0]
 
-            if sig0 == "dim":                      # ← old ≤ 4.50 signature
+            if sig0 == "dim":                 # ≤ 4.50
                 rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
                     dim=layer.self_attn.head_dim,
                     max_position_embeddings=layer.self_attn.config.max_position_embeddings,
                     device=x.device,
                 )
-            else:                                  # ← new ≥ 4.51 signature
+            else:                             # ≥ 4.51
                 rot = layer.self_attn.rotary_emb = LlamaRotaryEmbedding(
-                    config=layer.self_attn.config,
-                    dim=layer.self_attn.head_dim,
-                    device=x.device,
+                    layer.self_attn.config,      # config (positional)
+                    layer.self_attn.head_dim,    # dim    (positional)
+                    device=x.device,             # device (keyword)
                 )
 
         # ❷ slice cached cos/sin for this sequence length
