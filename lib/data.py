@@ -32,10 +32,9 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
-        attention_mask = (inp != tokenizer.pad_token_id).long()  # 防止 position_ids 出错
         tar = inp.clone()
         tar[:, :-1] = -100
-        trainloader.append((inp, attention_mask, tar))
+        trainloader.append((inp, tar))
     return trainloader, testenc
 
 # Load and process c4 dataset
@@ -48,23 +47,19 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
     random.seed(seed)
     trainloader = []
     for _ in range(nsamples):
-        # Instead of selecting a single example, concatenate multiple examples until reaching seqlen
-        concatenated_text = ""
         while True:
             i = random.randint(0, len(traindata) - 1)
-            concatenated_text += " " + traindata[i]['text']
-            trainenc = tokenizer(concatenated_text, return_tensors='pt')
+            trainenc = tokenizer(traindata[i]['text'], return_tensors='pt')
             if trainenc.input_ids.shape[1] > seqlen:
                 break
-
         i = random.randint(0, trainenc.input_ids.shape[1] - seqlen - 1)
         j = i + seqlen
         inp = trainenc.input_ids[:, i:j]
-        attention_mask = (inp != tokenizer.pad_token_id).long()  # 如果 tokenizer 没有 pad_token，可设为 0
         tar = inp.clone()
         tar[:, :-1] = -100
-        trainloader.append((inp, attention_mask, tar))
+        trainloader.append((inp, tar))
 
+    # Prepare validation dataset
     valenc = tokenizer(' '.join(valdata[:1100]['text']), return_tensors='pt')
     valenc = valenc.input_ids[:, :(256 * seqlen)]
     valenc = TokenizerWrapper(valenc)
