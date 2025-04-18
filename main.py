@@ -100,6 +100,8 @@ def main():
     model.eval()
 
     tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=False)
+    if tokenizer.pad_token_id is None:            # ★ 添加
+        tokenizer.pad_token = tokenizer.eos_token
     
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
