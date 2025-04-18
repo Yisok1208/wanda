@@ -129,30 +129,18 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     return ppl.item()
 
 
-def eval_zero_shot(
-    model_name,
-    model,
-    tokenizer,
-    task_list = ["boolq","rte","hellaswag","winogrande",
-                 "arc_challenge","arc_easy","openbookqa"],
-    num_fewshot = 0,
-    use_accelerate = False,
-    add_special_tokens = False,
-):
-    # ------------ 修正导入 ------------
-    from lm_eval import evaluator, tasks            # ❶ 只需这一行就够
-    ALL_TASKS = list(tasks.get_task_dict().keys())   # ❷ 新版的任务列表
-    # ---------------------------------
+def eval_zero_shot(model_name, model, tokenizer, task_list, num_fewshot=0, use_accelerate=False, add_special_tokens=False):
+    from lm_eval import evaluator, tasks
+    import fnmatch
 
-    # 与原来一致的匹配函数
+    ALL_TASKS = list(tasks.get_task_dict(list(tasks.TASK_REGISTRY.keys())).keys())
     def pattern_match(patterns, source_list):
-        out = set()
-        for pat in patterns:
-            out.update(fnmatch.filter(source_list, pat))
-        return list(out)
-
+        task_names = set()
+        for pattern in patterns:
+            for matching in fnmatch.filter(source_list, pattern):
+                task_names.add(matching)
+        return list(task_names)
     task_names = pattern_match(task_list, ALL_TASKS)
-
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     if use_accelerate:
         model_args += ",use_accelerate=True"
