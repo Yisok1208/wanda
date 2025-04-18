@@ -129,42 +129,45 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     return ppl.item()
 
 
-def eval_zero_shot(model_name, model, tokenizer, task_list=["boolq","rte","hellaswag","winogrande","arc_challenge","arc_easy","openbookqa"], 
-        num_fewshot=0, use_accelerate=False, add_special_tokens=False):
-    from lm_eval import evaluator
-    from lm_eval.tasks.registry import get_task_dict
-    ALL_TASKS = list(get_task_dict().keys())
+def eval_zero_shot(
+    model_name,
+    model,
+    tokenizer,
+    task_list = ["boolq","rte","hellaswag","winogrande",
+                 "arc_challenge","arc_easy","openbookqa"],
+    num_fewshot = 0,
+    use_accelerate = False,
+    add_special_tokens = False,
+):
+    # ------------ 修正导入 ------------
+    from lm_eval import evaluator, tasks            # ❶ 只需这一行就够
+    ALL_TASKS = list(tasks.get_task_dict().keys())   # ❷ 新版的任务列表
+    # ---------------------------------
 
+    # 与原来一致的匹配函数
     def pattern_match(patterns, source_list):
-        task_names = set()
-        for pattern in patterns:
-            for matching in fnmatch.filter(source_list, pattern):
-                task_names.add(matching)
-        return list(task_names)
+        out = set()
+        for pat in patterns:
+            out.update(fnmatch.filter(source_list, pat))
+        return list(out)
 
     task_names = pattern_match(task_list, ALL_TASKS)
+
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
-    limit = None 
-    if "70b" in model_name or "65b" in model_name:
-        limit = 2000
     if use_accelerate:
-        model_args = f"pretrained={model_name},cache_dir=./llm_weights,use_accelerate=True"
+        model_args += ",use_accelerate=True"
+    limit = 2000 if any(x in model_name for x in ("70b", "65b")) else None
 
     results = evaluator.simple_evaluate(
-        model="hf-causal-experimental",
-        model_args=model_args,
-        tasks=task_names,
-        num_fewshot=num_fewshot,
-        batch_size=None,
-        device=None,
-        no_cache=True,
-        limit=limit,
-        description_dict={},
-        decontamination_ngrams_path=None,
-        check_integrity=False,
-        pretrained_model=model,
-        tokenizer=tokenizer, 
-        add_special_tokens=add_special_tokens
+        model              = "hf-causal-experimental",
+        model_args         = model_args,
+        tasks              = task_names,
+        num_fewshot        = num_fewshot,
+        no_cache           = True,
+        limit              = limit,
+        check_integrity    = False,
+        pretrained_model   = model,
+        tokenizer          = tokenizer,
+        add_special_tokens = add_special_tokens,
     )
-
     return results
