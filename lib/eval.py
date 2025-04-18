@@ -129,22 +129,37 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     return ppl.item()
 
 
-def eval_zero_shot(model_name, model, tokenizer, task_list, num_fewshot=0, use_accelerate=False, add_special_tokens=False):
-    from lm_eval import evaluator, tasks
-    import fnmatch
+def eval_zero_shot(
+        model_name,
+        model,
+        tokenizer,
+        task_list = ["boolq","rte","hellaswag",
+                     "winogrande","arc_challenge",
+                     "arc_easy","openbookqa"],
+        num_fewshot = 0,
+        use_accelerate = False,
+        add_special_tokens = False):
 
-    ALL_TASKS = list(tasks.get_task_dict(list(tasks.TASK_REGISTRY.keys())).keys())
+    from lm_eval import evaluator, tasks        # tasks 仍然在这里
+    from lm_eval.tasks import get_task_dict     # ← 新接口
+
+    # -------- 兼容 0.4.8：拿到全部注册任务 ----------
+    ALL_TASKS = list(get_task_dict().keys())
+    # -----------------------------------------------
+
+    # 原来的通配匹配逻辑保持不变
     def pattern_match(patterns, source_list):
-        task_names = set()
-        for pattern in patterns:
-            for matching in fnmatch.filter(source_list, pattern):
-                task_names.add(matching)
-        return list(task_names)
+        out = set()
+        for p in patterns:
+            out.update(fnmatch.filter(source_list, p))
+        return list(out)
+
     task_names = pattern_match(task_list, ALL_TASKS)
+
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     if use_accelerate:
         model_args += ",use_accelerate=True"
-    limit = 2000 if any(x in model_name for x in ("70b", "65b")) else None
+    limit = 2000 if any(b in model_name for b in ("70b","65b")) else None
 
     results = evaluator.simple_evaluate(
         model              = "hf-causal-experimental",
@@ -154,7 +169,7 @@ def eval_zero_shot(model_name, model, tokenizer, task_list, num_fewshot=0, use_a
         no_cache           = True,
         limit              = limit,
         check_integrity    = False,
-        pretrained_model   = model,
+        pretrained_model   = model,      # 你的剪枝后权重
         tokenizer          = tokenizer,
         add_special_tokens = add_special_tokens,
     )
