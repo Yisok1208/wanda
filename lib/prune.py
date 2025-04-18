@@ -60,7 +60,7 @@ def prepare_calibration_input(model, dataloader, device):
     model.config.use_cache = False
     layers = model.model.layers
 
-    # 如果模型有 embed_tokens 的设备映射，则使用该设备
+    # dev = model.hf_device_map["model.embed_tokens"]
     if "model.embed_tokens" in model.hf_device_map:
         device = model.hf_device_map["model.embed_tokens"]
 
@@ -76,55 +76,23 @@ def prepare_calibration_input(model, dataloader, device):
         def forward(self, inp, **kwargs):
             inps[cache['i']] = inp
             cache['i'] += 1
-            # 尝试获取 attention_mask 与 position_ids；如果没有，则设为 None
-            cache['attention_mask'] = kwargs.get('attention_mask', None)
-            cache['position_ids'] = kwargs.get('position_ids', None)
+            cache['attention_mask'] = kwargs['attention_mask']
+            cache['position_ids'] = kwargs['position_ids']
             raise ValueError
-
-    # 将第一个层替换为 Catcher 用于捕获输入
     layers[0] = Catcher(layers[0])
     for batch in dataloader:
         try:
-            if isinstance(batch, (list, tuple)):
-                input_ids = batch[0].to(device)
-                attention_mask = batch[1].to(device) if len(batch) > 1 and batch[1] is not None else None
-                position_ids = batch[2].to(device) if len(batch) > 2 and batch[2] is not None else None
-            else:
-                input_ids = batch.to(device)
-                attention_mask = None
-                position_ids = None
-
-            model(input_ids, attention_mask=attention_mask, position_ids=position_ids)
+            model(batch[0].to(device))
         except ValueError:
-            pass
-
+            pass 
     layers[0] = layers[0].module
 
     outs = torch.zeros_like(inps)
     attention_mask = cache['attention_mask']
     position_ids = cache['position_ids']
-
-    max_seqlen = model.config.max_position_embeddings
-    if inps.shape[1] > max_seqlen:
-        print(f"Truncating inputs from {inps.shape[1]} to {max_seqlen}")
-        inps = inps[:, :max_seqlen]
-        
-        # Guarantee attention_mask exists (create if None)
-        attention_mask = (
-            attention_mask[:, :max_seqlen] 
-            if attention_mask is not None 
-            else torch.ones(inps.shape[0], max_seqlen, dtype=torch.long, device=device)
-        )
-        
-        # Guarantee position_ids exists (create if None)
-        position_ids = (
-            position_ids[:, :max_seqlen] 
-            if position_ids is not None 
-            else torch.arange(max_seqlen, device=device).unsqueeze(0).expand(inps.shape[0], -1)
-        )
-
     model.config.use_cache = use_cache
-    return inps, outs, attention_mask, position_ids
+
+    return inps, outs, attention_mask, position_ids 
 
 def return_given_alpha(alpha, sort_res, W_metric, tmp_metric, sum_before):
     thres_cumsum = sum_before * alpha 
@@ -243,17 +211,10 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
 
 
 @torch.no_grad()
-@torch.no_grad()
 def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
-    ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/...
+    ## SparseGPT code available at: https://github.com/IST-DASLab/sparsegpt/tree/f5c25005a61f96a0933ca2f95705a963585aafaa
     print('Starting ...')
-    dataloader, _ = get_loaders(
-    "c4", 
-    nsamples=args.nsamples,
-    seed=args.seed,
-    seqlen=model.config.max_position_embeddings,  # Critical fix
-    tokenizer=tokenizer
-    )
+    dataloader, _ = get_loaders("c4",nsamples=args.nsamples,seed=args.seed,seqlen=model.seqlen,tokenizer=tokenizer)
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
@@ -263,7 +224,9 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
         dev = model.hf_device_map["model.embed_tokens"]
 
     dtype = next(iter(model.parameters())).dtype
-    inps = torch.zeros((args.nsamples, model.seqlen, model.config.hidden_size), dtype=dtype, device=dev)
+    inps = torch.zeros(
+        (args.nsamples, model.seqlen, model.config.hidden_size), dtype=dtype, device=dev
+    )
     cache = {'i': 0, 'attention_mask': None, "position_ids": None}
 
     class Catcher(nn.Module):
@@ -279,19 +242,9 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
     layers[0] = Catcher(layers[0])
     for batch in dataloader:
         try:
-            if isinstance(batch, (list, tuple)):
-                input_ids = batch[0].to(dev)
-                attention_mask = batch[1].to(dev) if len(batch) > 1 and batch[1] is not None else None
-                position_ids = batch[2].to(dev) if len(batch) > 2 and batch[2] is not None else None
-            else:
-                input_ids = batch.to(dev)
-                attention_mask = None
-                position_ids = None
-
-            model(input_ids, attention_mask=attention_mask, position_ids=position_ids)
+            model(batch[0].to(dev))
         except ValueError:
             pass
-            
     layers[0] = layers[0].module
     torch.cuda.empty_cache()
 
@@ -301,24 +254,15 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 
     print('Ready.')
 
-    # FIXED INDENTATION ▼▼▼
     for i in range(len(layers)):
         layer = layers[i]
         if f"model.layers.{i}" in model.hf_device_map:
             dev = model.hf_device_map[f"model.layers.{i}"]
             print(f"layer {i} device {dev}")
-
-            # Validate tensors before transfer
-            assert attention_mask is not None, "attention_mask is None!"
-            assert position_ids is not None, "position_ids is None!"
-
-            # Device transfer
-            inps = inps.to(dev)
-            outs = outs.to(dev)
-            attention_mask = attention_mask.to(dev)
-            position_ids = position_ids.to(dev)
+            inps, outs, attention_mask, position_ids = inps.to(dev), outs.to(dev), attention_mask.to(dev), position_ids.to(dev)
 
         subset = find_layers(layer)
+
         gpts = {}
         for name in subset:
             gpts[name] = SparseGPT(subset[name])
@@ -332,43 +276,30 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
         for name in gpts:
             handles.append(subset[name].register_forward_hook(add_batch(name)))
 
-        # 在调用 forward 时，针对每个 sample 分别传入其对应的 attention_mask 与 position_ids
         for j in range(args.nsamples):
-            if attention_mask is None:
-                raise ValueError("attention_mask cannot be None at this stage")
-                
-            outs[j] = layer(
-                inps[j].unsqueeze(0),
-                attention_mask=attention_mask,       # ★ 不再按 j 索引
-                position_ids=position_ids,
-            )[0]
+            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
         for h in handles:
             h.remove()
 
         for name in gpts:
             print(i, name)
             print('Pruning ...')
+
             gpts[name].fasterprune(args.sparsity_ratio, prune_n=prune_n, prune_m=prune_m, percdamp=0.01, blocksize=128)
             gpts[name].free()
 
         for j in range(args.nsamples):
-            # Final validation
-            assert attention_mask is not None, "attention_mask cannot be None"
-            assert position_ids is not None, "position_ids cannot be None"
-            assert inps[j].shape[0] == position_ids[j].shape[0], "Mismatched sequence lengths"
-
-            outs[j] = layer(
-                inps[j].unsqueeze(0),
-                attention_mask=attention_mask[j].unsqueeze(0),
-                position_ids=position_ids[j].unsqueeze(0)
-            )[0]
+            outs[j] = layer(inps[j].unsqueeze(0), attention_mask=attention_mask, position_ids=position_ids)[0]
 
         layers[i] = layer 
         torch.cuda.empty_cache()
+
         inps, outs = outs, inps
 
     model.config.use_cache = use_cache
     torch.cuda.empty_cache()
+
+
 
 @torch.no_grad()
 def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
