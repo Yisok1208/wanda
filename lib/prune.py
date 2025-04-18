@@ -341,7 +341,6 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
                 inps[j].unsqueeze(0),
                 attention_mask=attention_mask,       # ★ 不再按 j 索引
                 position_ids=position_ids,
-                )[0]
             )[0]
         for h in handles:
             h.remove()
