@@ -169,6 +169,13 @@ def main():
         print("zero_shot evaluation results")
         print(results)
 
+        import json
+        # dump the zero‑shot results to a file alongside your PPL log
+        outfile = os.path.join(args.save, f"zeroshot_{args.prune_method}.json")
+        with open(outfile, "w") as f:
+            json.dump(results, f, indent=2, sort_keys=True)
+        print(f"Zero‑shot JSON results saved to {outfile}")
+
     if args.save_model:
         model.save_pretrained(args.save_model)
         tokenizer.save_pretrained(args.save_model)
