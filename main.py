@@ -108,6 +108,8 @@ def main():
         device = model.hf_device_map["lm_head"]
     print("use device ", device)
 
+    original_weights = {name: param.data.clone() for name, param in model.named_parameters() if 'weight' in name}
+    
     if args.sparsity_ratio != 0:
         print("pruning starts")
         if args.prune_method == "wanda":
