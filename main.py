@@ -61,13 +61,6 @@ def main():
         # LLaMA doesn’t ship with a pad token by default
         tokenizer.add_special_tokens({'pad_token': tokenizer.eos_token})
 
-    encoded = tokenizer(
-        text,
-        return_tensors='pt',
-        truncation=True,
-        max_length=model.config.max_position_embeddings
-    )
-
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
         device = model.hf_device_map["lm_head"]
