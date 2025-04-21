@@ -139,20 +139,9 @@ def eval_zero_shot(
     use_accelerate = False,
     add_special_tokens = False,
 ):
-    # ------------ 修正导入 ------------
-    from lm_eval import evaluator, tasks            # ❶ 只需这一行就够
-    ALL_TASKS = list(tasks.get_task_dict().keys())   # ❷ 新版的任务列表
-    # ---------------------------------
-
-    # 与原来一致的匹配函数
-    def pattern_match(patterns, source_list):
-        out = set()
-        for pat in patterns:
-            out.update(fnmatch.filter(source_list, pat))
-        return list(out)
-
-    task_names = pattern_match(task_list, ALL_TASKS)
-
+    from lm_eval import evaluator
+    task_names = task_list
+    
     model_args = f"pretrained={model_name},cache_dir=./llm_weights"
     if use_accelerate:
         model_args += ",use_accelerate=True"
