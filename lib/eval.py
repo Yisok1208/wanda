@@ -152,6 +152,7 @@ def eval_zero_shot(
         model_args         = model_args,
         tasks              = task_names,
         num_fewshot        = num_fewshot,
+        no_cache           = True,
         limit              = limit,
         check_integrity    = False,
         tokenizer          = tokenizer,
