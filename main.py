@@ -25,48 +25,6 @@ def get_llm(model_name, cache_dir="llm_weights"):
     model.seqlen = model.config.max_position_embeddings 
     return model
 
-def estimate_snr(t, sparsity):
-    # Apply Top-K masking directly
-    k = int(t.numel() * (1 - sparsity))  # Number of non-zero elements to retain
-    if k == 0:
-        t_s = torch.zeros_like(t)
-    else:
-        t_abs = torch.abs(t)
-        topk_values, _ = torch.topk(t_abs.view(-1), k)
-        threshold = topk_values[-1]  # Threshold for Top-K
-        mask = (t_abs >= threshold).float()
-        t_s = mask * t  # Masked tensor
-
-    # Calculate Mean Squared Error (MSE) and Tensor Norm
-    mse = torch.mean((t - t_s) ** 2)
-    tensor_norm = torch.mean(t ** 2)
-    
-    # Compute SNR
-    if mse.item() > 0.0:
-        pruning_snr = 10 * np.log10(tensor_norm.item() / mse.item())
-    else:
-        pruning_snr = np.Inf
-    
-    return mse, pruning_snr
-
-def compute_pruning_error(model, original_weights):
-    total_error = 0.0
-    total_elements = 0
-    with torch.no_grad():
-        for name, param in model.named_parameters():
-            if 'weight' in name and param.requires_grad:
-                # Retrieve the original and pruned weights
-                original_weight = original_weights[name]
-                pruned_weight = param.data
-
-                # Compute the L2 difference (pruning error)
-                error = torch.sum((original_weight - pruned_weight) ** 2).item()
-                total_error += error
-                total_elements += param.numel()  # Count the total number of weights
-                print(f"Layer: {name} | Pruning Error: {error:.6f}")
-    avg_error = total_error / total_elements if total_elements > 0 else 0.0
-    return avg_error
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, help='LLaMA model')
@@ -98,12 +56,17 @@ def main():
     print(f"loading llm model {args.model}")
     model = get_llm(args.model, args.cache_dir)
     model.eval()
-
-    encoded = tokenizer(text, return_tensors='pt', truncation=True, max_length=model.config.max_position_embeddings)
     tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=False)
-     if tokenizer.pad_token_id is None:
-         # LLaMA doesn’t ship with a pad token by default
-         tokenizer.add_special_tokens({'pad_token': tokenizer.eos_token})
+    if tokenizer.pad_token_id is None:
+        # LLaMA doesn’t ship with a pad token by default
+        tokenizer.add_special_tokens({'pad_token': tokenizer.eos_token})
+
+    encoded = tokenizer(
+        text,
+        return_tensors='pt',
+        truncation=True,
+        max_length=model.config.max_position_embeddings
+    )
 
     device = torch.device("cuda:0")
     if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
