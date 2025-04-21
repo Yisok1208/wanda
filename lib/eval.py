@@ -154,7 +154,6 @@ def eval_zero_shot(
         num_fewshot        = num_fewshot,
         limit              = limit,
         check_integrity    = False,
-        pretrained_model   = model,
         tokenizer          = tokenizer,
         add_special_tokens = add_special_tokens,
     )
