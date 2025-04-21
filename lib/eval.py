@@ -148,7 +148,7 @@ def eval_zero_shot(
     limit = 2000 if any(x in model_name for x in ("70b", "65b")) else None
 
     results = evaluator.simple_evaluate(
-        model              = "hf-causal-experimental",
+        model              = "hf",
         model_args         = model_args,
         tasks              = task_names,
         num_fewshot        = num_fewshot,
