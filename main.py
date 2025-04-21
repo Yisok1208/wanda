@@ -25,6 +25,48 @@ def get_llm(model_name, cache_dir="llm_weights"):
     model.seqlen = model.config.max_position_embeddings 
     return model
 
+def estimate_snr(t, sparsity):
+    # Apply Top-K masking directly
+    k = int(t.numel() * (1 - sparsity))  # Number of non-zero elements to retain
+    if k == 0:
+        t_s = torch.zeros_like(t)
+    else:
+        t_abs = torch.abs(t)
+        topk_values, _ = torch.topk(t_abs.view(-1), k)
+        threshold = topk_values[-1]  # Threshold for Top-K
+        mask = (t_abs >= threshold).float()
+        t_s = mask * t  # Masked tensor
+
+    # Calculate Mean Squared Error (MSE) and Tensor Norm
+    mse = torch.mean((t - t_s) ** 2)
+    tensor_norm = torch.mean(t ** 2)
+    
+    # Compute SNR
+    if mse.item() > 0.0:
+        pruning_snr = 10 * np.log10(tensor_norm.item() / mse.item())
+    else:
+        pruning_snr = np.Inf
+    
+    return mse, pruning_snr
+
+def compute_pruning_error(model, original_weights):
+    total_error = 0.0
+    total_elements = 0
+    with torch.no_grad():
+        for name, param in model.named_parameters():
+            if 'weight' in name and param.requires_grad:
+                # Retrieve the original and pruned weights
+                original_weight = original_weights[name]
+                pruned_weight = param.data
+
+                # Compute the L2 difference (pruning error)
+                error = torch.sum((original_weight - pruned_weight) ** 2).item()
+                total_error += error
+                total_elements += param.numel()  # Count the total number of weights
+                print(f"Layer: {name} | Pruning Error: {error:.6f}")
+    avg_error = total_error / total_elements if total_elements > 0 else 0.0
+    return avg_error
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, help='LLaMA model')
@@ -76,6 +118,25 @@ def main():
             prune_sparsegpt(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
         elif "ablate" in args.prune_method:
             prune_ablate(args, model, tokenizer, device, prune_n=prune_n, prune_m=prune_m)
+        print("Pruning completed.")
+
+        print("Estimating SNR after pruning...")
+        with torch.no_grad():
+            for name, param in model.named_parameters():
+                if 'weight' in name and param.requires_grad:  # Focus on weight tensors
+                    t = param.data  # Extract the pruned weight tensor
+                    sparsity = args.sparsity_ratio
+                    mse, pruning_snr = estimate_snr(t, sparsity)
+                    print(f"Layer: {name} | MSE: {mse.item():.6f} | SNR: {pruning_snr:.6f}")
+                    break  # Only process the first matching weight tensor
+
+        print("Computing pruning error...")
+        pruning_error = compute_pruning_error(model, original_weights)
+        print(f"Total Pruning Error: {pruning_error:.6f}")
+    else:
+        mse = torch.tensor(0.0)
+        pruning_snr = 0.0
+        pruning_error = 0.0
 
     ################################################################
     print("*"*30)
@@ -91,7 +152,8 @@ def main():
     save_filepath = os.path.join(args.save, f"log_{args.prune_method}.txt")
     with open(save_filepath, "w") as f:
         print("method\tactual_sparsity\tppl_test", file=f, flush=True)
-        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}", file=f, flush=True)
+        print("method\tactual_sparsity\tppl_test\tMSE\tSNR\tPruning_Error", file=f, flush=True)
+        print(f"{args.prune_method}\t{sparsity_ratio:.4f}\t{ppl_test:.4f}\t{mse.item():.6f}\t{pruning_snr:.6f}\t{pruning_error:.6f}", file=f, flush=True)
 
     if args.eval_zero_shot:
         accelerate=False
