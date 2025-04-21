@@ -2,6 +2,7 @@ import argparse
 import os 
 import numpy as np
 import torch
+import json
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from importlib.metadata import version
 
@@ -66,6 +67,13 @@ def compute_pruning_error(model, original_weights):
                 print(f"Layer: {name} | Pruning Error: {error:.6f}")
     avg_error = total_error / total_elements if total_elements > 0 else 0.0
     return avg_error
+
+def _to_json_serializable(obj):
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    return str(obj)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -169,11 +177,15 @@ def main():
         print("zero_shot evaluation results")
         print(results)
 
-        import json
         # dump the zero‑shot results to a file alongside your PPL log
         outfile = os.path.join(args.save, f"zeroshot_{args.prune_method}.json")
         with open(outfile, "w") as f:
-            json.dump(results, f, indent=2, sort_keys=True)
+            json.dump(results, 
+                      f, 
+                      indent=2, 
+                      sort_keys=True,
+                      default=_to_json_serializable
+            )
         print(f"Zero‑shot JSON results saved to {outfile}")
 
     if args.save_model:
