@@ -29,5 +29,6 @@ export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
             --model /mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_sgpt_0.5/ \
+            --sparsity_type unstructured \
             --eval_zero_shot \
             --save  /mnt/parscratch/users/aca22yn/yik/wanda/results/llama-2-7b-chat-hf_sgpt_0.5_eval/ 
