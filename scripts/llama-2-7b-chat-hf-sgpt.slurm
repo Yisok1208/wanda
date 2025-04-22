@@ -7,7 +7,7 @@
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --output=llama_2_7B_hf_sparse_0.1%j.log
+#SBATCH --output=llama_2_7B_hf_sgpt_%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
