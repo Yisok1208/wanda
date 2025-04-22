@@ -34,5 +34,5 @@ for s in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9; do
             --sparsity_ratio ${s} \
             --sparsity_type unstructured \
             --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/llama-2-7b-chat-hf_sgpt_${s}/" \
-            --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_sgpt_${s}/" \
+            --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_sgpt_${s}/"
 done
