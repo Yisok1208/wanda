@@ -7,7 +7,7 @@
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --output=llama_2_7B_hf_wanda_0.1%j.log
+#SBATCH --output=llama_2_7B_hf_wanda_%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
@@ -27,11 +27,12 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 # Set the HF_TOKEN environment variable by reading the file
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
-srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
-          --model meta-llama/Llama-2-7b-chat-hf \
-          --prune_method wanda \
-          --sparsity_ratio 0.1 \
-          --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/llama-2-7b-chat-hf_wanda_0.1/" \
-          --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_wanda_0.1/" \
-          --eval_zero_shot \
+for s in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9; do
+  srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
+            --model meta-llama/Llama-2-7b-chat-hf \
+            --prune_method wanda \
+            --sparsity_ratio ${s} \
+            --sparsity_type unstructured \
+            --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/llama-2-7b-chat-hf_wanda_${s}/" \
+            --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_wanda_${s}/" \
+done
