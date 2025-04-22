@@ -32,6 +32,6 @@ srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
           --prune_method wanda \
           --sparsity_ratio 0.7 \
           --sparsity_type unstructured \
-          --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/llama-2-7b-chat-hf_wanda_0.7 /" \
-          --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_wanda_0.7 /" \
+          --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/llama-2-7b-chat-hf_wanda-0.7/" \
+          --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/llama-2-7b-chat-hf_wanda-0.7/" \
           --eval_zero_shot \
