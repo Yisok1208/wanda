@@ -28,7 +28,7 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 for s in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9; do
-  srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
+  srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
             --model mistralai/Mistral-7B-v0.3 \
             --prune_method wanda \
             --sparsity_ratio ${s} \
