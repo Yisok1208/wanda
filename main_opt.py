@@ -23,7 +23,7 @@ def get_llm(model_name, cache_dir="llm_weights"):
         device_map="auto"
     )
 
-    model.seqlen = min(model.config.max_position_embeddings, 4096)
+    model.seqlen = min(model.config.max_position_embeddings, 2048)
     print(f"⚙️  Using seqlen = {model.seqlen} for pruning calibration")
     return model
 
