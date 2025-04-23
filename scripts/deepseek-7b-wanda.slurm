@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=deepseek_7b_job
+#SBATCH --job-name=deepseek_7B_job
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=128G
@@ -7,7 +7,7 @@
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --output=job_output_deepseek_7b_sparse_0.5%j.log
+#SBATCH --output=deepseek_7B_wanda_%j.log
 #SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
@@ -15,6 +15,9 @@ export SLURM_EXPORT_ENV=ALL
 # Load any required modules
 module load cuDNN/8.7.0.84-CUDA-11.8.0
 module load Anaconda3/2024.02-1
+
+#Activate conda
+source activate prune_llm
 
 # Set Hugging Face cache environment variables
 export HF_HOME="/mnt/parscratch/users/aca22yn/cache"
@@ -24,13 +27,12 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 # Set the HF_TOKEN environment variable by reading the file
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
-/mnt/parscratch/users/aca22yn/anaconda/envs/dissertation_llm/bin/python /mnt/parscratch/users/aca22yn/wanda2/wanda/main.py \
-          --model "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B" \
-          --prune_method sparsegpt \
-          --nsamples 16 \
-          --sparsity_ratio 0.5 \
-          --sparsity_type unstructured \
-          --dataset c4 \
-          --eval_zero_shot \
-          --save "/mnt/parscratch/users/aca22yn/wanda2/wanda/results/deepseek_7b_sgpt_0.5/" \
-          --save_model "/mnt/parscratch/users/aca22yn/wanda2/wanda/pruned/sgpt/deepseek_7b_sgpt_0.5/" \
+for s in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9; do
+  srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
+            --model deepseek-ai/DeepSeek-R1-Distill-Qwen-7B \
+            --prune_method wanda \
+            --sparsity_ratio ${s} \
+            --sparsity_type unstructured \
+            --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/deepseek_7b_wanda_${s}/" \
+            --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/deepseek_7b_wanda_${s}/"
+done
