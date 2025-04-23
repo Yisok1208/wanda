@@ -29,8 +29,8 @@ export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 for s in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9; do
   srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
-            --model /mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/mistral_7B_wanda_${s}/ \
+            --model /mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt/mistral_7b_wanda_${s}/ \
             --sparsity_type unstructured \
             --eval_zero_shot \
-            --save  /mnt/parscratch/users/aca22yn/yik/wanda/results/mistral_7B_wanda_${s}_eval/ 
+            --save  /mnt/parscratch/users/aca22yn/yik/wanda/results/mistral_7b_wanda_${s}_eval/ 
 done
