@@ -34,26 +34,33 @@ def check_sparsity(model):
     model.config.use_cache = False 
 
     layers = model.transformer.h
-    count = 0 
+    total_zero = 0
     total_params = 0
-    for i in range(len(layers)):
-        layer = layers[i]
+    for i, layer in enumerate(layers):
         subset = find_layers(layer)
 
-        sub_count = 0
-        sub_params = 0
-        for name in subset:
-            W = subset[name].weight.data
-            count += (W==0).sum().item()
-            total_params += W.numel()
+        layer_zero = 0
+        layer_params = 0
+        for W in subset.values():
+            w = W.weight.data
+            layer_zero   += (w == 0).sum().item()
+            layer_params += w.numel()
 
-            sub_count += (W==0).sum().item()
-            sub_params += W.numel()
+        if layer_params == 0:
+            print(f"layer {i} 没有 Linear 参数，跳过稀疏度计算。")
+        else:
+            sparsity = layer_zero / layer_params
+            print(f"layer {i} 稀疏度 {sparsity:.6f}")
 
-        print(f"layer {i} sparsity {float(sub_count)/sub_params:.6f}")
+            total_zero   += layer_zero
+            total_params += layer_params
 
     model.config.use_cache = use_cache 
-    return float(count)/total_params 
+
+    if total_params == 0:
+        return 0.0
+    else:
+        return total_zero / total_params
 
 def prepare_calibration_input(model, dataloader, device):
     use_cache = model.config.use_cache
