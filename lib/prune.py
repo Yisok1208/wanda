@@ -33,7 +33,7 @@ def check_sparsity(model):
     use_cache = model.config.use_cache 
     model.config.use_cache = False 
 
-    layers = model.transformer.h
+    layers = model.model.layers
     total_zero = 0
     total_params = 0
     for i, layer in enumerate(layers):
@@ -65,7 +65,7 @@ def check_sparsity(model):
 def prepare_calibration_input(model, dataloader, device):
     use_cache = model.config.use_cache
     model.config.use_cache = False
-    layers = model.transformer.h
+    layers = model.model.layers
 
     # dev = model.hf_device_map["model.embed_tokens"]
     if "model.embed_tokens" in model.hf_device_map:
@@ -110,7 +110,7 @@ def return_given_alpha(alpha, sort_res, W_metric, tmp_metric, sum_before):
     return W_mask, cur_sparsity
 
 def prune_magnitude(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0, prune_m=0):
-    layers = model.transformer.h 
+    layers = model.model.layers 
 
     for i in range(len(layers)):
         layer = layers[i]
@@ -141,7 +141,7 @@ def prune_wanda(args, model, tokenizer, device=torch.device("cuda:0"), prune_n=0
     with torch.no_grad():
         inps, outs, attention_mask, position_ids = prepare_calibration_input(model, dataloader, device)
 
-    layers = model.transformer.h
+    layers = model.model.layers
     for i in range(len(layers)):
         layer = layers[i]
         subset = find_layers(layer)
@@ -225,7 +225,7 @@ def prune_sparsegpt(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
-    layers = model.transformer.h
+    layers = model.model.layers
 
     if "model.embed_tokens" in model.hf_device_map:
         dev = model.hf_device_map["model.embed_tokens"]
@@ -316,7 +316,7 @@ def prune_ablate(args, model, tokenizer, dev, prune_n=0, prune_m=0):
 
     use_cache = model.config.use_cache
     model.config.use_cache = False
-    layers = model.transformer.h
+    layers = model.model.layers
 
     if "model.embed_tokens" in model.hf_device_map:
         dev = model.hf_device_map["model.embed_tokens"]
