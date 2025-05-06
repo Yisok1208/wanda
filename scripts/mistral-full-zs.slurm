@@ -1,14 +1,14 @@
 #!/bin/bash
-SBATCH --job-name=mistral_7B_job
-SBATCH --ntasks=1
-SBATCH --cpus-per-task=12
-SBATCH --mem=128G
-SBATCH --partition=gpu
-SBATCH --qos=gpu
-SBATCH --gres=gpu:1
-SBATCH --time=6:00:00
-SBATCH --output=mistral_7B_sgpt_%j.log
-SBATCH --mail-type=ALL
+#SBATCH --job-name=mistral_7B_job
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=12
+#SBATCH --mem=128G
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --time=6:00:00
+#SBATCH --output=mistral_7B_sgpt_%j.log
+#SBATCH --mail-type=ALL
 
 export SLURM_EXPORT_ENV=ALL
 
