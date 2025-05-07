@@ -32,4 +32,5 @@ srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
           --prune_method sparsegpt \
           --sparsity_ratio 0.5 \
           --sparsity_type unstructured \
+          --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/r/mistral_7b_sgpt_full/"
