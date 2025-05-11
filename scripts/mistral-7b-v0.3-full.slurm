@@ -29,6 +29,9 @@ export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
           --model mistralai/Mistral-7B-v0.3 \
+          --sparsity_ratio 0 \
           --sparsity_type unstructured \
+          --prune_method wanda \
+          --eval_zero_shot
           --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/mistral_7b_full/" \
           --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt//mistral_7b_full/"
