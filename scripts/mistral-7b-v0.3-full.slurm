@@ -27,7 +27,7 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 # Set the HF_TOKEN environment variable by reading the file
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
-srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
+srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
           --model mistralai/Mistral-7B-v0.3 \
           --sparsity_ratio 0 \
           --sparsity_type unstructured \
