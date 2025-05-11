@@ -35,3 +35,4 @@ srun python /mnt/parscratch/users/aca22yn/yik/wanda/main_opt.py \
           --eval_zero_shot
           --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/mistral_7b_full/" \
           --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/sgpt//mistral_7b_full/"
+          --save  /mnt/parscratch/users/aca22yn/yik/wanda/results/mistral_7b_wanda_${s}_eval/ 
