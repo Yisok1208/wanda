@@ -5,7 +5,7 @@
 #SBATCH --mem=128G
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 #SBATCH --time=6:00:00
 #SBATCH --output=mistral_7B_full_%j.log
 #SBATCH --mail-type=ALL
