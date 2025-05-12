@@ -28,7 +28,7 @@ export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
 
 srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
-          --model mistralai/Mistral-7B-v0.3 \
+          --model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/mistral_7b_full_model/" \
           --sparsity_type unstructured \
           --eval_zero_shot \
           --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/r/mistral_7b_sgpt_full/"
