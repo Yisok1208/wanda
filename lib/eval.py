@@ -84,6 +84,11 @@ def eval_ppl_wikitext(model, testenc, bs=1, device=None):
     # Get input IDs
     testenc = testenc.input_ids
 
+    if testenc.shape[1] < model.seqlen:
+        raise ValueError(
+            f"testenc too short: got {testenc.shape[1]} tokens, but model.seqlen = {model.seqlen}."
+        )
+
     # Calculate number of samples
     nsamples = testenc.numel() // model.seqlen
 
