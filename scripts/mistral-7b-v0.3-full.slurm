@@ -33,7 +33,6 @@ srun python /mnt/parscratch/users/aca22yn/yik/wanda/main.py \
   --model mistralai/Mistral-7B-v0.3 \
   --sparsity_ratio 0 \
   --sparsity_type unstructured \
-  --prune_method magnitude \
-  --eval_zero_shot \
+  --prune_method sparsegpt \
   --save "/mnt/parscratch/users/aca22yn/yik/wanda/results/mistral_7b_full_eval/" \
   --save_model "/mnt/parscratch/users/aca22yn/yik/wanda/pruned/mistral_7b_full_model/"
