@@ -21,17 +21,21 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
     traindata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='train')
     testdata = load_dataset('wikitext', 'wikitext-2-raw-v1', split='test')
 
-    # Encode datasets
+    # Encode training set
     trainenc = tokenizer(" ".join(traindata['text']), return_tensors='pt')
-    test_text = "\n\n".join(testdata['text'])
 
+    # Encode and truncate test set
+    test_text = "\n\n".join(testdata['text'])
     testenc = tokenizer(test_text, return_tensors='pt')
     testenc = testenc.input_ids  # shape: (1, T)
 
-    max_test_tokens = 4096
-    if testenc.shape[1] > max_test_tokens:
-        testenc = testenc[:, :max_test_tokens]
+    # 保证 testenc 至少能生成一条样本
+    min_test_tokens = seqlen * 2
+    if testenc.shape[1] < min_test_tokens:
+        raise ValueError(f"Test set too short: only {testenc.shape[1]} tokens, need at least {min_test_tokens}.")
 
+    max_test_tokens = max(4096, seqlen * 4)
+    testenc = testenc[:, :max_test_tokens]
     testenc = TokenizerWrapper(testenc)
 
     # Generate samples from training set
@@ -44,6 +48,7 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
         tar = inp.clone()
         tar[:, :-1] = -100
         trainloader.append((inp, tar))
+
     return trainloader, testenc
 
 # Load and process c4 dataset
