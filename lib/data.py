@@ -24,7 +24,15 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
     # Encode datasets
     trainenc = tokenizer(" ".join(traindata['text']), return_tensors='pt')
     test_text = "\n\n".join(testdata['text'])
-    testenc = tokenizer(test_text, return_tensors='pt', truncation=True, max_length=512)
+
+    testenc = tokenizer(test_text, return_tensors='pt')
+    testenc = testenc.input_ids  # shape: (1, T)
+
+    max_test_tokens = 4096
+    if testenc.shape[1] > max_test_tokens:
+    testenc = testenc[:, :max_test_tokens]
+
+testenc = TokenizerWrapper(testenc)
 
     # Generate samples from training set
     random.seed(seed)
