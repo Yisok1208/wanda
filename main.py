@@ -6,6 +6,12 @@ try:
 except ImportError:
     pass
 
+try:
+    hf_versions = importlib.import_module("transformers.utils.versions")
+    hf_versions.require_version = lambda *args, **kwargs: None
+except ImportError:
+    pass
+
 import argparse
 import os 
 import numpy as np
