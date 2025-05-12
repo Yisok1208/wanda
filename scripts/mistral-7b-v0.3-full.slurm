@@ -24,6 +24,7 @@ export HF_HOME="/mnt/parscratch/users/aca22yn/cache"
 export HF_DATASETS_CACHE="/mnt/parscratch/users/aca22yn/cache/datasets"
 export TRANSFORMERS_CACHE="/mnt/parscratch/users/aca22yn/cache/transformers"
 export TRANSFORMERS_NO_FAST=1
+export HF_DISABLE_FAST=1
 
 # Set the HF_TOKEN environment variable by reading the file
 export HF_TOKEN=$(cat /mnt/parscratch/users/aca22yn/wanda/token/hf_token.txt)
