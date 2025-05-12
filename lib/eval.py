@@ -81,58 +81,47 @@ def eval_ppl_wikitext_train(model, trainloader, bs=1, device=None):
 
 # Function to evaluate perplexity (ppl) specifically on the wikitext dataset
 def eval_ppl_wikitext(model, testenc, bs=1, device=None):
-    # Get input IDs
     testenc = testenc.input_ids
+    max_seq_len = 512  # 显存友好
 
-    if testenc.shape[1] < model.seqlen:
-        raise ValueError(
-            f"testenc too short: got {testenc.shape[1]} tokens, but model.seqlen = {model.seqlen}."
-        )
-
-    # Calculate number of samples
-    nsamples = testenc.numel() // model.seqlen
-
-    # List to store negative log likelihoods
+    total_tokens = testenc.shape[1]
+    nsamples = total_tokens // max_seq_len
     nlls = []
+
     print(f"nsamples {nsamples}")
+    for i in range(nsamples):
+        start = i * max_seq_len
+        end = start + max_seq_len
+        inputs = testenc[:, start:end].to(device)
 
-    # Loop through each batch
-    for i in range(0,nsamples,bs):
-        if i % 50 == 0:
-            print(f"sample {i}")
+        if inputs.shape[1] < 2:
+            continue  # skip too-short input
 
-        # Calculate end index
-        j = min(i+bs, nsamples)
+        try:
+            outputs = model(inputs)
+        except torch.cuda.OutOfMemoryError:
+            print(f"OOM on sample {i}, skipping")
+            torch.cuda.empty_cache()
+            continue
 
-        # Prepare inputs and move to device
-        inputs = testenc[:,(i * model.seqlen):(j * model.seqlen)].to(device)
-        inputs = inputs.reshape(j-i, model.seqlen)
-
-        # Forward pass through the model
-        lm_logits = model(inputs).logits
-
-        # Shift logits and labels for next token prediction
+        lm_logits = outputs.logits
         shift_logits = lm_logits[:, :-1, :].contiguous()
         shift_labels = inputs[:, 1:]
 
-        # Compute loss
-        loss_fct = nn.CrossEntropyLoss()
-        loss = loss_fct(shift_logits.reshape(-1, shift_logits.size(-1)), shift_labels.reshape(-1))
-
-        # Calculate negative log likelihood
-        neg_log_likelihood = loss.float() * model.seqlen * (j-i)
-
-        # Append to list of negative log likelihoods
+        loss_fct = torch.nn.CrossEntropyLoss()
+        loss = loss_fct(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            shift_labels.reshape(-1)
+        )
+        neg_log_likelihood = loss.float() * (inputs.shape[1] - 1)
         nlls.append(neg_log_likelihood)
 
-    # Compute perplexity
-    ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * model.seqlen))
+    if len(nlls) == 0:
+        raise ValueError("No samples could be processed without OOM.")
 
-    # Empty CUDA cache to save memory
+    ppl = torch.exp(torch.stack(nlls).sum() / (nsamples * (max_seq_len - 1)))
     torch.cuda.empty_cache()
-
     return ppl.item()
-
 
 def eval_zero_shot(
     model_name,
