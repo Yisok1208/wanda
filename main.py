@@ -1,17 +1,3 @@
-# Monkey-patch for datasets → huggingface_hub.utils.insecure_hashlib
-import hashlib, importlib
-try:
-    hfh_utils = importlib.import_module("huggingface_hub.utils")
-    setattr(hfh_utils, "insecure_hashlib", hashlib)
-except ImportError:
-    pass
-
-try:
-    hf_versions = importlib.import_module("transformers.utils.versions")
-    hf_versions.require_version = lambda *args, **kwargs: None
-except ImportError:
-    pass
-
 import argparse
 import os 
 import numpy as np
