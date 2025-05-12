@@ -30,9 +30,9 @@ def get_wikitext2(nsamples, seed, seqlen, tokenizer):
 
     max_test_tokens = 4096
     if testenc.shape[1] > max_test_tokens:
-    testenc = testenc[:, :max_test_tokens]
+        testenc = testenc[:, :max_test_tokens]
 
-testenc = TokenizerWrapper(testenc)
+    testenc = TokenizerWrapper(testenc)
 
     # Generate samples from training set
     random.seed(seed)
